@@ -1,0 +1,302 @@
+import { useState, useEffect } from 'react'
+import {
+  listAdminUsers,
+  createAdminUser,
+  sendInvite,
+  suspendUser,
+  deleteAdminUser,
+} from '../../api/admin'
+import { getApiError } from '../../lib/utils'
+import { useToast } from '../../stores/toastStore'
+import Spinner from '../../components/ui/Spinner'
+import type { AdminUser } from '../../types/api'
+
+export default function AdminUsersPage() {
+  const toast = useToast()
+  const [users, setUsers] = useState<AdminUser[]>([])
+  const [nextCursor, setNextCursor] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [search, setSearch] = useState('')
+
+  // Create form
+  const [showCreate, setShowCreate] = useState(false)
+  const [creating, setCreating] = useState(false)
+  const [createForm, setCreateForm] = useState({ firstName: '', lastName: '', email: '' })
+
+  // Per-row action loading
+  const [actionLoading, setActionLoading] = useState<Record<string, string>>({})
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
+
+  async function loadUsers(cursor?: string) {
+    try {
+      const res = await listAdminUsers(cursor)
+      setUsers((prev) => (cursor ? [...prev, ...res.users] : res.users))
+      setNextCursor(res.nextCursor)
+    } catch (err) {
+      toast(getApiError(err), 'error')
+    } finally {
+      setLoading(false)
+      setLoadingMore(false)
+    }
+  }
+
+  useEffect(() => { loadUsers() }, [])
+
+  async function handleCreate(e: React.FormEvent) {
+    e.preventDefault()
+    setCreating(true)
+    try {
+      const user = await createAdminUser(createForm)
+      setUsers((prev) => [user, ...prev])
+      setCreateForm({ firstName: '', lastName: '', email: '' })
+      setShowCreate(false)
+    } catch (err) {
+      toast(getApiError(err), 'error')
+    } finally {
+      setCreating(false)
+    }
+  }
+
+  async function handleInvite(userId: string) {
+    setActionLoading((a) => ({ ...a, [userId]: 'invite' }))
+    try {
+      await sendInvite(userId)
+      toast('Invite sent successfully')
+    } catch (err) {
+      toast(getApiError(err), 'error')
+    } finally {
+      setActionLoading((a) => { const n = { ...a }; delete n[userId]; return n })
+    }
+  }
+
+  async function handleSuspend(userId: string) {
+    setActionLoading((a) => ({ ...a, [userId]: 'suspend' }))
+    try {
+      const res = await suspendUser(userId)
+      setUsers((prev) =>
+        prev.map((u) => (u.id === res.id ? { ...u, isActive: res.isActive } : u))
+      )
+    } catch (err) {
+      toast(getApiError(err), 'error')
+    } finally {
+      setActionLoading((a) => { const n = { ...a }; delete n[userId]; return n })
+    }
+  }
+
+  async function handleDelete(userId: string) {
+    setConfirmDeleteId(null)
+    setActionLoading((a) => ({ ...a, [userId]: 'delete' }))
+    try {
+      await deleteAdminUser(userId)
+      setUsers((prev) => prev.filter((u) => u.id !== userId))
+    } catch (err) {
+      toast(getApiError(err), 'error')
+    } finally {
+      setActionLoading((a) => { const n = { ...a }; delete n[userId]; return n })
+    }
+  }
+
+  const filtered = search.trim()
+    ? users.filter((u) => {
+        const q = search.toLowerCase()
+        return (
+          u.firstName.toLowerCase().includes(q) ||
+          u.lastName.toLowerCase().includes(q) ||
+          u.email.toLowerCase().includes(q)
+        )
+      })
+    : users
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-16">
+        <Spinner />
+      </div>
+    )
+  }
+
+  return (
+    <div className="p-4 max-w-4xl mx-auto">
+      <title>Users — Admin · CBA</title>
+      {/* Toolbar */}
+      <div className="flex items-center gap-3 mb-4">
+        <input
+          type="search"
+          placeholder="Search by name or email…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="flex-1 text-xs border border-border rounded-full px-4 py-2 bg-card focus:outline-none focus:border-primary"
+        />
+        <button
+          onClick={() => setShowCreate((v) => !v)}
+          className="text-xs font-semibold bg-primary text-white px-4 py-2 rounded-full whitespace-nowrap"
+        >
+          {showCreate ? 'Cancel' : '+ New member'}
+        </button>
+      </div>
+
+      {/* Create form */}
+      {showCreate && (
+        <form
+          onSubmit={handleCreate}
+          className="bg-card border border-border rounded-xl p-4 mb-4 flex flex-col gap-3"
+        >
+          <p className="text-xs font-semibold text-gray-700">Create new member</p>
+          <div className="grid grid-cols-2 gap-3">
+            <input
+              required
+              placeholder="First name"
+              value={createForm.firstName}
+              onChange={(e) => setCreateForm((f) => ({ ...f, firstName: e.target.value }))}
+              className="text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-primary"
+            />
+            <input
+              required
+              placeholder="Last name"
+              value={createForm.lastName}
+              onChange={(e) => setCreateForm((f) => ({ ...f, lastName: e.target.value }))}
+              className="text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-primary"
+            />
+          </div>
+          <input
+            required
+            type="email"
+            placeholder="Email address"
+            value={createForm.email}
+            onChange={(e) => setCreateForm((f) => ({ ...f, email: e.target.value }))}
+            className="text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-primary"
+          />
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              disabled={creating}
+              className="text-xs font-semibold bg-primary text-white px-4 py-2 rounded-lg disabled:opacity-60"
+            >
+              {creating ? 'Creating…' : 'Create member'}
+            </button>
+            <p className="text-[10px] text-muted self-center">
+              You can send the invite email from the member row after creating.
+            </p>
+          </div>
+        </form>
+      )}
+
+      {/* Count */}
+      <p className="text-[10px] text-muted mb-2">
+        {filtered.length} member{filtered.length !== 1 ? 's' : ''} shown
+        {search && ' (filtered)'}
+      </p>
+
+      {/* User list */}
+      <div className="bg-card rounded-xl border border-border overflow-hidden">
+        {filtered.length === 0 ? (
+          <p className="text-center text-xs text-muted py-10">No members found.</p>
+        ) : (
+          filtered.map((user, i) => {
+            const busy = actionLoading[user.id]
+            return (
+              <div
+                key={user.id}
+                className={`flex items-center gap-3 px-4 py-3 ${
+                  i < filtered.length - 1 ? 'border-b border-border' : ''
+                }`}
+              >
+                {/* Initials avatar */}
+                <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-600 text-xs font-bold flex items-center justify-center flex-shrink-0">
+                  {user.firstName[0]}{user.lastName[0]}
+                </div>
+
+                {/* Info */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-xs font-semibold text-gray-900">
+                      {user.firstName} {user.lastName}
+                    </span>
+                    {user.role === 'admin' && (
+                      <span className="text-[9px] font-bold uppercase bg-primary text-white px-1.5 py-0.5 rounded">
+                        Admin
+                      </span>
+                    )}
+                    <span
+                      className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded ${
+                        user.isActive
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-red-100 text-red-600'
+                      }`}
+                    >
+                      {user.isActive ? 'Active' : 'Suspended'}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-muted truncate">{user.email}</p>
+                  <p className="text-[10px] text-gray-300 font-mono truncate select-all" title="User ID — copy this to add as group member">
+                    {user.id}
+                  </p>
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <button
+                    onClick={() => handleInvite(user.id)}
+                    disabled={!!busy}
+                    title="Send invite email"
+                    className="text-[10px] font-semibold text-accent border border-accent px-2 py-1 rounded-lg disabled:opacity-40 hover:bg-blue-50 transition"
+                  >
+                    {busy === 'invite' ? <Spinner size="sm" /> : 'Invite'}
+                  </button>
+                  <button
+                    onClick={() => handleSuspend(user.id)}
+                    disabled={!!busy}
+                    title={user.isActive ? 'Suspend member' : 'Reactivate member'}
+                    className="text-[10px] font-semibold text-gray-600 border border-border px-2 py-1 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition"
+                  >
+                    {busy === 'suspend' ? <Spinner size="sm" /> : user.isActive ? 'Suspend' : 'Reactivate'}
+                  </button>
+                  {confirmDeleteId === user.id ? (
+                    <div className="flex items-center gap-1">
+                      <span className="text-[10px] text-danger font-medium">Sure?</span>
+                      <button
+                        onClick={() => handleDelete(user.id)}
+                        className="text-[10px] font-semibold text-white bg-danger px-2 py-1 rounded-lg"
+                      >
+                        Yes
+                      </button>
+                      <button
+                        onClick={() => setConfirmDeleteId(null)}
+                        className="text-[10px] font-semibold text-muted border border-border px-2 py-1 rounded-lg"
+                      >
+                        No
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setConfirmDeleteId(user.id)}
+                      disabled={!!busy}
+                      title="Delete member"
+                      className="text-[10px] font-semibold text-danger border border-danger px-2 py-1 rounded-lg disabled:opacity-40 hover:bg-red-50 transition"
+                    >
+                      {busy === 'delete' ? <Spinner size="sm" /> : 'Delete'}
+                    </button>
+                  )}
+                </div>
+              </div>
+            )
+          })
+        )}
+      </div>
+
+      {/* More */}
+      {nextCursor && !search && (
+        <div className="flex justify-center mt-4">
+          <button
+            onClick={() => { setLoadingMore(true); loadUsers(nextCursor) }}
+            disabled={loadingMore}
+            className="px-6 py-2 rounded-full bg-surface border border-border text-xs font-semibold text-gray-600 hover:bg-gray-100 transition"
+          >
+            {loadingMore ? <Spinner size="sm" /> : 'More'}
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
