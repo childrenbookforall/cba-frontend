@@ -12,7 +12,7 @@ import type { Notification } from '../types/api'
 
 function notificationText(n: Notification): string {
   const who = n.triggeredBy
-    ? `${n.triggeredBy.firstName} ${n.triggeredBy.lastName}`
+    ? `${n.triggeredBy.firstName}${n.triggeredBy.lastName ? ` ${n.triggeredBy.lastName}` : ''}`
     : 'Someone'
   if (n.type === 'comment_reply') {
     return `${who} replied to your comment on "${n.post.title}"`
@@ -125,11 +125,11 @@ export default function NotificationsPage() {
                     {notificationText(n)}
                   </p>
                   {n.comment.content && (
-                    <p className="text-[10px] text-muted mt-0.5 truncate">
+                    <p className="text-[0.625rem] text-muted mt-0.5 truncate">
                       "{n.comment.content}"
                     </p>
                   )}
-                  <p className="text-[10px] text-muted mt-1">
+                  <p className="text-[0.625rem] text-muted mt-1">
                     {formatRelativeTime(n.createdAt)}
                   </p>
                 </div>

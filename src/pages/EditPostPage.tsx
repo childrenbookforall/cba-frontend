@@ -81,7 +81,7 @@ export default function EditPostPage() {
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="p-4 max-w-lg mx-auto">
         <div className="mb-3">
-          <label className="block text-[10px] font-bold text-muted uppercase tracking-wide mb-1">
+          <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
             Title
           </label>
           <input
@@ -90,12 +90,12 @@ export default function EditPostPage() {
               errors.title ? 'border-danger bg-red-50' : 'border-border'
             }`}
           />
-          {errors.title && <p className="text-[10px] text-danger mt-1">{errors.title.message}</p>}
+          {errors.title && <p className="text-[0.625rem] text-danger mt-1">{errors.title.message}</p>}
         </div>
 
         {post?.type === 'text' && (
           <div className="mb-4">
-            <label className="block text-[10px] font-bold text-muted uppercase tracking-wide mb-1">
+            <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
               Content
             </label>
             <textarea

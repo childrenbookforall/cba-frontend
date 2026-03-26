@@ -11,7 +11,7 @@ export default function InstallBanner() {
       <div className="bg-gray-900 text-white rounded-2xl shadow-xl px-4 py-3 flex items-center gap-3 max-w-sm w-full pointer-events-auto">
         <div className="flex-1 min-w-0">
           <p className="text-xs font-semibold leading-snug">Add CBA to your home screen</p>
-          <p className="text-[10px] text-gray-400 mt-0.5">Quick access, works offline</p>
+          <p className="text-[0.625rem] text-gray-400 mt-0.5">Quick access, works offline</p>
         </div>
         <button
           onClick={install}

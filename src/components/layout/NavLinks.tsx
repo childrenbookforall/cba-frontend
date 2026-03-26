@@ -29,7 +29,7 @@ export default function NavLinks() {
           aria-live="polite"
           aria-atomic="true"
           aria-label={unreadCount > 0 ? `${unreadCount} unread notification${unreadCount === 1 ? '' : 's'}` : undefined}
-          className={`absolute -top-1 -right-1.5 min-w-[14px] h-[14px] rounded-full bg-danger text-white text-[8px] font-bold flex items-center justify-center px-0.5 leading-none transition-opacity ${unreadCount > 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+          className={`absolute -top-1 -right-1.5 min-w-[14px] h-[14px] rounded-full bg-danger text-white text-[0.5rem] font-bold flex items-center justify-center px-0.5 leading-none transition-opacity ${unreadCount > 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         >
           {unreadCount > 9 ? '9+' : unreadCount || ''}
         </span>

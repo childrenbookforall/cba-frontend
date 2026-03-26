@@ -100,7 +100,7 @@ export default function PostMenu({ post }: PostMenuProps) {
         <div className="absolute right-0 top-6 z-20 bg-card border border-border rounded-xl shadow-lg py-1 w-40">
           {flagging ? (
             <div className="px-3 py-2">
-              <p className="text-[10px] text-muted mb-1.5">Reason (optional)</p>
+              <p className="text-[0.625rem] text-muted mb-1.5">Reason (optional)</p>
               <input
                 autoFocus
                 value={flagReason}
@@ -112,13 +112,13 @@ export default function PostMenu({ post }: PostMenuProps) {
                 <button
                   onClick={() => flagMutation.mutate()}
                   disabled={flagMutation.isPending}
-                  className="flex-1 text-[10px] font-semibold bg-red-50 text-danger rounded-lg py-1.5"
+                  className="flex-1 text-[0.625rem] font-semibold bg-red-50 text-danger rounded-lg py-1.5"
                 >
                   Flag
                 </button>
                 <button
                   onClick={() => setFlagging(false)}
-                  className="flex-1 text-[10px] font-semibold bg-surface text-muted rounded-lg py-1.5"
+                  className="flex-1 text-[0.625rem] font-semibold bg-surface text-muted rounded-lg py-1.5"
                 >
                   Cancel
                 </button>
@@ -146,18 +146,18 @@ export default function PostMenu({ post }: PostMenuProps) {
               {(isOwner || isAdmin) && (
                 confirmDelete ? (
                   <div className="px-3 py-2">
-                    <p className="text-[10px] text-gray-700 mb-2">Delete this post?</p>
+                    <p className="text-[0.625rem] text-gray-700 mb-2">Delete this post?</p>
                     <div className="flex gap-1.5">
                       <button
                         onClick={() => deleteMutation.mutate()}
                         disabled={deleteMutation.isPending}
-                        className="flex-1 text-[10px] font-semibold bg-danger text-white rounded-lg py-1.5 disabled:opacity-60"
+                        className="flex-1 text-[0.625rem] font-semibold bg-danger text-white rounded-lg py-1.5 disabled:opacity-60"
                       >
                         {deleteMutation.isPending ? '…' : 'Delete'}
                       </button>
                       <button
                         onClick={() => setConfirmDelete(false)}
-                        className="flex-1 text-[10px] font-semibold bg-surface text-muted rounded-lg py-1.5"
+                        className="flex-1 text-[0.625rem] font-semibold bg-surface text-muted rounded-lg py-1.5"
                       >
                         Cancel
                       </button>

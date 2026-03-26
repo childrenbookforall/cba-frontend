@@ -105,7 +105,7 @@ export default function ProfilePage() {
               </div>
             )}
           </div>
-          <p className="text-[10px] text-muted mt-2">Tap photo to change</p>
+          <p className="text-[0.625rem] text-muted mt-2">Tap photo to change</p>
         </div>
 
         {/* Name + role */}
@@ -114,16 +114,16 @@ export default function ProfilePage() {
             {user.firstName} {user.lastName}
           </h2>
           {user.role === 'admin' && (
-            <span className="inline-block mt-1 text-[10px] font-semibold uppercase tracking-wide bg-primary text-white px-2 py-0.5 rounded-full">
+            <span className="inline-block mt-1 text-[0.625rem] font-semibold uppercase tracking-wide bg-primary text-white px-2 py-0.5 rounded-full">
               Admin
             </span>
           )}
-          <p className="text-[10px] text-muted mt-1">Member since {memberSince}</p>
+          <p className="text-[0.625rem] text-muted mt-1">Member since {memberSince}</p>
         </div>
 
         {/* Email */}
         <div className="border-t border-border pt-4">
-          <p className="text-[10px] font-semibold text-muted uppercase tracking-wide mb-1">Email</p>
+          <p className="text-[0.625rem] font-semibold text-muted uppercase tracking-wide mb-1">Email</p>
           <p className="text-xs text-gray-700">{user.email}</p>
         </div>
       </div>
@@ -131,11 +131,11 @@ export default function ProfilePage() {
       {/* Bio section */}
       <div className="bg-card mt-2 px-4 py-4">
         <div className="flex items-center justify-between mb-2">
-          <p className="text-[10px] font-semibold text-muted uppercase tracking-wide">About me</p>
+          <p className="text-[0.625rem] font-semibold text-muted uppercase tracking-wide">About me</p>
           {!editingBio && (
             <button
               onClick={() => { setBioValue(user.bio ?? ''); setEditingBio(true) }}
-              className="text-[10px] text-accent font-medium"
+              className="text-[0.625rem] text-accent font-medium"
             >
               Edit
             </button>
@@ -156,13 +156,13 @@ export default function ProfilePage() {
               <button
                 onClick={() => bioMutation.mutate()}
                 disabled={bioMutation.isPending}
-                className="text-[10px] font-semibold text-white bg-primary px-4 py-1.5 rounded-lg disabled:opacity-60"
+                className="text-[0.625rem] font-semibold text-white bg-primary px-4 py-1.5 rounded-lg disabled:opacity-60"
               >
                 {bioMutation.isPending ? 'Saving…' : 'Save'}
               </button>
               <button
                 onClick={() => setEditingBio(false)}
-                className="text-[10px] font-semibold text-muted px-3 py-1.5 rounded-lg"
+                className="text-[0.625rem] font-semibold text-muted px-3 py-1.5 rounded-lg"
               >
                 Cancel
               </button>

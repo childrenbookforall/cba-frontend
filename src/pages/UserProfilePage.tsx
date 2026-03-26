@@ -71,7 +71,7 @@ export default function UserProfilePage() {
 
       {/* Bio section */}
       <div className="bg-card mt-2 px-4 py-4">
-        <p className="text-[10px] font-semibold text-muted uppercase tracking-wide mb-2">About</p>
+        <p className="text-[0.625rem] font-semibold text-muted uppercase tracking-wide mb-2">About</p>
         <p className="text-xs text-gray-600 leading-relaxed">
           {user.bio || <span className="text-muted italic">No bio yet.</span>}
         </p>

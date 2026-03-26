@@ -116,7 +116,7 @@ export default function SearchPage() {
 
         {!isLoading && results.length > 0 && (
           <>
-            <p className="text-[10px] text-muted px-4 pb-2">
+            <p className="text-[0.625rem] text-muted px-4 pb-2">
               {results.length} result{results.length !== 1 ? 's' : ''}
             </p>
             {results.map((post) => (

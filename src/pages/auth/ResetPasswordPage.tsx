@@ -6,15 +6,12 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { validateResetToken, resetPassword } from '../../api/auth'
 import { getApiError } from '../../lib/utils'
 import Spinner from '../../components/ui/Spinner'
+import PasswordInput from '../../components/ui/PasswordInput'
 import logoWithName from '../../assets/logo-with-name.png'
 
 const passwordSchema = z
   .string()
-  .min(10, 'At least 10 characters')
-  .regex(/[A-Z]/, 'Must include an uppercase letter')
-  .regex(/[a-z]/, 'Must include a lowercase letter')
-  .regex(/[0-9]/, 'Must include a number')
-  .regex(/[^A-Za-z0-9]/, 'Must include a special character')
+  .min(6, 'At least 6 characters')
 
 const schema = z
   .object({
@@ -72,9 +69,9 @@ export default function ResetPasswordPage() {
 
   if (tokenState === 'invalid') {
     return (
-      <div className="min-h-svh bg-surface flex items-center justify-center px-4">
+      <div className="min-h-svh bg-card sm:bg-surface flex flex-col sm:items-center sm:justify-center sm:px-4">
         <title>Reset Password — CBA</title>
-        <div className="w-full max-w-sm bg-card rounded-2xl shadow-sm p-8 text-center">
+        <div className="flex-1 sm:flex-none w-full sm:max-w-sm bg-card sm:rounded-2xl sm:shadow-sm p-8 flex flex-col justify-center text-center">
           <div className="text-center mb-6">
             <img src={logoWithName} alt="Children's Book for All" className="h-16 mx-auto object-contain" />
           </div>
@@ -95,9 +92,9 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-svh bg-surface flex items-center justify-center px-4">
+    <div className="min-h-svh bg-card sm:bg-surface flex flex-col sm:items-center sm:justify-center sm:px-4">
       <title>Reset Password — CBA</title>
-      <div className="w-full max-w-sm bg-card rounded-2xl shadow-sm p-8">
+      <div className="flex-1 sm:flex-none w-full sm:max-w-sm bg-card sm:rounded-2xl sm:shadow-sm p-8 flex flex-col justify-center">
 
         <div className="text-center mb-6">
           <img src={logoWithName} alt="Children's Book for All" className="h-16 mx-auto object-contain" />
@@ -115,38 +112,32 @@ export default function ResetPasswordPage() {
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="mb-3">
-            <label className="block text-[10px] font-bold text-muted uppercase tracking-wide mb-1">
+            <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
               New Password
             </label>
-            <input
-              type="password"
+            <PasswordInput
               autoComplete="new-password"
-              placeholder="Min 10 chars · Upper · Number · Symbol"
+              placeholder="Min 6 characters"
+              hasError={!!errors.password}
               {...register('password')}
-              className={`w-full px-3 py-2.5 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition ${
-                errors.password ? 'border-danger bg-red-50' : 'border-border'
-              }`}
             />
             {errors.password && (
-              <p className="text-[10px] text-danger mt-1">{errors.password.message}</p>
+              <p className="text-[0.625rem] text-danger mt-1">{errors.password.message}</p>
             )}
           </div>
 
           <div className="mb-5">
-            <label className="block text-[10px] font-bold text-muted uppercase tracking-wide mb-1">
+            <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
               Confirm Password
             </label>
-            <input
-              type="password"
+            <PasswordInput
               autoComplete="new-password"
               placeholder="Re-enter new password"
+              hasError={!!errors.confirm}
               {...register('confirm')}
-              className={`w-full px-3 py-2.5 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition ${
-                errors.confirm ? 'border-danger bg-red-50' : 'border-border'
-              }`}
             />
             {errors.confirm && (
-              <p className="text-[10px] text-danger mt-1">{errors.confirm.message}</p>
+              <p className="text-[0.625rem] text-danger mt-1">{errors.confirm.message}</p>
             )}
           </div>
 

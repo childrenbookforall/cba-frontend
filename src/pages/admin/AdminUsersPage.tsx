@@ -102,7 +102,7 @@ export default function AdminUsersPage() {
         const q = search.toLowerCase()
         return (
           u.firstName.toLowerCase().includes(q) ||
-          u.lastName.toLowerCase().includes(q) ||
+          u.lastName?.toLowerCase().includes(q) ||
           u.email.toLowerCase().includes(q)
         )
       })
@@ -152,8 +152,7 @@ export default function AdminUsersPage() {
               className="text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-primary"
             />
             <input
-              required
-              placeholder="Last name"
+              placeholder="Last name (optional)"
               value={createForm.lastName}
               onChange={(e) => setCreateForm((f) => ({ ...f, lastName: e.target.value }))}
               className="text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-primary"
@@ -175,7 +174,7 @@ export default function AdminUsersPage() {
             >
               {creating ? 'Creating…' : 'Create member'}
             </button>
-            <p className="text-[10px] text-muted self-center">
+            <p className="text-[0.625rem] text-muted self-center">
               You can send the invite email from the member row after creating.
             </p>
           </div>
@@ -183,7 +182,7 @@ export default function AdminUsersPage() {
       )}
 
       {/* Count */}
-      <p className="text-[10px] text-muted mb-2">
+      <p className="text-[0.625rem] text-muted mb-2">
         {filtered.length} member{filtered.length !== 1 ? 's' : ''} shown
         {search && ' (filtered)'}
       </p>
@@ -204,7 +203,7 @@ export default function AdminUsersPage() {
               >
                 {/* Initials avatar */}
                 <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-600 text-xs font-bold flex items-center justify-center flex-shrink-0">
-                  {user.firstName[0]}{user.lastName[0]}
+                  {user.firstName[0]}{user.lastName?.[0]}
                 </div>
 
                 {/* Info */}
@@ -214,12 +213,12 @@ export default function AdminUsersPage() {
                       {user.firstName} {user.lastName}
                     </span>
                     {user.role === 'admin' && (
-                      <span className="text-[9px] font-bold uppercase bg-primary text-white px-1.5 py-0.5 rounded">
+                      <span className="text-[0.5625rem] font-bold uppercase bg-primary text-white px-1.5 py-0.5 rounded">
                         Admin
                       </span>
                     )}
                     <span
-                      className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded ${
+                      className={`text-[0.5625rem] font-bold uppercase px-1.5 py-0.5 rounded ${
                         user.isActive
                           ? 'bg-green-100 text-green-700'
                           : 'bg-red-100 text-red-600'
@@ -228,8 +227,8 @@ export default function AdminUsersPage() {
                       {user.isActive ? 'Active' : 'Suspended'}
                     </span>
                   </div>
-                  <p className="text-[10px] text-muted truncate">{user.email}</p>
-                  <p className="text-[10px] text-gray-300 font-mono truncate select-all" title="User ID — copy this to add as group member">
+                  <p className="text-[0.625rem] text-muted truncate">{user.email}</p>
+                  <p className="text-[0.625rem] text-gray-300 font-mono truncate select-all" title="User ID — copy this to add as group member">
                     {user.id}
                   </p>
                 </div>
@@ -240,7 +239,7 @@ export default function AdminUsersPage() {
                     onClick={() => handleInvite(user.id)}
                     disabled={!!busy}
                     title="Send invite email"
-                    className="text-[10px] font-semibold text-accent border border-accent px-2 py-1 rounded-lg disabled:opacity-40 hover:bg-blue-50 transition"
+                    className="text-[0.625rem] font-semibold text-accent border border-accent px-2 py-1 rounded-lg disabled:opacity-40 hover:bg-blue-50 transition"
                   >
                     {busy === 'invite' ? <Spinner size="sm" /> : 'Invite'}
                   </button>
@@ -248,22 +247,22 @@ export default function AdminUsersPage() {
                     onClick={() => handleSuspend(user.id)}
                     disabled={!!busy}
                     title={user.isActive ? 'Suspend member' : 'Reactivate member'}
-                    className="text-[10px] font-semibold text-gray-600 border border-border px-2 py-1 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition"
+                    className="text-[0.625rem] font-semibold text-gray-600 border border-border px-2 py-1 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition"
                   >
                     {busy === 'suspend' ? <Spinner size="sm" /> : user.isActive ? 'Suspend' : 'Reactivate'}
                   </button>
                   {confirmDeleteId === user.id ? (
                     <div className="flex items-center gap-1">
-                      <span className="text-[10px] text-danger font-medium">Sure?</span>
+                      <span className="text-[0.625rem] text-danger font-medium">Sure?</span>
                       <button
                         onClick={() => handleDelete(user.id)}
-                        className="text-[10px] font-semibold text-white bg-danger px-2 py-1 rounded-lg"
+                        className="text-[0.625rem] font-semibold text-white bg-danger px-2 py-1 rounded-lg"
                       >
                         Yes
                       </button>
                       <button
                         onClick={() => setConfirmDeleteId(null)}
-                        className="text-[10px] font-semibold text-muted border border-border px-2 py-1 rounded-lg"
+                        className="text-[0.625rem] font-semibold text-muted border border-border px-2 py-1 rounded-lg"
                       >
                         No
                       </button>
@@ -273,7 +272,7 @@ export default function AdminUsersPage() {
                       onClick={() => setConfirmDeleteId(user.id)}
                       disabled={!!busy}
                       title="Delete member"
-                      className="text-[10px] font-semibold text-danger border border-danger px-2 py-1 rounded-lg disabled:opacity-40 hover:bg-red-50 transition"
+                      className="text-[0.625rem] font-semibold text-danger border border-danger px-2 py-1 rounded-lg disabled:opacity-40 hover:bg-red-50 transition"
                     >
                       {busy === 'delete' ? <Spinner size="sm" /> : 'Delete'}
                     </button>

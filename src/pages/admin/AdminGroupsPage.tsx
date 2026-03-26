@@ -238,7 +238,7 @@ export default function AdminGroupsPage() {
               pattern="[a-z0-9-]+"
               className="w-full text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-primary"
             />
-            <p className="text-[10px] text-muted mt-1">Lowercase letters, numbers, and hyphens only</p>
+            <p className="text-[0.625rem] text-muted mt-1">Lowercase letters, numbers, and hyphens only</p>
           </div>
           <textarea
             placeholder="Description (optional)"
@@ -278,16 +278,16 @@ export default function AdminGroupsPage() {
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-semibold text-gray-900">{group.name}</p>
                   {group.description && (
-                    <p className="text-[10px] text-muted truncate">{group.description}</p>
+                    <p className="text-[0.625rem] text-muted truncate">{group.description}</p>
                   )}
-                  <p className="text-[10px] text-muted">/{group.slug}</p>
+                  <p className="text-[0.625rem] text-muted">/{group.slug}</p>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <span className="text-xs text-muted">
                     {group._count.members} member{group._count.members !== 1 ? 's' : ''}
                   </span>
                   {group.suspendedCount > 0 && (
-                    <span className="text-[9px] font-bold bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full">
+                    <span className="text-[0.5625rem] font-bold bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full">
                       {group.suspendedCount} suspended
                     </span>
                   )}
@@ -300,14 +300,14 @@ export default function AdminGroupsPage() {
               {/* Members panel */}
               {selectedGroupId === group.id && (
                 <div className={`bg-surface border-t border-border px-4 py-4 ${i === groups.length - 1 ? 'rounded-b-xl' : ''}`}>
-                  <p className="text-[10px] font-semibold text-muted uppercase tracking-wide mb-3">
+                  <p className="text-[0.625rem] font-semibold text-muted uppercase tracking-wide mb-3">
                     Members of {selectedGroup?.name}
                   </p>
 
                   {/* Add member form */}
                   <form onSubmit={handleAddMember} className="flex gap-2 items-end">
                     <div className="flex-1" ref={pickerRef}>
-                      <label className="text-[10px] font-semibold text-muted uppercase tracking-wide block mb-1">
+                      <label className="text-[0.625rem] font-semibold text-muted uppercase tracking-wide block mb-1">
                         Add member
                       </label>
                       <div className="relative">
@@ -340,7 +340,7 @@ export default function AdminGroupsPage() {
                           const suggestions = allUsers.filter((u) =>
                             !currentMemberIds.has(u.id) && (
                               u.firstName.toLowerCase().includes(q) ||
-                              u.lastName.toLowerCase().includes(q) ||
+                              u.lastName?.toLowerCase().includes(q) ||
                               u.email.toLowerCase().includes(q)
                             )
                           ).slice(0, 6)
@@ -353,17 +353,17 @@ export default function AdminGroupsPage() {
                                   onMouseDown={(e) => {
                                     e.preventDefault()
                                     setAddUserId(u.id)
-                                    setAddUserName(`${u.firstName} ${u.lastName}`)
+                                    setAddUserName(`${u.firstName}${u.lastName ? ` ${u.lastName}` : ''}`)
                                     setShowSuggestions(false)
                                   }}
                                   className="w-full flex items-center gap-2.5 px-3 py-2 text-left hover:bg-surface transition"
                                 >
-                                  <div className="w-6 h-6 rounded-full bg-gray-200 text-gray-600 text-[10px] font-bold flex items-center justify-center flex-shrink-0">
-                                    {u.firstName[0]}{u.lastName[0]}
+                                  <div className="w-6 h-6 rounded-full bg-gray-200 text-gray-600 text-[0.625rem] font-bold flex items-center justify-center flex-shrink-0">
+                                    {u.firstName[0]}{u.lastName?.[0]}
                                   </div>
                                   <div className="min-w-0">
                                     <p className="text-xs font-medium text-gray-900 truncate">{u.firstName} {u.lastName}</p>
-                                    <p className="text-[10px] text-muted truncate">{u.email}</p>
+                                    <p className="text-[0.625rem] text-muted truncate">{u.email}</p>
                                   </div>
                                 </button>
                               ))}
@@ -426,25 +426,25 @@ export default function AdminGroupsPage() {
                                 <p className={`text-xs font-medium ${m.isActive ? 'text-gray-800' : 'text-red-800'}`}>
                                   {m.firstName} {m.lastName}
                                   {!m.isActive && (
-                                    <span className="ml-1.5 text-[9px] bg-red-200 text-red-700 font-bold uppercase px-1 rounded">
+                                    <span className="ml-1.5 text-[0.5625rem] bg-red-200 text-red-700 font-bold uppercase px-1 rounded">
                                       Suspended
                                     </span>
                                   )}
                                 </p>
-                                <p className="text-[10px] text-muted">{m.email}</p>
+                                <p className="text-[0.625rem] text-muted">{m.email}</p>
                               </div>
                               {confirmRemoveId === m.id ? (
                                 <div className="flex items-center gap-1 flex-shrink-0">
-                                  <span className="text-[10px] text-danger font-medium">Sure?</span>
+                                  <span className="text-[0.625rem] text-danger font-medium">Sure?</span>
                                   <button
                                     onClick={() => handleRemoveMember(m.id)}
-                                    className="text-[10px] font-semibold text-white bg-danger px-2 py-1 rounded-lg"
+                                    className="text-[0.625rem] font-semibold text-white bg-danger px-2 py-1 rounded-lg"
                                   >
                                     Yes
                                   </button>
                                   <button
                                     onClick={() => setConfirmRemoveId(null)}
-                                    className="text-[10px] font-semibold text-muted border border-border px-2 py-1 rounded-lg"
+                                    className="text-[0.625rem] font-semibold text-muted border border-border px-2 py-1 rounded-lg"
                                   >
                                     No
                                   </button>
@@ -453,7 +453,7 @@ export default function AdminGroupsPage() {
                                 <button
                                   onClick={() => setConfirmRemoveId(m.id)}
                                   disabled={removingId === m.id}
-                                  className="text-[10px] font-semibold text-danger border border-danger px-2 py-1 rounded-lg disabled:opacity-40 hover:bg-red-50 transition flex-shrink-0"
+                                  className="text-[0.625rem] font-semibold text-danger border border-danger px-2 py-1 rounded-lg disabled:opacity-40 hover:bg-red-50 transition flex-shrink-0"
                                 >
                                   {removingId === m.id ? <Spinner size="sm" /> : 'Remove'}
                                 </button>

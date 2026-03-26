@@ -17,7 +17,7 @@ export default function AdminShell() {
       <div className="bg-card border-b border-border px-4 py-3 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-2">
           <span className="text-sm font-bold text-gray-900">CBA</span>
-          <span className="text-[10px] font-bold uppercase tracking-wide bg-primary text-white px-1.5 py-0.5 rounded">
+          <span className="text-[0.625rem] font-bold uppercase tracking-wide bg-primary text-white px-1.5 py-0.5 rounded">
             Admin
           </span>
         </div>

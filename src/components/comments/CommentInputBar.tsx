@@ -113,12 +113,12 @@ export default function CommentInputBar({ postId, replyingTo, onCancelReply }: C
       {/* Replying-to banner */}
       {replyingTo && (
         <div className="flex items-center justify-between px-3 py-1.5 bg-blue-50 border-b border-blue-100">
-          <span className="text-[10px] text-accent font-medium">
+          <span className="text-[0.625rem] text-accent font-medium">
             Replying to {replyingTo.name}
           </span>
           <button
             onClick={onCancelReply}
-            className="text-[10px] text-muted hover:text-gray-600"
+            className="text-[0.625rem] text-muted hover:text-gray-600"
           >
             ✕ Cancel
           </button>
@@ -161,7 +161,7 @@ export default function CommentInputBar({ postId, replyingTo, onCancelReply }: C
           className="flex-1 text-xs border border-border rounded-full px-4 py-2 bg-surface focus:outline-none focus:border-primary transition"
         />
         {focused && !showPicker && (
-          <span className="hidden sm:block text-[10px] text-muted whitespace-nowrap flex-shrink-0">
+          <span className="hidden sm:block text-[0.625rem] text-muted whitespace-nowrap flex-shrink-0">
             Enter ↵ to send
           </span>
         )}

@@ -46,12 +46,12 @@ export default function PostCard({ post }: PostCardProps) {
               onClick={(e) => { e.preventDefault(); if (author) navigate(`/profile/${author.id}`) }}
               className={`text-xs font-semibold text-gray-900 truncate${author ? ' cursor-pointer hover:underline' : ''}`}
             >
-              {author ? `${author.firstName} ${author.lastName}` : 'Deleted user'}
+              {author ? `${author.firstName}${author.lastName ? ` ${author.lastName}` : ''}` : 'Deleted user'}
             </span>
             {post.group && <GroupChip name={post.group.name} />}
           </div>
           <div className="flex items-center gap-1.5 mt-0.5">
-            <span className="text-[10px] text-muted">{formatRelativeTime(post.createdAt)}</span>
+            <span className="text-[0.625rem] text-muted">{formatRelativeTime(post.createdAt)}</span>
             {showFlagDot && (
               <span
                 role="img"

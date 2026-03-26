@@ -93,13 +93,13 @@ export default function PostDetailPage() {
               <div className="flex items-center gap-1.5 flex-wrap">
                 <span className="text-xs font-semibold text-gray-900">
                   {post.user
-                    ? `${post.user.firstName} ${post.user.lastName}`
+                    ? `${post.user.firstName}${post.user.lastName ? ` ${post.user.lastName}` : ''}`
                     : 'Deleted user'}
                 </span>
                 {post.group && <GroupChip name={post.group.name} />}
               </div>
               <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="text-[10px] text-muted">{formatRelativeTime(post.createdAt)}</span>
+                <span className="text-[0.625rem] text-muted">{formatRelativeTime(post.createdAt)}</span>
                 {post.isFlagged && (isAdmin || post.flaggedByMe) && (
                   <span
                     role="img"

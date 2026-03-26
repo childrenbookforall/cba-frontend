@@ -9,15 +9,12 @@ import { useAuthStore } from '../../stores/authStore'
 import { getApiError } from '../../lib/utils'
 import type { InviteInfo } from '../../types/api'
 import Spinner from '../../components/ui/Spinner'
+import PasswordInput from '../../components/ui/PasswordInput'
 import logoWithName from '../../assets/logo-with-name.png'
 
 const passwordSchema = z
   .string()
-  .min(10, 'At least 10 characters')
-  .regex(/[A-Z]/, 'Must include an uppercase letter')
-  .regex(/[a-z]/, 'Must include a lowercase letter')
-  .regex(/[0-9]/, 'Must include a number')
-  .regex(/[^A-Za-z0-9]/, 'Must include a special character')
+  .min(6, 'At least 6 characters')
 
 const schema = z.object({
   password: passwordSchema,
@@ -76,8 +73,8 @@ export default function AcceptInvitePage() {
   // Invalid / expired invite
   if (loadError) {
     return (
-      <div className="min-h-svh bg-surface flex items-center justify-center px-4">
-        <div className="w-full max-w-sm bg-card rounded-2xl shadow-sm p-8 text-center">
+      <div className="min-h-svh bg-card sm:bg-surface flex flex-col sm:items-center sm:justify-center sm:px-4">
+        <div className="flex-1 sm:flex-none w-full sm:max-w-sm bg-card sm:rounded-2xl sm:shadow-sm p-8 flex flex-col justify-center text-center">
           <div className="text-3xl mb-3">✉️</div>
           <h1 className="text-base font-bold text-gray-900 mb-2">Invite unavailable</h1>
           <p className="text-xs text-muted leading-relaxed">{loadError}</p>
@@ -87,9 +84,9 @@ export default function AcceptInvitePage() {
   }
 
   return (
-    <div className="min-h-svh bg-surface flex items-center justify-center px-4">
+    <div className="min-h-svh bg-card sm:bg-surface flex flex-col sm:items-center sm:justify-center sm:px-4">
       <title>Join CBA Community</title>
-      <div className="w-full max-w-sm bg-card rounded-2xl shadow-sm p-8">
+      <div className="flex-1 sm:flex-none w-full sm:max-w-sm bg-card sm:rounded-2xl sm:shadow-sm p-8 flex flex-col justify-center">
 
         {/* Logo */}
         <div className="text-center mb-6">
@@ -110,19 +107,19 @@ export default function AcceptInvitePage() {
 
         {/* Read-only fields */}
         <div className="mb-3">
-          <label className="block text-[10px] font-bold text-muted uppercase tracking-wide mb-1">First Name</label>
+          <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">First Name</label>
           <div className="w-full px-3 py-2.5 rounded-xl border border-border bg-gray-50 text-sm text-gray-700">
             {inviteInfo!.firstName}
           </div>
         </div>
         <div className="mb-3">
-          <label className="block text-[10px] font-bold text-muted uppercase tracking-wide mb-1">Last Name</label>
+          <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">Last Name</label>
           <div className="w-full px-3 py-2.5 rounded-xl border border-border bg-gray-50 text-sm text-gray-700">
             {inviteInfo!.lastName}
           </div>
         </div>
         <div className="mb-5">
-          <label className="block text-[10px] font-bold text-muted uppercase tracking-wide mb-1">Email</label>
+          <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">Email</label>
           <div className="w-full px-3 py-2.5 rounded-xl border border-border bg-gray-100 text-sm text-muted">
             {inviteInfo!.email}
           </div>
@@ -131,39 +128,33 @@ export default function AcceptInvitePage() {
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           {/* Password */}
           <div className="mb-3">
-            <label className="block text-[10px] font-bold text-muted uppercase tracking-wide mb-1">
+            <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
               Set Password
             </label>
-            <input
-              type="password"
+            <PasswordInput
               autoComplete="new-password"
-              placeholder="Min 10 chars · Upper · Number · Symbol"
+              placeholder="Min 6 characters"
+              hasError={!!errors.password}
               {...register('password')}
-              className={`w-full px-3 py-2.5 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition ${
-                errors.password ? 'border-danger bg-red-50' : 'border-border'
-              }`}
             />
             {errors.password && (
-              <p className="text-[10px] text-danger mt-1">{errors.password.message}</p>
+              <p className="text-[0.625rem] text-danger mt-1">{errors.password.message}</p>
             )}
           </div>
 
           {/* Confirm */}
           <div className="mb-5">
-            <label className="block text-[10px] font-bold text-muted uppercase tracking-wide mb-1">
+            <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
               Confirm Password
             </label>
-            <input
-              type="password"
+            <PasswordInput
               autoComplete="new-password"
               placeholder="Re-enter password"
+              hasError={!!errors.confirm}
               {...register('confirm')}
-              className={`w-full px-3 py-2.5 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition ${
-                errors.confirm ? 'border-danger bg-red-50' : 'border-border'
-              }`}
             />
             {errors.confirm && (
-              <p className="text-[10px] text-danger mt-1">{errors.confirm.message}</p>
+              <p className="text-[0.625rem] text-danger mt-1">{errors.confirm.message}</p>
             )}
           </div>
 

@@ -33,7 +33,7 @@ export default function CommentItem({ comment, postId, onReply }: CommentItemPro
   const showFlagDot = comment.isFlagged && (isAdmin || comment.flaggedByMe)
 
   const authorName = comment.user
-    ? `${comment.user.firstName} ${comment.user.lastName}`
+    ? `${comment.user.firstName}${comment.user.lastName ? ` ${comment.user.lastName}` : ''}`
     : 'Deleted user'
 
   return (
@@ -62,7 +62,7 @@ export default function CommentItem({ comment, postId, onReply }: CommentItemPro
             ) : (
               <span className="text-xs font-semibold text-gray-900">{authorName}</span>
             )}
-            <span className="text-[10px] text-muted">{formatRelativeTime(comment.createdAt)}</span>
+            <span className="text-[0.625rem] text-muted">{formatRelativeTime(comment.createdAt)}</span>
             {showFlagDot && (
               <span
                 role="img"
@@ -90,13 +90,13 @@ export default function CommentItem({ comment, postId, onReply }: CommentItemPro
                 <button
                   onClick={() => updateMutation.mutate()}
                   disabled={updateMutation.isPending || !editContent.trim()}
-                  className="text-[10px] font-semibold text-white bg-primary px-3 py-1.5 rounded-lg disabled:opacity-60"
+                  className="text-[0.625rem] font-semibold text-white bg-primary px-3 py-1.5 rounded-lg disabled:opacity-60"
                 >
                   Save
                 </button>
                 <button
                   onClick={() => { setEditing(false); setEditContent(comment.content) }}
-                  className="text-[10px] font-semibold text-muted px-3 py-1.5 rounded-lg"
+                  className="text-[0.625rem] font-semibold text-muted px-3 py-1.5 rounded-lg"
                 >
                   Cancel
                 </button>
@@ -110,7 +110,7 @@ export default function CommentItem({ comment, postId, onReply }: CommentItemPro
           {!editing && (
             <button
               onClick={() => onReply(comment.id, authorName)}
-              className="text-[10px] text-muted hover:text-accent mt-1 font-medium transition"
+              className="text-[0.625rem] text-muted hover:text-accent mt-1 font-medium transition"
             >
               Reply
             </button>

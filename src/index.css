@@ -15,6 +15,10 @@
   --font-sans: 'Inter', system-ui, sans-serif;
 }
 
+html {
+  font-size: 24px;
+}
+
 body {
   margin: 0;
   font-family: var(--font-sans);

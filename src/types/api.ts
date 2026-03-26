@@ -2,7 +2,7 @@ export interface User {
   id: string
   email: string
   firstName: string
-  lastName: string
+  lastName?: string | null
   bio?: string | null
   avatarUrl?: string | null
   role: 'admin' | 'member'
@@ -12,7 +12,7 @@ export interface User {
 export interface InviteInfo {
   email: string
   firstName: string
-  lastName: string
+  lastName?: string | null
 }
 
 export interface AuthResponse {
@@ -26,7 +26,7 @@ export interface MessageResponse {
 export interface PublicProfile {
   id: string
   firstName: string
-  lastName: string
+  lastName?: string | null
   bio?: string | null
   avatarUrl?: string | null
 }
@@ -35,7 +35,7 @@ export interface PublicProfile {
 export interface PostUser {
   id: string
   firstName: string
-  lastName: string
+  lastName?: string | null
   avatarUrl?: string | null
 }
 
@@ -144,7 +144,7 @@ export interface Flag {
 export interface AdminUser {
   id: string
   firstName: string
-  lastName: string
+  lastName?: string | null
   email: string
   role: 'admin' | 'member'
   isActive: boolean
@@ -168,7 +168,7 @@ export interface AdminGroup {
 export interface GroupMember {
   id: string
   firstName: string
-  lastName: string
+  lastName?: string | null
   email: string
   isActive: boolean
   joinedAt: string
@@ -183,7 +183,7 @@ export interface AdminFlag {
   id: string
   contentType: 'post' | 'comment'
   reason?: string | null
-  flaggedBy?: { id: string; firstName: string; lastName: string } | null
+  flaggedBy?: { id: string; firstName: string; lastName?: string | null } | null
   post?: { id: string; title: string } | null
   comment?: { id: string; content: string; post?: { id: string; title: string } | null } | null
   createdAt: string

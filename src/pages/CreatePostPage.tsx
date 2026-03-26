@@ -181,7 +181,7 @@ export default function CreatePostPage() {
 
         {/* Group select */}
         <div className="mb-3">
-          <label className="block text-[10px] font-bold text-muted uppercase tracking-wide mb-1">
+          <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
             Group
           </label>
           {groups?.length === 1 ? (
@@ -211,20 +211,20 @@ export default function CreatePostPage() {
             </select>
           )}
           {groups?.length === 0 && !groupsLoading && (
-            <p className="text-[10px] text-muted mt-1">
+            <p className="text-[0.625rem] text-muted mt-1">
               An admin needs to add you to a group before you can post.
             </p>
           )}
-          {errors.groupId && <p className="text-[10px] text-danger mt-1">{errors.groupId.message}</p>}
+          {errors.groupId && <p className="text-[0.625rem] text-danger mt-1">{errors.groupId.message}</p>}
         </div>
 
         {/* Title */}
         <div className="mb-3">
           <div className="flex justify-between items-baseline mb-1">
-            <label className="text-[10px] font-bold text-muted uppercase tracking-wide">
+            <label className="text-[0.625rem] font-bold text-muted uppercase tracking-wide">
               Title
             </label>
-            <span className={`text-[10px] tabular-nums ${titleValue.length > 180 ? 'text-danger font-semibold' : 'text-muted'}`}>
+            <span className={`text-[0.625rem] tabular-nums ${titleValue.length > 180 ? 'text-danger font-semibold' : 'text-muted'}`}>
               {titleValue.length} / 200
             </span>
           </div>
@@ -235,18 +235,18 @@ export default function CreatePostPage() {
               errors.title ? 'border-danger bg-red-50' : 'border-border'
             }`}
           />
-          {errors.title && <p className="text-[10px] text-danger mt-1">{errors.title.message}</p>}
+          {errors.title && <p className="text-[0.625rem] text-danger mt-1">{errors.title.message}</p>}
         </div>
 
         {/* Type-specific fields */}
         {type === 'text' && (
           <div className="mb-4">
             <div className="flex justify-between items-baseline mb-1">
-              <label className="text-[10px] font-bold text-muted uppercase tracking-wide">
+              <label className="text-[0.625rem] font-bold text-muted uppercase tracking-wide">
                 Content <span className="normal-case font-normal">(optional)</span>
               </label>
               {contentValue.length > 0 && (
-                <span className={`text-[10px] tabular-nums ${contentValue.length > 9500 ? 'text-danger font-semibold' : 'text-muted'}`}>
+                <span className={`text-[0.625rem] tabular-nums ${contentValue.length > 9500 ? 'text-danger font-semibold' : 'text-muted'}`}>
                   {contentValue.length} / 10,000
                 </span>
               )}
@@ -283,7 +283,7 @@ export default function CreatePostPage() {
 
         {type === 'link' && (
           <div className="mb-4">
-            <label className="block text-[10px] font-bold text-muted uppercase tracking-wide mb-1">
+            <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
               URL
             </label>
             <input
@@ -294,14 +294,14 @@ export default function CreatePostPage() {
                 errors.linkUrl ? 'border-danger bg-red-50' : 'border-border'
               }`}
             />
-            {errors.linkUrl && <p className="text-[10px] text-danger mt-1">{errors.linkUrl.message}</p>}
+            {errors.linkUrl && <p className="text-[0.625rem] text-danger mt-1">{errors.linkUrl.message}</p>}
           </div>
         )}
 
         {type === 'photo' && (
           <div className="mb-4 flex flex-col gap-3">
             <div>
-              <label className="block text-[10px] font-bold text-muted uppercase tracking-wide mb-1">
+              <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
                 Photo
               </label>
               {photoPreview ? (
@@ -330,7 +330,7 @@ export default function CreatePostPage() {
                     <>
                       <span className="text-2xl">📷</span>
                       <span className="text-xs font-medium">Tap to select a photo</span>
-                      <span className="text-[10px]">JPEG · PNG · WebP · max 10 MB</span>
+                      <span className="text-[0.625rem]">JPEG · PNG · WebP · max 10 MB</span>
                     </>
                   )}
                 </div>
@@ -338,11 +338,11 @@ export default function CreatePostPage() {
             </div>
             <div>
               <div className="flex justify-between items-baseline mb-1">
-                <label className="text-[10px] font-bold text-muted uppercase tracking-wide">
+                <label className="text-[0.625rem] font-bold text-muted uppercase tracking-wide">
                   Caption <span className="normal-case font-normal">(optional)</span>
                 </label>
                 {contentValue.length > 0 && (
-                  <span className={`text-[10px] tabular-nums ${contentValue.length > 9500 ? 'text-danger font-semibold' : 'text-muted'}`}>
+                  <span className={`text-[0.625rem] tabular-nums ${contentValue.length > 9500 ? 'text-danger font-semibold' : 'text-muted'}`}>
                     {contentValue.length} / 10,000
                   </span>
                 )}

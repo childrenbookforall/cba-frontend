@@ -47,13 +47,13 @@ export default function ReplyItem({ reply, postId }: ReplyItemProps) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 mb-0.5">
           {reply.user ? (
-            <Link to={`/profile/${reply.user.id}`} className="text-[10px] font-semibold text-gray-700 hover:underline">
-              {`${reply.user.firstName} ${reply.user.lastName}`}
+            <Link to={`/profile/${reply.user.id}`} className="text-[0.625rem] font-semibold text-gray-700 hover:underline">
+              {`${reply.user.firstName}${reply.user.lastName ? ` ${reply.user.lastName}` : ''}`}
             </Link>
           ) : (
-            <span className="text-[10px] font-semibold text-gray-700">Deleted user</span>
+            <span className="text-[0.625rem] font-semibold text-gray-700">Deleted user</span>
           )}
-          <span className="text-[10px] text-muted">{formatRelativeTime(reply.createdAt)}</span>
+          <span className="text-[0.625rem] text-muted">{formatRelativeTime(reply.createdAt)}</span>
           {showFlagDot && (
             <span
               className="w-1.5 h-1.5 rounded-full bg-danger flex-shrink-0"
@@ -78,20 +78,20 @@ export default function ReplyItem({ reply, postId }: ReplyItemProps) {
               <button
                 onClick={() => updateMutation.mutate()}
                 disabled={updateMutation.isPending || !editContent.trim()}
-                className="text-[10px] font-semibold text-white bg-primary px-2.5 py-1 rounded-lg disabled:opacity-60"
+                className="text-[0.625rem] font-semibold text-white bg-primary px-2.5 py-1 rounded-lg disabled:opacity-60"
               >
                 Save
               </button>
               <button
                 onClick={() => { setEditing(false); setEditContent(reply.content) }}
-                className="text-[10px] font-semibold text-muted px-2.5 py-1 rounded-lg"
+                className="text-[0.625rem] font-semibold text-muted px-2.5 py-1 rounded-lg"
               >
                 Cancel
               </button>
             </div>
           </div>
         ) : (
-          <p className="text-[10px] text-gray-600 leading-relaxed">{reply.content}</p>
+          <p className="text-[0.625rem] text-gray-600 leading-relaxed">{reply.content}</p>
         )}
       </div>
     </div>

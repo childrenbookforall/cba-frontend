@@ -2,8 +2,8 @@ export function cn(...classes: (string | undefined | null | false)[]) {
   return classes.filter(Boolean).join(' ')
 }
 
-export function getInitials(firstName: string, lastName: string) {
-  return `${firstName[0]}${lastName[0]}`.toUpperCase()
+export function getInitials(firstName: string, lastName?: string | null) {
+  return `${firstName[0]}${lastName ? lastName[0] : ''}`.toUpperCase()
 }
 
 export function formatRelativeTime(dateStr: string): string {

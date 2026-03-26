@@ -30,9 +30,9 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-svh bg-surface flex items-center justify-center px-4">
+    <div className="min-h-svh bg-card sm:bg-surface flex flex-col sm:items-center sm:justify-center sm:px-4">
       <title>Reset Password — CBA</title>
-      <div className="w-full max-w-sm bg-card rounded-2xl shadow-sm p-8">
+      <div className="flex-1 sm:flex-none w-full sm:max-w-sm bg-card sm:rounded-2xl sm:shadow-sm p-8 flex flex-col justify-center">
 
         <div className="text-center mb-6">
           <img src={logoWithName} alt="Children's Book for All" className="h-16 mx-auto object-contain" />
@@ -56,7 +56,7 @@ export default function ForgotPasswordPage() {
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
             <div className="mb-5">
-              <label className="block text-[10px] font-bold text-muted uppercase tracking-wide mb-1">
+              <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
                 Email
               </label>
               <input
@@ -69,7 +69,7 @@ export default function ForgotPasswordPage() {
                 }`}
               />
               {errors.email && (
-                <p className="text-[10px] text-danger mt-1">{errors.email.message}</p>
+                <p className="text-[0.625rem] text-danger mt-1">{errors.email.message}</p>
               )}
             </div>
 

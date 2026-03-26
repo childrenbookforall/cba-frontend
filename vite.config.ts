@@ -20,6 +20,7 @@ export default defineConfig({
         theme_color: '#222222',
         background_color: '#ffffff',
         display: 'standalone',
+        orientation: 'portrait',
         start_url: '/feed',
         icons: [
           {

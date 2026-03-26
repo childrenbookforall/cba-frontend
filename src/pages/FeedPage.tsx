@@ -56,11 +56,8 @@ export default function FeedPage() {
         />
       )}
 
-      {/* Sort + count bar */}
-      <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-100">
-        <span className="text-xs text-muted">
-          {isLoading ? '…' : `${posts.length} posts`}
-        </span>
+      {/* Sort bar */}
+      <div className="flex items-center justify-end px-4 py-2 bg-gray-50 border-b border-gray-100">
         <SortPills sort={sort} onChange={handleSortChange} />
       </div>
 

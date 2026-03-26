@@ -7,6 +7,7 @@ import { getMe } from '../../api/users'
 import { useAuthStore } from '../../stores/authStore'
 import { getApiError } from '../../lib/utils'
 import Spinner from '../../components/ui/Spinner'
+import PasswordInput from '../../components/ui/PasswordInput'
 import logoWithName from '../../assets/logo-with-name.png'
 
 const schema = z.object({
@@ -41,9 +42,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-svh bg-surface flex items-center justify-center px-4">
+    <div className="min-h-svh bg-card sm:bg-surface flex flex-col sm:items-center sm:justify-center sm:px-4">
       <title>Sign In — CBA</title>
-      <div className="w-full max-w-sm bg-card rounded-2xl shadow-sm p-8">
+      <div className="flex-1 sm:flex-none w-full sm:max-w-sm bg-card sm:rounded-2xl sm:shadow-sm p-8 flex flex-col justify-center">
 
         {/* Logo */}
         <div className="text-center mb-8">
@@ -58,7 +59,7 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           {/* Email */}
           <div className="mb-4">
-            <label className="block text-[10px] font-bold text-muted uppercase tracking-wide mb-1">
+            <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
               Email
             </label>
             <input
@@ -71,26 +72,23 @@ export default function LoginPage() {
               }`}
             />
             {errors.email && (
-              <p className="text-[10px] text-danger mt-1">{errors.email.message}</p>
+              <p className="text-[0.625rem] text-danger mt-1">{errors.email.message}</p>
             )}
           </div>
 
           {/* Password */}
           <div className="mb-5">
-            <label className="block text-[10px] font-bold text-muted uppercase tracking-wide mb-1">
+            <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
               Password
             </label>
-            <input
-              type="password"
+            <PasswordInput
               autoComplete="current-password"
               placeholder="••••••••••"
+              hasError={!!errors.password}
               {...register('password')}
-              className={`w-full px-3 py-2.5 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition ${
-                errors.password ? 'border-danger bg-red-50' : 'border-border'
-              }`}
             />
             {errors.password && (
-              <p className="text-[10px] text-danger mt-1">{errors.password.message}</p>
+              <p className="text-[0.625rem] text-danger mt-1">{errors.password.message}</p>
             )}
           </div>
 
