@@ -35,7 +35,7 @@ export default function UserProfilePage() {
 
   return (
     <div className="min-h-svh bg-surface flex flex-col pb-20 sm:pb-0">
-      <title>{user.firstName} {user.lastName} — CBA</title>
+      <title>{user.firstName} {user.lastName} - CBA</title>
 
       {/* Header */}
       <div className="bg-card border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">

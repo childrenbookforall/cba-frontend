@@ -37,7 +37,7 @@ export default function PostDetailPage() {
   if (postLoading) {
     return (
       <div className="min-h-svh bg-surface flex items-center justify-center">
-        <title>Post — CBA</title>
+        <title>Post - CBA</title>
         <Spinner />
       </div>
     )
@@ -46,7 +46,7 @@ export default function PostDetailPage() {
   if (!post) {
     return (
       <div className="min-h-svh bg-surface flex items-center justify-center flex-col gap-3">
-        <title>Post not found — CBA</title>
+        <title>Post not found - CBA</title>
         <p className="text-sm text-muted">Post not found.</p>
         <button onClick={() => navigate('/feed')} className="text-xs text-accent underline">
           Back to feed
@@ -57,7 +57,7 @@ export default function PostDetailPage() {
 
   return (
     <div className="min-h-svh bg-surface flex flex-col">
-      <title>Post — CBA</title>
+      <title>Post - CBA</title>
       {/* Header */}
       <div className="bg-card border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
         <button

@@ -61,7 +61,7 @@ self.addEventListener('notificationclick', (event) => {
           clients.openWindow(url)
         }
       } else {
-        // External URL — open in new tab
+        // External URL - open in new tab
         clients.openWindow(url)
       }
     })

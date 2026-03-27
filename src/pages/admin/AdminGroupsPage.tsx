@@ -87,7 +87,7 @@ export default function AdminGroupsPage() {
       } while (cursor && iterations < MAX_ITERATIONS)
       setAllUsers(collected)
     } catch {
-      // non-critical — picker just won't populate
+      // non-critical - picker just won't populate
     }
   }
 
@@ -203,7 +203,7 @@ export default function AdminGroupsPage() {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <title>Groups — Admin · CBA</title>
+      <title>Groups - Admin · CBA</title>
       {/* Toolbar */}
       <div className="flex items-center justify-between mb-4">
         <p className="text-xs text-muted">{groups.length} group{groups.length !== 1 ? 's' : ''}</p>
@@ -312,7 +312,7 @@ export default function AdminGroupsPage() {
                       </label>
                       <div className="relative">
                         {addUserId ? (
-                          // Confirmed selection — show chip with clear button
+                          // Confirmed selection - show chip with clear button
                           <div className="flex items-center gap-2 border border-primary rounded-lg px-3 py-2 bg-card">
                             <span className="text-xs text-gray-900 flex-1">{addUserName}</span>
                             <button

@@ -152,7 +152,7 @@ export default function CreatePostPage() {
 
   return (
     <div className="min-h-svh bg-surface">
-      <title>New Post — CBA</title>
+      <title>New Post - CBA</title>
       {/* Header */}
       <div className="bg-card border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
         <button onClick={() => navigate(-1)} className="text-gray-500 hover:text-gray-700 transition" aria-label="Go back">

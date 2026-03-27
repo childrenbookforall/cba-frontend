@@ -61,7 +61,7 @@ export default function ResetPasswordPage() {
   if (tokenState === 'loading') {
     return (
       <div className="min-h-svh bg-surface flex items-center justify-center">
-        <title>Reset Password — CBA</title>
+        <title>Reset Password - CBA</title>
         <Spinner />
       </div>
     )
@@ -70,7 +70,7 @@ export default function ResetPasswordPage() {
   if (tokenState === 'invalid') {
     return (
       <div className="min-h-svh bg-card sm:bg-surface flex flex-col sm:items-center sm:justify-center sm:px-4">
-        <title>Reset Password — CBA</title>
+        <title>Reset Password - CBA</title>
         <div className="flex-1 sm:flex-none w-full sm:max-w-sm bg-card sm:rounded-2xl sm:shadow-sm p-8 flex flex-col justify-center text-center">
           <div className="text-center mb-6">
             <img src={logoWithName} alt="Children's Book for All" className="h-16 mx-auto object-contain" />
@@ -93,7 +93,7 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="min-h-svh bg-card sm:bg-surface flex flex-col sm:items-center sm:justify-center sm:px-4">
-      <title>Reset Password — CBA</title>
+      <title>Reset Password - CBA</title>
       <div className="flex-1 sm:flex-none w-full sm:max-w-sm bg-card sm:rounded-2xl sm:shadow-sm p-8 flex flex-col justify-center">
 
         <div className="text-center mb-6">

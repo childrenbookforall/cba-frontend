@@ -118,7 +118,7 @@ export default function AdminUsersPage() {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <title>Users — Admin · CBA</title>
+      <title>Users - Admin · CBA</title>
       {/* Toolbar */}
       <div className="flex items-center gap-3 mb-4">
         <input
@@ -228,7 +228,7 @@ export default function AdminUsersPage() {
                     </span>
                   </div>
                   <p className="text-[0.625rem] text-muted truncate">{user.email}</p>
-                  <p className="text-[0.625rem] text-gray-300 font-mono truncate select-all" title="User ID — copy this to add as group member">
+                  <p className="text-[0.625rem] text-gray-300 font-mono truncate select-all" title="User ID - copy this to add as group member">
                     {user.id}
                   </p>
                 </div>

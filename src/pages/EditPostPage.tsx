@@ -71,7 +71,7 @@ export default function EditPostPage() {
 
   return (
     <div className="min-h-svh bg-surface">
-      <title>Edit Post — CBA</title>
+      <title>Edit Post - CBA</title>
       <div className="bg-card border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
         <button onClick={() => navigate(-1)} className="text-gray-500 hover:text-gray-700 transition" aria-label="Go back">
           <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>

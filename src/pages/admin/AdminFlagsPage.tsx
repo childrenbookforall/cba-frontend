@@ -76,7 +76,7 @@ export default function AdminFlagsPage() {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <title>Flags — Admin · CBA</title>
+      <title>Flags - Admin · CBA</title>
       <p className="text-[0.625rem] text-muted mb-4">
         {flags.length} unreviewed flag{flags.length !== 1 ? 's' : ''}
         {nextCursor ? ' (more available)' : ''}

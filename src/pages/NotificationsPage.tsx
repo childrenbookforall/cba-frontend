@@ -55,7 +55,7 @@ export default function NotificationsPage() {
 
   return (
     <div className="min-h-svh bg-surface flex flex-col pb-20 sm:pb-0">
-      <title>Notifications — CBA</title>
+      <title>Notifications - CBA</title>
       {/* Header */}
       <div className="bg-card border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
         <button

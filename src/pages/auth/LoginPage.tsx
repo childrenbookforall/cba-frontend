@@ -43,7 +43,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-svh bg-card sm:bg-surface flex flex-col sm:items-center sm:justify-center sm:px-4">
-      <title>Sign In — CBA</title>
+      <title>Sign In - CBA</title>
       <div className="flex-1 sm:flex-none w-full sm:max-w-sm bg-card sm:rounded-2xl sm:shadow-sm p-8 flex flex-col justify-center">
 
         {/* Logo */}
