@@ -21,6 +21,7 @@ export default function Avatar({ firstName, lastName, avatarUrl, size = 'md' }: 
       <img
         src={avatarUrl}
         alt={`${firstName}${lastName ? ` ${lastName}` : ''}`}
+        loading="lazy"
         className={`${cls} object-cover`}
       />
     )

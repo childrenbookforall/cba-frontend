@@ -7,6 +7,7 @@ import ReplyItem from './ReplyItem'
 import { updateComment } from '../../api/comments'
 import { formatRelativeTime, getApiError } from '../../lib/utils'
 import { useAuthStore } from '../../stores/authStore'
+import { useToast } from '../../stores/toastStore'
 import type { Comment } from '../../types/api'
 
 interface CommentItemProps {
@@ -19,6 +20,7 @@ export default function CommentItem({ comment, postId, onReply }: CommentItemPro
   const [editing, setEditing] = useState(false)
   const [editContent, setEditContent] = useState(comment.content)
   const queryClient = useQueryClient()
+  const toast = useToast()
 
   const updateMutation = useMutation({
     mutationFn: () => updateComment(comment.id, editContent),
@@ -26,7 +28,7 @@ export default function CommentItem({ comment, postId, onReply }: CommentItemPro
       queryClient.invalidateQueries({ queryKey: ['comments', postId] })
       setEditing(false)
     },
-    onError: (err) => alert(getApiError(err)),
+    onError: (err) => toast(getApiError(err), 'error'),
   })
 
   const isAdmin = useAuthStore((s) => s.user?.role === 'admin')

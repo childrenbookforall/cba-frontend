@@ -106,6 +106,7 @@ export default function PostCard({ post }: PostCardProps) {
             <img
               src={post.mediaUrl}
               alt={post.title}
+              loading="lazy"
               className="mt-1.5 w-full rounded-lg object-contain max-h-52 bg-gray-50"
             />
             {post.content && (
