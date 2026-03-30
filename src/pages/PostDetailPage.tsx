@@ -80,18 +80,23 @@ export default function PostDetailPage() {
           {/* Author + meta */}
           <div className="flex items-center gap-2.5 mb-3">
             {post.user ? (
-              <Avatar
-                firstName={post.user.firstName}
-                lastName={post.user.lastName}
-                avatarUrl={post.user.avatarUrl}
-                size="md"
-              />
+              <div className="cursor-pointer" onClick={() => navigate(`/profile/${post.user!.id}`)}>
+                <Avatar
+                  firstName={post.user.firstName}
+                  lastName={post.user.lastName}
+                  avatarUrl={post.user.avatarUrl}
+                  size="md"
+                />
+              </div>
             ) : (
               <div className="w-8 h-8 rounded-full bg-gray-200" />
             )}
             <div>
               <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-xs font-semibold text-gray-900">
+                <span
+                  className={`text-xs font-semibold text-gray-900${post.user ? ' cursor-pointer hover:underline' : ''}`}
+                  onClick={() => { if (post.user) navigate(`/profile/${post.user.id}`) }}
+                >
                   {post.user
                     ? `${post.user.firstName}${post.user.lastName ? ` ${post.user.lastName}` : ''}`
                     : 'Deleted user'}

@@ -19,9 +19,47 @@ client.interceptors.request.use((config) => {
 let isRefreshing = false
 let refreshSubscribers: Array<(token: string) => void> = []
 
+const REFRESH_LOCK_KEY = 'cba-token-refreshing'
+const REFRESH_LOCK_TIMEOUT_MS = 10000
+
 function onTokenRefreshed(token: string) {
   refreshSubscribers.forEach((cb) => cb(token))
   refreshSubscribers = []
+}
+
+function isAnotherTabRefreshing(): boolean {
+  const ts = localStorage.getItem(REFRESH_LOCK_KEY)
+  if (!ts) return false
+  // Treat stale locks (older than timeout) as expired
+  return Date.now() - Number(ts) < REFRESH_LOCK_TIMEOUT_MS
+}
+
+// Wait for another tab to finish refreshing and return the new token from localStorage.
+// Resolves with the new token, or rejects after timeout.
+function waitForTokenFromOtherTab(): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      window.removeEventListener('storage', handler)
+      reject(new Error('Cross-tab refresh timeout'))
+    }, REFRESH_LOCK_TIMEOUT_MS)
+
+    function handler(event: StorageEvent) {
+      if (event.key === 'cba-auth') {
+        clearTimeout(timeout)
+        window.removeEventListener('storage', handler)
+        try {
+          const state = JSON.parse(event.newValue ?? '{}')
+          const token = state?.state?.token
+          if (token) resolve(token)
+          else reject(new Error('No token in storage event'))
+        } catch {
+          reject(new Error('Failed to parse storage event'))
+        }
+      }
+    }
+
+    window.addEventListener('storage', handler)
+  })
 }
 
 // On 401: if a token exists, try to refresh silently and retry the request.
@@ -37,6 +75,22 @@ client.interceptors.response.use(
       const { token, user, setAuth, clearAuth } = useAuthStore.getState()
       if (!token) return Promise.reject(error)
 
+      originalRequest._retry = true
+
+      // Another tab in this browser is already refreshing — wait for its result
+      if (isAnotherTabRefreshing()) {
+        try {
+          const newToken = await waitForTokenFromOtherTab()
+          originalRequest.headers.Authorization = `Bearer ${newToken}`
+          return client(originalRequest)
+        } catch {
+          clearAuth()
+          window.location.href = '/login'
+          return Promise.reject(error)
+        }
+      }
+
+      // This tab is already mid-refresh — queue the request
       if (isRefreshing) {
         return new Promise((resolve) => {
           refreshSubscribers.push((newToken) => {
@@ -46,8 +100,8 @@ client.interceptors.response.use(
         })
       }
 
-      originalRequest._retry = true
       isRefreshing = true
+      localStorage.setItem(REFRESH_LOCK_KEY, Date.now().toString())
 
       try {
         const res = await axios.post(
@@ -61,11 +115,13 @@ client.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${newToken}`
         return client(originalRequest)
       } catch {
+        refreshSubscribers = []
         clearAuth()
         window.location.href = '/login'
         return Promise.reject(error)
       } finally {
         isRefreshing = false
+        localStorage.removeItem(REFRESH_LOCK_KEY)
       }
     }
 
