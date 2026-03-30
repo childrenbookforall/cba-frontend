@@ -41,8 +41,19 @@ export default function CommentMenu({ comment, postId, onEdit }: CommentMenuProp
   const deleteMutation = useMutation({
     mutationFn: () => deleteComment(comment.id),
     onSuccess: () => {
+      // Optimistically remove from cache immediately so it doesn't persist during refetch
+      queryClient.setQueryData<Comment[]>(['comments', postId], (old) => {
+        if (!old) return old
+        const withoutTop = old.filter((c) => c.id !== comment.id)
+        if (withoutTop.length !== old.length) return withoutTop
+        return old.map((c) => ({
+          ...c,
+          replies: c.replies?.filter((r) => r.id !== comment.id),
+        }))
+      })
       queryClient.invalidateQueries({ queryKey: ['comments', postId] })
       queryClient.invalidateQueries({ queryKey: ['post', postId] })
+      queryClient.invalidateQueries({ queryKey: ['feed'] })
       toast('Comment deleted')
       setOpen(false)
     },

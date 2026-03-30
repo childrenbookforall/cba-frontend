@@ -168,7 +168,7 @@ export default function PostDetailPage() {
         </div>
 
         {/* Comments */}
-        <div className="bg-card px-4 pt-4 pb-2">
+        <div id="comments" className="bg-card px-4 pt-4 pb-2">
           <h3 className="text-xs font-bold text-muted uppercase tracking-wide mb-4">
             Comments
           </h3>

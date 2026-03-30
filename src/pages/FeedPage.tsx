@@ -40,7 +40,7 @@ export default function FeedPage() {
 
   return (
     <div className="min-h-svh bg-surface pb-20 sm:pb-0">
-      <title>Feed - CBA</title>
+      <title>Community - CBA</title>
       {/* Top nav */}
       <div className="bg-card border-b border-border px-4 py-2.5 flex items-center justify-between sticky top-0 z-10">
         <Link to="/feed"><img src={logo} alt="Children's Book for All" className="h-8 object-contain" /></Link>

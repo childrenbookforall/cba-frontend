@@ -11,8 +11,13 @@ export async function getInvite(token: string): Promise<InviteInfo> {
   return res.data
 }
 
-export async function acceptInvite(token: string, password: string): Promise<AuthResponse> {
-  const res = await client.post<AuthResponse>(`/api/auth/invite/${token}`, { password })
+export async function acceptInvite(
+  token: string,
+  password: string,
+  firstName: string,
+  lastName: string,
+): Promise<AuthResponse> {
+  const res = await client.post<AuthResponse>(`/api/auth/invite/${token}`, { password, firstName, lastName })
   return res.data
 }
 

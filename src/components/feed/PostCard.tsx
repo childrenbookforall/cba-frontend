@@ -124,7 +124,11 @@ export default function PostCard({ post }: PostCardProps) {
         <ReactionButton post={post} type="hug" />
         <ReactionButton post={post} type="with_you" />
         <ReactionButton post={post} type="helped_me" />
-        <span className="flex items-center gap-1 text-xs text-muted">
+        <span
+          role="button"
+          onClick={(e) => { e.preventDefault(); navigate(`/posts/${post.id}#comments`) }}
+          className="flex items-center gap-1 text-xs text-muted cursor-pointer"
+        >
           💬 {post._count.comments}
         </span>
       </div>

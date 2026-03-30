@@ -83,6 +83,8 @@ export default function CommentInputBar({ postId, replyingTo, onCancelReply }: C
         // New top-level comment
         return [...old, { ...newComment, replies: [] }]
       })
+      // Invalidate so any in-flight or subsequent refetch reflects the new comment
+      queryClient.invalidateQueries({ queryKey: ['comments', postId] })
       // Update comment count on post
       queryClient.invalidateQueries({ queryKey: ['post', postId] })
       queryClient.invalidateQueries({ queryKey: ['feed'] })

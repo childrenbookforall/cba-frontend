@@ -17,6 +17,8 @@ const passwordSchema = z
   .min(6, 'At least 6 characters')
 
 const schema = z.object({
+  firstName: z.string().min(1, 'Required'),
+  lastName: z.string().optional(),
   password: passwordSchema,
   confirm: z.string(),
 }).refine((d) => d.password === d.confirm, {
@@ -38,20 +40,24 @@ export default function AcceptInvitePage() {
     register,
     handleSubmit,
     setError,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<Fields>({ resolver: zodResolver(schema) })
 
   useEffect(() => {
     if (!token) return
     getInvite(token)
-      .then(setInviteInfo)
+      .then((info) => {
+        setInviteInfo(info)
+        reset({ firstName: info.firstName, lastName: info.lastName ?? '' })
+      })
       .catch((err) => setLoadError(getApiError(err)))
   }, [token])
 
   async function onSubmit(data: Fields) {
     if (!token) return
     try {
-      const { token: jwt } = await acceptInvite(token, data.password)
+      const { token: jwt } = await acceptInvite(token, data.password, data.firstName, data.lastName ?? '')
       useAuthStore.getState().setAuth(jwt, { id: '', email: '', firstName: '', lastName: '', role: 'member', createdAt: '' })
       const user = await getMe()
       setAuth(jwt, user)
@@ -105,19 +111,7 @@ export default function AcceptInvitePage() {
           </p>
         </div>
 
-        {/* Read-only fields */}
-        <div className="mb-3">
-          <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">First Name</label>
-          <div className="w-full px-3 py-2.5 rounded-xl border border-border bg-gray-50 text-sm text-gray-700">
-            {inviteInfo!.firstName}
-          </div>
-        </div>
-        <div className="mb-3">
-          <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">Last Name</label>
-          <div className="w-full px-3 py-2.5 rounded-xl border border-border bg-gray-50 text-sm text-gray-700">
-            {inviteInfo!.lastName}
-          </div>
-        </div>
+        {/* Email (read-only) */}
         <div className="mb-5">
           <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">Email</label>
           <div className="w-full px-3 py-2.5 rounded-xl border border-border bg-gray-100 text-sm text-muted">
@@ -126,6 +120,30 @@ export default function AcceptInvitePage() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
+          {/* First Name */}
+          <div className="mb-3">
+            <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">First Name</label>
+            <input
+              type="text"
+              autoComplete="given-name"
+              className={`w-full px-3 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 ${errors.firstName ? 'border-danger bg-red-50' : 'border-border bg-white'}`}
+              {...register('firstName')}
+            />
+            {errors.firstName && (
+              <p className="text-[0.625rem] text-danger mt-1">{errors.firstName.message}</p>
+            )}
+          </div>
+
+          {/* Last Name */}
+          <div className="mb-5">
+            <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">Last Name <span className="normal-case font-normal">(optional)</span></label>
+            <input
+              type="text"
+              autoComplete="family-name"
+              className="w-full px-3 py-2.5 rounded-xl border border-border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+              {...register('lastName')}
+            />
+          </div>
           {/* Password */}
           <div className="mb-3">
             <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
