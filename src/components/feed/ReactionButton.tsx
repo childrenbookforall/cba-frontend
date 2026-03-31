@@ -78,6 +78,9 @@ export default function ReactionButton({ post, type }: ReactionButtonProps) {
             ...old,
             pages: old.pages.map((page) => ({
               ...page,
+              pinnedPosts: page.pinnedPosts.map((p) =>
+                p.id !== post.id ? p : applyReactionToPost(p, type)
+              ),
               posts: page.posts.map((p) =>
                 p.id !== post.id ? p : applyReactionToPost(p, type)
               ),

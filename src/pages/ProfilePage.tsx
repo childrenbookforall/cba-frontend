@@ -48,8 +48,14 @@ export default function ProfilePage() {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { 'image/*': [] },
+    accept: { 'image/jpeg': [], 'image/png': [], 'image/webp': [] },
     maxFiles: 1,
+    maxSize: 5 * 1024 * 1024,
+    onDropRejected: (fileRejections) => {
+      const err = fileRejections[0]?.errors[0]
+      if (err?.code === 'file-too-large') toast('File is too large (max 5 MB)', 'error')
+      else toast('Only JPEG, PNG and WebP images are allowed', 'error')
+    },
     disabled: avatarMutation.isPending,
   })
 
