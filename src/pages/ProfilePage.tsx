@@ -82,6 +82,8 @@ export default function ProfilePage() {
         <NavLinks />
       </div>
 
+      <div className="max-w-2xl mx-auto w-full">
+
       {/* Profile card */}
       <div className="bg-card mt-2 px-4 pt-6 pb-5">
         {/* Avatar with upload overlay */}
@@ -208,6 +210,8 @@ export default function ProfilePage() {
           </button>
         )}
       </div>
+
+      </div>{/* end max-w-2xl */}
 
       <BottomNav />
     </div>

@@ -79,7 +79,7 @@ export default function NotificationsPage() {
       </div>
 
       {/* Content */}
-      <div className="flex-1">
+      <div className="flex-1 max-w-2xl mx-auto w-full">
         {isLoading && (
           <div className="flex justify-center py-12">
             <Spinner />

@@ -52,6 +52,8 @@ export default function UserProfilePage() {
         <NavLinks />
       </div>
 
+      <div className="max-w-2xl mx-auto w-full">
+
       {/* Profile card */}
       <div className="bg-card mt-2 px-4 pt-6 pb-5">
         <div className="flex flex-col items-center mb-5">
@@ -76,6 +78,8 @@ export default function UserProfilePage() {
           {user.bio || <span className="text-muted italic">No bio yet.</span>}
         </p>
       </div>
+
+      </div>{/* end max-w-2xl */}
 
       <BottomNav />
     </div>

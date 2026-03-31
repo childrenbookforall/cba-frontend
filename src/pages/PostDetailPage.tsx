@@ -74,6 +74,7 @@ export default function PostDetailPage() {
 
       {/* Scrollable content */}
       <div className="flex-1 overflow-y-auto pb-24">
+        <div className="max-w-2xl mx-auto">
 
         {/* Post body */}
         <div className="bg-card mb-2 px-4 pt-4 pb-3">
@@ -192,6 +193,7 @@ export default function PostDetailPage() {
             />
           )}
         </div>
+        </div>{/* end max-w-2xl */}
       </div>
 
       {/* Sticky comment input */}
