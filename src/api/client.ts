@@ -84,8 +84,7 @@ client.interceptors.response.use(
           originalRequest.headers.Authorization = `Bearer ${newToken}`
           return client(originalRequest)
         } catch {
-          clearAuth()
-          window.location.href = '/login'
+          // Cross-tab refresh timed out — don't logout, just fail the request
           return Promise.reject(error)
         }
       }
@@ -114,10 +113,15 @@ client.interceptors.response.use(
         onTokenRefreshed(newToken)
         originalRequest.headers.Authorization = `Bearer ${newToken}`
         return client(originalRequest)
-      } catch {
+      } catch (refreshError) {
         refreshSubscribers = []
-        clearAuth()
-        window.location.href = '/login'
+        // Only clear auth if the refresh token is definitively invalid.
+        // Network errors or server errors should not log the user out.
+        const status = (refreshError as any)?.response?.status
+        if (status === 401 || status === 403) {
+          clearAuth()
+          window.location.href = '/login'
+        }
         return Promise.reject(error)
       } finally {
         isRefreshing = false
