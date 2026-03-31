@@ -62,7 +62,7 @@ export default function FeedPage() {
       </div>
 
       {/* Feed */}
-      <div className="pt-2">
+      <div className="max-w-2xl mx-auto pt-2">
         {isLoading && (
           <>
             <PostCardSkeleton />
