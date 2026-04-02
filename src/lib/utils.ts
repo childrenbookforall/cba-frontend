@@ -1,3 +1,19 @@
+// Inject Cloudinary URL transformations after /upload/.
+// Falls back to the original URL for non-Cloudinary or already-transformed URLs.
+export function cloudinaryUrl(
+  url: string | null | undefined,
+  transforms: string
+): string | undefined {
+  if (!url) return undefined
+  const marker = '/upload/'
+  const idx = url.indexOf(marker)
+  if (idx === -1) return url
+  // Don't double-inject if transforms are already present
+  const afterUpload = url.slice(idx + marker.length)
+  if (afterUpload.startsWith(transforms)) return url
+  return url.slice(0, idx + marker.length) + transforms + '/' + afterUpload
+}
+
 export function cn(...classes: (string | undefined | null | false)[]) {
   return classes.filter(Boolean).join(' ')
 }

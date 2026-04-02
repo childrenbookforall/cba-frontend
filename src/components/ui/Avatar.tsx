@@ -1,4 +1,4 @@
-import { getInitials } from '../../lib/utils'
+import { getInitials, cloudinaryUrl } from '../../lib/utils'
 
 interface AvatarProps {
   firstName: string
@@ -13,13 +13,20 @@ const sizes = {
   lg: 'w-16 h-16 text-2xl',
 }
 
+// 2× the CSS pixel size for retina displays
+const avatarTransforms: Record<string, string> = {
+  sm: 'f_auto,q_auto,w_48,h_48,c_fill,g_face',
+  md: 'f_auto,q_auto,w_64,h_64,c_fill,g_face',
+  lg: 'f_auto,q_auto,w_128,h_128,c_fill,g_face',
+}
+
 export default function Avatar({ firstName, lastName, avatarUrl, size = 'md' }: AvatarProps) {
   const cls = `${sizes[size]} rounded-full flex-shrink-0 flex items-center justify-center font-bold`
 
   if (avatarUrl) {
     return (
       <img
-        src={avatarUrl}
+        src={cloudinaryUrl(avatarUrl, avatarTransforms[size]) ?? avatarUrl}
         alt={`${firstName}${lastName ? ` ${lastName}` : ''}`}
         loading="lazy"
         className={`${cls} object-cover`}

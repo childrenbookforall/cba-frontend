@@ -11,7 +11,7 @@ import CommentThread from '../components/comments/CommentThread'
 import CommentInputBar from '../components/comments/CommentInputBar'
 import CommentSkeleton from '../components/comments/CommentSkeleton'
 import Spinner from '../components/ui/Spinner'
-import { formatRelativeTime } from '../lib/utils'
+import { formatRelativeTime, cloudinaryUrl } from '../lib/utils'
 import { useAuthStore } from '../stores/authStore'
 import NavLinks from '../components/layout/NavLinks'
 
@@ -149,10 +149,14 @@ export default function PostDetailPage() {
             ) : null
           })()}
 
+          {post.type === 'link' && post.content && (
+            <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap mt-2">{post.content}</p>
+          )}
+
           {post.type === 'photo' && post.mediaUrl && (
             <>
               <img
-                src={post.mediaUrl}
+                src={cloudinaryUrl(post.mediaUrl, 'f_auto,q_auto,w_1200') ?? post.mediaUrl}
                 alt={post.title}
                 className="w-full rounded-xl object-contain max-h-80"
               />

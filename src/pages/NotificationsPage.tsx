@@ -17,6 +17,9 @@ function notificationText(n: Notification): string {
   if (n.type === 'comment_reply') {
     return `${who} replied to your comment on "${n.post.title}"`
   }
+  if (n.type === 'thread_comment') {
+    return `${who} also commented on "${n.post.title}"`
+  }
   return `${who} commented on your post "${n.post.title}"`
 }
 

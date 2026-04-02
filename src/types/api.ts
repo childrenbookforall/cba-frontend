@@ -121,7 +121,7 @@ export interface Comment {
 
 export interface Notification {
   id: string
-  type: 'post_comment' | 'comment_reply'
+  type: 'post_comment' | 'comment_reply' | 'thread_comment'
   triggeredBy?: PostUser | null
   post: Pick<Post, 'id' | 'title'>
   comment: { id: string; content: string }

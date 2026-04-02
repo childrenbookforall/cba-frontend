@@ -282,19 +282,60 @@ export default function CreatePostPage() {
         )}
 
         {type === 'link' && (
-          <div className="mb-4">
-            <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
-              URL
-            </label>
-            <input
-              {...register('linkUrl')}
-              type="url"
-              placeholder="https://"
-              className={`w-full px-3 py-2.5 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 ${
-                errors.linkUrl ? 'border-danger bg-red-50' : 'border-border'
-              }`}
-            />
-            {errors.linkUrl && <p className="text-[0.625rem] text-danger mt-1">{errors.linkUrl.message}</p>}
+          <div className="mb-4 flex flex-col gap-3">
+            <div>
+              <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
+                URL
+              </label>
+              <input
+                {...register('linkUrl')}
+                type="url"
+                placeholder="https://"
+                className={`w-full px-3 py-2.5 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+                  errors.linkUrl ? 'border-danger bg-red-50' : 'border-border'
+                }`}
+              />
+              {errors.linkUrl && <p className="text-[0.625rem] text-danger mt-1">{errors.linkUrl.message}</p>}
+            </div>
+            <div>
+              <div className="flex justify-between items-baseline mb-1">
+                <label className="text-[0.625rem] font-bold text-muted uppercase tracking-wide">
+                  Description <span className="normal-case font-normal">(optional)</span>
+                </label>
+                {contentValue.length > 0 && (
+                  <span className={`text-[0.625rem] tabular-nums ${contentValue.length > 9500 ? 'text-danger font-semibold' : 'text-muted'}`}>
+                    {contentValue.length} / 10,000
+                  </span>
+                )}
+              </div>
+              <div className="relative">
+                {showEmojiPicker && emojiData && (
+                  <div ref={emojiPickerRef} className="absolute top-full right-0 mt-1 z-50">
+                    <Suspense fallback={null}>
+                      <Picker data={emojiData} onEmojiSelect={handleEmojiSelect} theme="light" previewPosition="none" skinTonePosition="none" maxFrequentRows={1} />
+                    </Suspense>
+                  </div>
+                )}
+                <textarea
+                  {...register('content')}
+                  ref={(el) => {
+                    register('content').ref(el)
+                    contentTextareaRef.current = el
+                  }}
+                  rows={3}
+                  placeholder="Add a description…"
+                  className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowEmojiPicker((v) => !v)}
+                  aria-label="Insert emoji"
+                  className="absolute bottom-2 right-2.5 text-lg leading-none text-muted hover:text-gray-600 transition"
+                >
+                  🙂
+                </button>
+              </div>
+            </div>
           </div>
         )}
 

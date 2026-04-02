@@ -3,7 +3,7 @@ import Avatar from '../ui/Avatar'
 import GroupChip from './GroupChip'
 import ReactionButton from './ReactionButton'
 import PostMenu from './PostMenu'
-import { formatRelativeTime } from '../../lib/utils'
+import { formatRelativeTime, cloudinaryUrl } from '../../lib/utils'
 import { useAuthStore } from '../../stores/authStore'
 import type { Post } from '../../types/api'
 
@@ -101,10 +101,14 @@ export default function PostCard({ post }: PostCardProps) {
           ) : null
         })()}
 
+        {post.type === 'link' && post.content && (
+          <p className="text-xs text-gray-500 mt-1.5 leading-relaxed line-clamp-3 whitespace-pre-wrap">{post.content}</p>
+        )}
+
         {post.type === 'photo' && post.mediaUrl && (
           <>
             <img
-              src={post.mediaUrl}
+              src={cloudinaryUrl(post.mediaUrl, 'f_auto,q_auto,w_800') ?? post.mediaUrl}
               alt={post.title}
               loading="lazy"
               className="mt-1.5 w-full rounded-lg object-contain max-h-52 bg-gray-50"
