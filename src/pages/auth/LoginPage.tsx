@@ -33,7 +33,14 @@ export default function LoginPage() {
       const { token } = await login(data.email, data.password)
       // Store token first so getMe() request is authenticated
       useAuthStore.getState().setAuth(token, { id: '', email: '', firstName: '', lastName: '', role: 'member', createdAt: '' })
-      const user = await getMe()
+      let user
+      try {
+        user = await getMe()
+      } catch (err) {
+        // getMe() failed — clear the stub so we don't persist a bad auth state
+        useAuthStore.getState().clearAuth()
+        throw err
+      }
       setAuth(token, user)
       navigate('/feed', { replace: true })
     } catch (err) {

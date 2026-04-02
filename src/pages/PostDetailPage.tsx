@@ -32,7 +32,7 @@ export default function PostDetailPage() {
     enabled: !!postId,
   })
 
-  const { data: comments, isLoading: commentsLoading } = useComments(postId!)
+  const { data: comments, isLoading: commentsLoading } = useComments(postId)
 
   if (postLoading) {
     return (

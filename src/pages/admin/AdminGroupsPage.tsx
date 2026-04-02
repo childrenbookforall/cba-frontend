@@ -41,6 +41,7 @@ export default function AdminGroupsPage() {
   const [adding, setAdding] = useState(false)
   const pickerRef = useRef<HTMLDivElement>(null)
   const memberSearchTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const memberSearchGen = useRef(0)
 
   // Per-member remove loading
   const [removingId, setRemovingId] = useState<string | null>(null)
@@ -58,17 +59,22 @@ export default function AdminGroupsPage() {
   }
 
   async function loadMembers(groupId: string, search = '', cursor?: string) {
+    const gen = memberSearchGen.current
     if (cursor) setMembersLoadingMore(true)
     else setMembersLoading(true)
     try {
       const res = await listGroupMembers(groupId, { cursor, search: search || undefined })
+      if (gen !== memberSearchGen.current) return
       setMembers((prev) => cursor ? [...prev, ...res.members] : res.members)
       setMembersNextCursor(res.nextCursor)
     } catch (err) {
+      if (gen !== memberSearchGen.current) return
       toast(getApiError(err), 'error')
     } finally {
-      setMembersLoading(false)
-      setMembersLoadingMore(false)
+      if (gen === memberSearchGen.current) {
+        setMembersLoading(false)
+        setMembersLoadingMore(false)
+      }
     }
   }
 
@@ -396,6 +402,7 @@ export default function AdminGroupsPage() {
                         setMemberSearch(q)
                         if (memberSearchTimer.current) clearTimeout(memberSearchTimer.current)
                         memberSearchTimer.current = setTimeout(() => {
+                          memberSearchGen.current++
                           setMembersNextCursor(null)
                           loadMembers(group.id, q)
                         }, 300)

@@ -1,9 +1,9 @@
-import { useState, useCallback, useEffect, useRef, lazy, Suspense } from 'react'
+import { useState, useCallback, useEffect, useRef, lazy, Suspense, Component, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useDropzone } from 'react-dropzone'
+import { useImageDropzone } from '../hooks/useImageDropzone'
 import { useQueryClient } from '@tanstack/react-query'
 import { createPost } from '../api/posts'
 import { useGroups } from '../hooks/useGroups'
@@ -13,6 +13,15 @@ import Spinner from '../components/ui/Spinner'
 
 const Picker = lazy(() => import('@emoji-mart/react'))
 import NavLinks from '../components/layout/NavLinks'
+
+class EmojiPickerErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false }
+  static getDerivedStateFromError() { return { failed: true } }
+  render() {
+    if (this.state.failed) return <span className="text-xs text-muted p-2">Emoji picker unavailable</span>
+    return this.props.children
+  }
+}
 
 type PostType = 'text' | 'link' | 'photo'
 
@@ -47,7 +56,6 @@ export default function CreatePostPage() {
   const [emojiData, setEmojiData] = useState<any>(null)
   const contentTextareaRef = useRef<HTMLTextAreaElement>(null)
   const emojiPickerRef = useRef<HTMLDivElement>(null)
-  const submittingRef = useRef(false)
 
   const {
     register,
@@ -103,6 +111,13 @@ export default function CreatePostPage() {
     })
   }
 
+  // Revoke object URL when photoPreview changes or component unmounts
+  useEffect(() => {
+    return () => {
+      if (photoPreview) URL.revokeObjectURL(photoPreview)
+    }
+  }, [photoPreview])
+
   const onDrop = useCallback((accepted: File[]) => {
     const file = accepted[0]
     if (!file) return
@@ -110,11 +125,9 @@ export default function CreatePostPage() {
     setPhotoPreview(URL.createObjectURL(file))
   }, [])
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useImageDropzone({
     onDrop,
-    accept: { 'image/jpeg': [], 'image/png': [], 'image/webp': [] },
     maxSize: 10 * 1024 * 1024,
-    multiple: false,
   })
 
   function handleTypeChange(newType: PostType) {
@@ -125,12 +138,10 @@ export default function CreatePostPage() {
   }
 
   async function onSubmit(data: Fields) {
-    if (submittingRef.current) return
     if (type === 'photo' && !photoFile) {
       setError('root', { message: 'Please select a photo' })
       return
     }
-    submittingRef.current = true
     try {
       await createPost({
         groupId: data.groupId,
@@ -145,8 +156,6 @@ export default function CreatePostPage() {
       navigate('/feed')
     } catch (err) {
       setError('root', { message: getApiError(err) })
-    } finally {
-      submittingRef.current = false
     }
   }
 
@@ -254,9 +263,11 @@ export default function CreatePostPage() {
             <div className="relative">
               {showEmojiPicker && emojiData && (
                 <div ref={emojiPickerRef} className="absolute top-full right-0 mt-1 z-50">
-                  <Suspense fallback={null}>
-                    <Picker data={emojiData} onEmojiSelect={handleEmojiSelect} theme="light" previewPosition="none" skinTonePosition="none" maxFrequentRows={1} />
-                  </Suspense>
+                  <EmojiPickerErrorBoundary>
+                    <Suspense fallback={null}>
+                      <Picker data={emojiData} onEmojiSelect={handleEmojiSelect} theme="light" previewPosition="none" skinTonePosition="none" maxFrequentRows={1} />
+                    </Suspense>
+                  </EmojiPickerErrorBoundary>
                 </div>
               )}
               <textarea

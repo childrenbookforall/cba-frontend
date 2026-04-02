@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useQueryClient } from '@tanstack/react-query'
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import { listAdminFlags, reviewFlag } from '../../api/admin'
 import { deletePost } from '../../api/posts'
 import { deleteComment } from '../../api/comments'
@@ -12,34 +12,24 @@ import type { AdminFlag } from '../../types/api'
 export default function AdminFlagsPage() {
   const queryClient = useQueryClient()
   const toast = useToast()
-  const [flags, setFlags] = useState<AdminFlag[]>([])
-  const [nextCursor, setNextCursor] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [loadingMore, setLoadingMore] = useState(false)
   const [dismissingId, setDismissingId] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
-  async function loadFlags(cursor?: string) {
-    try {
-      const res = await listAdminFlags(cursor)
-      setFlags((prev) => (cursor ? [...prev, ...res.flags] : res.flags))
-      setNextCursor(res.nextCursor)
-    } catch (err) {
-      toast(getApiError(err), 'error')
-    } finally {
-      setLoading(false)
-      setLoadingMore(false)
-    }
-  }
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
+    queryKey: ['admin-flags'],
+    queryFn: ({ pageParam }) => listAdminFlags(pageParam),
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    initialPageParam: undefined as string | undefined,
+  })
 
-  useEffect(() => { loadFlags() }, [])
+  const flags = data?.pages.flatMap((p) => p.flags) ?? []
 
   async function handleDismiss(flagId: string) {
     setDismissingId(flagId)
     try {
       await reviewFlag(flagId)
-      setFlags((prev) => prev.filter((f) => f.id !== flagId))
+      queryClient.invalidateQueries({ queryKey: ['admin-flags'] })
       queryClient.invalidateQueries({ queryKey: ['feed'] })
     } catch (err) {
       toast(getApiError(err), 'error')
@@ -58,7 +48,7 @@ export default function AdminFlagsPage() {
         await deleteComment(flag.comment.id)
       }
       // Deleting the content cascades to the flag in the DB, so no need to call reviewFlag
-      setFlags((prev) => prev.filter((f) => f.id !== flag.id))
+      queryClient.invalidateQueries({ queryKey: ['admin-flags'] })
     } catch (err) {
       toast(getApiError(err), 'error')
     } finally {
@@ -66,7 +56,7 @@ export default function AdminFlagsPage() {
     }
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center py-16">
         <Spinner />
@@ -79,7 +69,7 @@ export default function AdminFlagsPage() {
       <title>Flags - Admin · CBA</title>
       <p className="text-[0.625rem] text-muted mb-4">
         {flags.length} unreviewed flag{flags.length !== 1 ? 's' : ''}
-        {nextCursor ? ' (more available)' : ''}
+        {hasNextPage ? ' (more available)' : ''}
       </p>
 
       {flags.length === 0 ? (
@@ -213,14 +203,14 @@ export default function AdminFlagsPage() {
       )}
 
       {/* More */}
-      {nextCursor && (
+      {hasNextPage && (
         <div className="flex justify-center mt-6">
           <button
-            onClick={() => { setLoadingMore(true); loadFlags(nextCursor) }}
-            disabled={loadingMore}
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}
             className="px-6 py-2 rounded-full bg-surface border border-border text-xs font-semibold text-gray-600 hover:bg-gray-100 transition"
           >
-            {loadingMore ? <Spinner size="sm" /> : 'More'}
+            {isFetchingNextPage ? <Spinner size="sm" /> : 'More'}
           </button>
         </div>
       )}

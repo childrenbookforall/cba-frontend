@@ -21,17 +21,35 @@ let refreshSubscribers: Array<(token: string) => void> = []
 
 const REFRESH_LOCK_KEY = 'cba-token-refreshing'
 const REFRESH_LOCK_TIMEOUT_MS = 10000
+// Unique ID for this tab — used to detect whether we own the refresh lock
+const TAB_ID = Math.random().toString(36).slice(2)
 
 function onTokenRefreshed(token: string) {
   refreshSubscribers.forEach((cb) => cb(token))
   refreshSubscribers = []
 }
 
+function acquireRefreshLock(): boolean {
+  const lockValue = JSON.stringify({ tabId: TAB_ID, ts: Date.now() })
+  localStorage.setItem(REFRESH_LOCK_KEY, lockValue)
+  // Read back to confirm we were the last writer (last-write-wins)
+  try {
+    const stored = JSON.parse(localStorage.getItem(REFRESH_LOCK_KEY) ?? '{}')
+    return stored.tabId === TAB_ID
+  } catch {
+    return false
+  }
+}
+
 function isAnotherTabRefreshing(): boolean {
-  const ts = localStorage.getItem(REFRESH_LOCK_KEY)
-  if (!ts) return false
-  // Treat stale locks (older than timeout) as expired
-  return Date.now() - Number(ts) < REFRESH_LOCK_TIMEOUT_MS
+  try {
+    const stored = JSON.parse(localStorage.getItem(REFRESH_LOCK_KEY) ?? 'null')
+    if (!stored) return false
+    if (stored.tabId === TAB_ID) return false // We hold the lock
+    return Date.now() - Number(stored.ts) < REFRESH_LOCK_TIMEOUT_MS
+  } catch {
+    return false
+  }
 }
 
 // Wait for another tab to finish refreshing and return the new token from localStorage.
@@ -99,8 +117,18 @@ client.interceptors.response.use(
         })
       }
 
+      if (!acquireRefreshLock()) {
+        // Another tab wrote the lock between our check and our write — wait for it
+        try {
+          const newToken = await waitForTokenFromOtherTab()
+          originalRequest.headers.Authorization = `Bearer ${newToken}`
+          return client(originalRequest)
+        } catch {
+          return Promise.reject(error)
+        }
+      }
+
       isRefreshing = true
-      localStorage.setItem(REFRESH_LOCK_KEY, Date.now().toString())
 
       try {
         const res = await axios.post(

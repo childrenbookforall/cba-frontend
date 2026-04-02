@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useDropzone } from 'react-dropzone'
+import { useImageDropzone } from '../hooks/useImageDropzone'
 import { useMutation } from '@tanstack/react-query'
 import { useAuthStore } from '../stores/authStore'
 import { updateMe, uploadAvatar } from '../api/users'
@@ -46,10 +46,8 @@ export default function ProfilePage() {
     [avatarMutation]
   )
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useImageDropzone({
     onDrop,
-    accept: { 'image/jpeg': [], 'image/png': [], 'image/webp': [] },
-    maxFiles: 1,
     maxSize: 5 * 1024 * 1024,
     onDropRejected: (fileRejections) => {
       const err = fileRejections[0]?.errors[0]

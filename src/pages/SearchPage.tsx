@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { searchPosts } from '../api/posts'
 import { getApiError } from '../lib/utils'
@@ -19,15 +19,10 @@ export default function SearchPage() {
   const [searched, setSearched] = useState(false)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  // Capture initialQ at mount so the effect below doesn't need it as a dep
+  const initialQRef = useRef(initialQ)
 
-  // Run search on initial load if q param is present
-  useEffect(() => {
-    if (initialQ) runSearch(initialQ)
-    else inputRef.current?.focus()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  async function runSearch(q: string) {
+  const runSearch = useCallback(async (q: string) => {
     setIsLoading(true)
     setSearched(true)
     setError(null)
@@ -39,9 +34,16 @@ export default function SearchPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [])
 
-  function handleChange(q: string) {
+  // Run search on initial load if q param is present.
+  // runSearch is stable (useCallback []) so this effect truly runs once.
+  useEffect(() => {
+    if (initialQRef.current) runSearch(initialQRef.current)
+    else inputRef.current?.focus()
+  }, [runSearch])
+
+  const handleChange = useCallback((q: string) => {
     setQuery(q)
     setError(null)
 
@@ -58,7 +60,7 @@ export default function SearchPage() {
       setSearchParams({ q: q.trim() })
       runSearch(q.trim())
     }, 350)
-  }
+  }, [runSearch, setSearchParams])
 
   return (
     <div className="min-h-svh bg-surface pb-20 sm:pb-0">

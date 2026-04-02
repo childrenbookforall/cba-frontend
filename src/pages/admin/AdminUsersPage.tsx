@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import {
   listAdminUsers,
   createAdminUser,
@@ -9,14 +10,10 @@ import {
 import { getApiError } from '../../lib/utils'
 import { useToast } from '../../stores/toastStore'
 import Spinner from '../../components/ui/Spinner'
-import type { AdminUser } from '../../types/api'
 
 export default function AdminUsersPage() {
   const toast = useToast()
-  const [users, setUsers] = useState<AdminUser[]>([])
-  const [nextCursor, setNextCursor] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [loadingMore, setLoadingMore] = useState(false)
+  const queryClient = useQueryClient()
   const [search, setSearch] = useState('')
 
   // Create form
@@ -28,27 +25,21 @@ export default function AdminUsersPage() {
   const [actionLoading, setActionLoading] = useState<Record<string, string>>({})
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
-  async function loadUsers(cursor?: string) {
-    try {
-      const res = await listAdminUsers(cursor)
-      setUsers((prev) => (cursor ? [...prev, ...res.users] : res.users))
-      setNextCursor(res.nextCursor)
-    } catch (err) {
-      toast(getApiError(err), 'error')
-    } finally {
-      setLoading(false)
-      setLoadingMore(false)
-    }
-  }
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
+    queryKey: ['admin-users'],
+    queryFn: ({ pageParam }) => listAdminUsers(pageParam),
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    initialPageParam: undefined as string | undefined,
+  })
 
-  useEffect(() => { loadUsers() }, [])
+  const users = data?.pages.flatMap((p) => p.users) ?? []
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault()
     setCreating(true)
     try {
-      const user = await createAdminUser(createForm)
-      setUsers((prev) => [user, ...prev])
+      await createAdminUser(createForm)
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] })
       setCreateForm({ firstName: '', lastName: '', email: '' })
       setShowCreate(false)
     } catch (err) {
@@ -73,10 +64,8 @@ export default function AdminUsersPage() {
   async function handleSuspend(userId: string) {
     setActionLoading((a) => ({ ...a, [userId]: 'suspend' }))
     try {
-      const res = await suspendUser(userId)
-      setUsers((prev) =>
-        prev.map((u) => (u.id === res.id ? { ...u, isActive: res.isActive } : u))
-      )
+      await suspendUser(userId)
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] })
     } catch (err) {
       toast(getApiError(err), 'error')
     } finally {
@@ -89,7 +78,7 @@ export default function AdminUsersPage() {
     setActionLoading((a) => ({ ...a, [userId]: 'delete' }))
     try {
       await deleteAdminUser(userId)
-      setUsers((prev) => prev.filter((u) => u.id !== userId))
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] })
     } catch (err) {
       toast(getApiError(err), 'error')
     } finally {
@@ -108,7 +97,7 @@ export default function AdminUsersPage() {
       })
     : users
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center py-16">
         <Spinner />
@@ -285,14 +274,14 @@ export default function AdminUsersPage() {
       </div>
 
       {/* More */}
-      {nextCursor && !search && (
+      {hasNextPage && !search && (
         <div className="flex justify-center mt-4">
           <button
-            onClick={() => { setLoadingMore(true); loadUsers(nextCursor) }}
-            disabled={loadingMore}
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}
             className="px-6 py-2 rounded-full bg-surface border border-border text-xs font-semibold text-gray-600 hover:bg-gray-100 transition"
           >
-            {loadingMore ? <Spinner size="sm" /> : 'More'}
+            {isFetchingNextPage ? <Spinner size="sm" /> : 'More'}
           </button>
         </div>
       )}
