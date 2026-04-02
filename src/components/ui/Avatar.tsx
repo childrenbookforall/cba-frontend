@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { getInitials, cloudinaryUrl } from '../../lib/utils'
 
 interface AvatarProps {
@@ -21,14 +22,16 @@ const avatarTransforms: Record<string, string> = {
 }
 
 export default function Avatar({ firstName, lastName, avatarUrl, size = 'md' }: AvatarProps) {
+  const [imgError, setImgError] = useState(false)
   const cls = `${sizes[size]} rounded-full flex-shrink-0 flex items-center justify-center font-bold`
 
-  if (avatarUrl) {
+  if (avatarUrl && !imgError) {
     return (
       <img
         src={cloudinaryUrl(avatarUrl, avatarTransforms[size]) ?? avatarUrl}
         alt={`${firstName}${lastName ? ` ${lastName}` : ''}`}
         loading="lazy"
+        onError={() => setImgError(true)}
         className={`${cls} object-cover`}
       />
     )
