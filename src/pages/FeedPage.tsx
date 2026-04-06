@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import logo from '../assets/logo.png'
 import { useFeed } from '../hooks/useFeed'
 import { useGroups } from '../hooks/useGroups'
@@ -11,7 +11,10 @@ import BottomNav from '../components/layout/BottomNav'
 import NavLinks from '../components/layout/NavLinks'
 
 export default function FeedPage() {
-  const [sort, setSort] = useState<'latest' | 'top'>('top')
+  const [searchParams] = useSearchParams()
+  const [sort, setSort] = useState<'latest' | 'top'>(
+    searchParams.get('sort') === 'latest' ? 'latest' : 'top'
+  )
   const [groupId, setGroupId] = useState<string | null>(null)
 
   const { data: groups } = useGroups()

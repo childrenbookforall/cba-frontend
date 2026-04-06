@@ -17,7 +17,7 @@ export function useImageDropzone({
     onDrop,
     accept: ACCEPTED_IMAGE_TYPES,
     maxSize,
-    multiple: false,
+    multiple: true,
     onDropRejected,
     disabled,
   })

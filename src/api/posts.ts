@@ -39,17 +39,19 @@ export interface CreatePostData {
   title: string
   content?: string
   linkUrl?: string
-  file?: File
+  files?: File[]
 }
 
 export async function createPost(data: CreatePostData): Promise<Post> {
-  if (data.type === 'photo' && data.file) {
+  if (data.type === 'photo' && data.files?.length) {
     const form = new FormData()
     form.append('groupId', data.groupId)
     form.append('type', 'photo')
     form.append('title', data.title)
     if (data.content) form.append('content', data.content)
-    form.append('media', data.file)
+    for (const file of data.files) {
+      form.append('media', file)
+    }
     const res = await client.post<Post>('/api/posts', form)
     return res.data
   }

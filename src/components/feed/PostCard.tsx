@@ -3,7 +3,8 @@ import Avatar from '../ui/Avatar'
 import GroupChip from './GroupChip'
 import ReactionButton from './ReactionButton'
 import PostMenu from './PostMenu'
-import { formatRelativeTime, cloudinaryUrl } from '../../lib/utils'
+import MediaCarousel from './MediaCarousel'
+import { formatRelativeTime } from '../../lib/utils'
 import { useAuthStore } from '../../stores/authStore'
 import type { Post } from '../../types/api'
 
@@ -105,13 +106,12 @@ export default function PostCard({ post }: PostCardProps) {
           <p className="text-xs text-gray-500 mt-1.5 leading-relaxed line-clamp-3 whitespace-pre-wrap">{post.content}</p>
         )}
 
-        {post.type === 'photo' && post.mediaUrl && (
+        {post.type === 'photo' && (post.mediaUrls?.length || post.mediaUrl) && (
           <>
-            <img
-              src={cloudinaryUrl(post.mediaUrl, 'f_auto,q_auto,w_800') ?? post.mediaUrl}
+            <MediaCarousel
+              urls={post.mediaUrls?.length ? post.mediaUrls : [post.mediaUrl!]}
               alt={post.title}
-              loading="lazy"
-              className="mt-1.5 w-full rounded-lg object-contain max-h-52 bg-gray-50"
+              compact
             />
             {post.content && (
               <p className="text-xs text-gray-500 mt-1.5 leading-relaxed text-center whitespace-pre-wrap">{post.content}</p>

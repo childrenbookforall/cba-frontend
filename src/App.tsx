@@ -53,6 +53,18 @@ function InstallPromptCapture() {
   return null
 }
 
+function GoatCounter() {
+  useEffect(() => {
+    return router.subscribe((state) => {
+      const gc = (window as any).goatcounter
+      if (typeof gc?.count === 'function') {
+        gc.count({ path: state.location.pathname + state.location.search })
+      }
+    })
+  }, [])
+  return null
+}
+
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -63,6 +75,7 @@ export default function App() {
       <InstallBanner />
       <InstallPromptCapture />
       <PushSubscriptionManager />
+      <GoatCounter />
     </QueryClientProvider>
   )
 }

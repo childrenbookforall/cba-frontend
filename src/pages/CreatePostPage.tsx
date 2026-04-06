@@ -49,8 +49,8 @@ export default function CreatePostPage() {
   const toast = useToast()
   const { data: groups, isLoading: groupsLoading, isError: groupsError } = useGroups()
   const [type, setType] = useState<PostType>('text')
-  const [photoFile, setPhotoFile] = useState<File | null>(null)
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+  const [photoFiles, setPhotoFiles] = useState<File[]>([])
+  const [photoPreviews, setPhotoPreviews] = useState<string[]>([])
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [emojiData, setEmojiData] = useState<any>(null)
@@ -111,35 +111,49 @@ export default function CreatePostPage() {
     })
   }
 
-  // Revoke object URL when photoPreview changes or component unmounts
+  // Revoke object URLs on unmount
   useEffect(() => {
     return () => {
-      if (photoPreview) URL.revokeObjectURL(photoPreview)
+      photoPreviews.forEach((url) => URL.revokeObjectURL(url))
     }
-  }, [photoPreview])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const onDrop = useCallback((accepted: File[]) => {
-    const file = accepted[0]
-    if (!file) return
-    setPhotoFile(file)
-    setPhotoPreview(URL.createObjectURL(file))
+    if (!accepted.length) return
+    setPhotoFiles((prev) => {
+      const remaining = 10 - prev.length
+      return [...prev, ...accepted.slice(0, remaining)]
+    })
+    setPhotoPreviews((prev) => {
+      const remaining = 10 - prev.length
+      return [...prev, ...accepted.slice(0, remaining).map((f) => URL.createObjectURL(f))]
+    })
   }, [])
+
+  function removePhoto(index: number) {
+    URL.revokeObjectURL(photoPreviews[index])
+    setPhotoFiles((prev) => prev.filter((_, i) => i !== index))
+    setPhotoPreviews((prev) => prev.filter((_, i) => i !== index))
+  }
 
   const { getRootProps, getInputProps, isDragActive } = useImageDropzone({
     onDrop,
     maxSize: 10 * 1024 * 1024,
+    disabled: photoFiles.length >= 10,
   })
 
   function handleTypeChange(newType: PostType) {
     setType(newType)
     reset({ groupId: groups?.length === 1 ? groups[0].id : undefined })
-    setPhotoFile(null)
-    setPhotoPreview(null)
+    photoPreviews.forEach((url) => URL.revokeObjectURL(url))
+    setPhotoFiles([])
+    setPhotoPreviews([])
   }
 
   async function onSubmit(data: Fields) {
-    if (type === 'photo' && !photoFile) {
-      setError('root', { message: 'Please select a photo' })
+    if (type === 'photo' && photoFiles.length === 0) {
+      setError('root', { message: 'Please select at least one photo' })
       return
     }
     try {
@@ -149,11 +163,11 @@ export default function CreatePostPage() {
         title: data.title,
         content: data.content,
         linkUrl: data.linkUrl,
-        file: photoFile ?? undefined,
+        files: photoFiles.length > 0 ? photoFiles : undefined,
       })
       queryClient.invalidateQueries({ queryKey: ['feed'] })
       toast('Post shared')
-      navigate('/feed')
+      navigate('/feed?sort=latest')
     } catch (err) {
       setError('root', { message: getApiError(err) })
     }
@@ -356,33 +370,42 @@ export default function CreatePostPage() {
               <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
                 Photo
               </label>
-              {photoPreview ? (
-                <div className="relative">
-                  <img src={photoPreview} alt="Preview" className="w-full rounded-xl object-contain max-h-64 bg-gray-50" />
-                  <button
-                    type="button"
-                    onClick={() => { setPhotoFile(null); setPhotoPreview(null) }}
-                    aria-label="Remove photo"
-                    className="absolute top-2 right-2 bg-black/50 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
-                  >
-                    ✕
-                  </button>
+              {photoPreviews.length > 0 && (
+                <div className="flex gap-2 overflow-x-auto pb-1 mb-2">
+                  {photoPreviews.map((src, i) => (
+                    <div key={i} className="relative flex-shrink-0">
+                      <img src={src} alt={`Preview ${i + 1}`} className="w-20 h-20 rounded-lg object-cover bg-gray-50" />
+                      <button
+                        type="button"
+                        onClick={() => removePhoto(i)}
+                        aria-label="Remove photo"
+                        className="absolute -top-1.5 -right-1.5 bg-black/60 text-white rounded-full w-5 h-5 flex items-center justify-center text-[0.6rem] leading-none"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
                 </div>
-              ) : (
+              )}
+              {photoFiles.length < 10 && (
                 <div
                   {...getRootProps()}
-                  className={`border-2 border-dashed rounded-xl h-36 flex flex-col items-center justify-center gap-1.5 text-muted cursor-pointer transition ${
+                  className={`border-2 border-dashed rounded-xl h-28 flex flex-col items-center justify-center gap-1.5 text-muted cursor-pointer transition ${
                     isDragActive ? 'border-primary bg-blue-50' : 'border-border hover:border-gray-400'
                   }`}
                 >
                   <input {...getInputProps()} />
                   {isDragActive ? (
-                    <span className="text-sm">Drop the photo here</span>
+                    <span className="text-sm">Drop photos here</span>
                   ) : (
                     <>
                       <span className="text-2xl">📷</span>
-                      <span className="text-xs font-medium">Tap to select a photo</span>
-                      <span className="text-[0.625rem]">JPEG · PNG · WebP · max 10 MB</span>
+                      <span className="text-xs font-medium">
+                        {photoPreviews.length === 0 ? 'Tap to select photos' : 'Add more photos'}
+                      </span>
+                      <span className="text-[0.625rem]">
+                        JPEG · PNG · WebP · max 10 MB · {photoPreviews.length} / 10
+                      </span>
                     </>
                   )}
                 </div>

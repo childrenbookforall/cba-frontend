@@ -61,6 +61,7 @@ export interface Post {
   content?: string | null
   linkUrl?: string | null
   mediaUrl?: string | null
+  mediaUrls?: string[] | null
   isFlagged: boolean
   isPinned: boolean
   pinnedAt?: string | null
