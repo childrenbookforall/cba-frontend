@@ -12,6 +12,7 @@ import CommentInputBar from '../components/comments/CommentInputBar'
 import CommentSkeleton from '../components/comments/CommentSkeleton'
 import Spinner from '../components/ui/Spinner'
 import MediaCarousel from '../components/feed/MediaCarousel'
+import LinkPreview from '../components/feed/LinkPreview'
 import { formatRelativeTime } from '../lib/utils'
 import { useAuthStore } from '../stores/authStore'
 import NavLinks from '../components/layout/NavLinks'
@@ -129,29 +130,17 @@ export default function PostDetailPage() {
             <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{post.content}</p>
           )}
 
-          {post.type === 'link' && post.linkUrl && (() => {
-            let safeUrl: string | null = null
-            try {
-              const parsed = new URL(post.linkUrl)
-              if (parsed.protocol === 'https:' || parsed.protocol === 'http:') safeUrl = post.linkUrl
-            } catch { /* invalid URL */ }
-            return safeUrl ? (
-            <a
-              href={safeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2.5 bg-surface border border-border rounded-xl px-3 py-2.5 hover:border-accent transition"
-            >
-              <span className="text-lg">🔗</span>
-              <span className="text-xs text-accent font-medium break-all">
-                {post.linkUrl.replace(/^https?:\/\//, '')}
-              </span>
-            </a>
-            ) : null
-          })()}
+          {post.type === 'link' && post.linkUrl && (
+            <LinkPreview
+              url={post.linkUrl}
+              previewImage={post.linkPreviewImage}
+              previewTitle={post.linkPreviewTitle}
+              previewDescription={post.linkPreviewDescription}
+            />
+          )}
 
           {post.type === 'link' && post.content && (
-            <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap mt-2">{post.content}</p>
+            <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap mt-2 text-center">{post.content}</p>
           )}
 
           {post.type === 'photo' && (post.mediaUrls?.length || post.mediaUrl) && (

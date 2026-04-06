@@ -21,7 +21,7 @@ export default function ProfilePage() {
   const [bioValue, setBioValue] = useState(user?.bio ?? '')
 
   const bioMutation = useMutation({
-    mutationFn: () => updateMe({ bio: bioValue }),
+    mutationFn: (bio: string) => updateMe({ bio }),
     onSuccess: (updatedUser) => {
       setAuth(token!, { ...user!, ...updatedUser })
       setEditingBio(false)
@@ -160,7 +160,7 @@ export default function ProfilePage() {
             />
             <div className="flex gap-1.5 mt-2">
               <button
-                onClick={() => bioMutation.mutate()}
+                onClick={() => bioMutation.mutate(bioValue)}
                 disabled={bioMutation.isPending}
                 className="text-[0.625rem] font-semibold text-white bg-primary px-4 py-1.5 rounded-lg disabled:opacity-60"
               >

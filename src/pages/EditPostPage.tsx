@@ -47,7 +47,7 @@ export default function EditPostPage() {
     if (post && currentUser && post.userId !== currentUser.id) {
       navigate(`/posts/${postId}`, { replace: true })
     }
-  }, [post, currentUser, navigate])
+  }, [post, currentUser, navigate, postId])
 
   async function onSubmit(data: Fields) {
     if (!postId) return

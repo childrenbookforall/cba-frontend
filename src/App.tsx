@@ -1,4 +1,5 @@
 import { useEffect, Component, type ReactNode } from 'react'
+import axios from 'axios'
 import { RouterProvider } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { router } from './lib/router'
@@ -30,6 +31,25 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
     }
     return this.props.children
   }
+}
+
+// On every page load the token is gone (not persisted to localStorage).
+// If a user session exists, silently exchange the httpOnly refresh cookie for a new token.
+function AuthInitializer() {
+  const { user, token, setAuth, clearAuth, setInitialized } = useAuthStore()
+
+  useEffect(() => {
+    if (user && !token) {
+      axios
+        .post(`${import.meta.env.VITE_API_URL}/api/auth/refresh`, {}, { withCredentials: true })
+        .then((res) => { setAuth(res.data.token, user); setInitialized() })
+        .catch(() => { clearAuth(); setInitialized() })
+    } else {
+      setInitialized()
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  return null
 }
 
 function PushSubscriptionManager() {
@@ -73,6 +93,7 @@ export default function App() {
       </ErrorBoundary>
       <Toaster />
       <InstallBanner />
+      <AuthInitializer />
       <InstallPromptCapture />
       <PushSubscriptionManager />
       <GoatCounter />

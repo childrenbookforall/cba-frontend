@@ -41,6 +41,7 @@ export default function SearchPage() {
   useEffect(() => {
     if (initialQRef.current) runSearch(initialQRef.current)
     else inputRef.current?.focus()
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
   }, [runSearch])
 
   const handleChange = useCallback((q: string) => {

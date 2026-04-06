@@ -44,6 +44,7 @@ export interface Group {
   name: string
   slug: string
   description?: string | null
+  _count?: { members: number }
 }
 
 // _count shape returned by Prisma includes on post queries
@@ -60,6 +61,9 @@ export interface Post {
   title: string
   content?: string | null
   linkUrl?: string | null
+  linkPreviewImage?: string | null
+  linkPreviewTitle?: string | null
+  linkPreviewDescription?: string | null
   mediaUrl?: string | null
   mediaUrls?: string[] | null
   isFlagged: boolean

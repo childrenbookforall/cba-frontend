@@ -39,5 +39,5 @@ export function usePushSubscription(enabled = true) {
     }
 
     subscribe()
-  }, [])
+  }, [enabled])
 }

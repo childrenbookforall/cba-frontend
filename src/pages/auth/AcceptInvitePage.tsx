@@ -52,7 +52,7 @@ export default function AcceptInvitePage() {
         reset({ firstName: info.firstName, lastName: info.lastName ?? '' })
       })
       .catch((err) => setLoadError(getApiError(err)))
-  }, [token])
+  }, [token, reset])
 
   async function onSubmit(data: Fields) {
     if (!token) return

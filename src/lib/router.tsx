@@ -43,12 +43,16 @@ function SuspenseOutlet() {
 
 function ProtectedRoute() {
   const token = useAuthStore((s) => s.token)
+  const isInitialized = useAuthStore((s) => s.isInitialized)
+  if (!isInitialized) return <PageLoader />
   if (!token) return <Navigate to="/login" replace />
   return <SuspenseOutlet />
 }
 
 function AdminRoute() {
   const user = useAuthStore((s) => s.user)
+  const isInitialized = useAuthStore((s) => s.isInitialized)
+  if (!isInitialized) return <PageLoader />
   if (!user) return <Navigate to="/login" replace />
   if (user.role !== 'admin') return <Navigate to="/feed" replace />
   return <SuspenseOutlet />
@@ -56,6 +60,8 @@ function AdminRoute() {
 
 function PublicOnlyRoute() {
   const token = useAuthStore((s) => s.token)
+  const isInitialized = useAuthStore((s) => s.isInitialized)
+  if (!isInitialized) return <PageLoader />
   if (token) return <Navigate to="/feed" replace />
   return <SuspenseOutlet />
 }

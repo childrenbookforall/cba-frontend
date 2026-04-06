@@ -4,6 +4,7 @@ import GroupChip from './GroupChip'
 import ReactionButton from './ReactionButton'
 import PostMenu from './PostMenu'
 import MediaCarousel from './MediaCarousel'
+import LinkPreview from './LinkPreview'
 import { formatRelativeTime } from '../../lib/utils'
 import { useAuthStore } from '../../stores/authStore'
 import type { Post } from '../../types/api'
@@ -80,30 +81,17 @@ export default function PostCard({ post }: PostCardProps) {
           </p>
         )}
 
-        {post.type === 'link' && post.linkUrl && (() => {
-          let safeUrl: string | null = null
-          try {
-            const parsed = new URL(post.linkUrl)
-            if (parsed.protocol === 'https:' || parsed.protocol === 'http:') safeUrl = post.linkUrl
-          } catch { /* invalid URL */ }
-          return safeUrl ? (
-          <a
-            href={safeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="mt-1.5 flex items-center gap-2 bg-surface rounded-lg px-2.5 py-2 border border-border hover:border-accent transition"
-          >
-            <span className="text-base">🔗</span>
-            <span className="text-xs text-accent font-medium truncate">
-              {post.linkUrl.replace(/^https?:\/\//, '')}
-            </span>
-          </a>
-          ) : null
-        })()}
+        {post.type === 'link' && post.linkUrl && (
+          <LinkPreview
+            url={post.linkUrl}
+            previewImage={post.linkPreviewImage}
+            previewTitle={post.linkPreviewTitle}
+            previewDescription={post.linkPreviewDescription}
+          />
+        )}
 
         {post.type === 'link' && post.content && (
-          <p className="text-xs text-gray-500 mt-1.5 leading-relaxed line-clamp-3 whitespace-pre-wrap">{post.content}</p>
+          <p className="text-xs text-gray-500 mt-1.5 leading-relaxed line-clamp-3 whitespace-pre-wrap text-center">{post.content}</p>
         )}
 
         {post.type === 'photo' && (post.mediaUrls?.length || post.mediaUrl) && (
@@ -128,13 +116,13 @@ export default function PostCard({ post }: PostCardProps) {
         <ReactionButton post={post} type="hug" />
         <ReactionButton post={post} type="with_you" />
         <ReactionButton post={post} type="helped_me" />
-        <span
-          role="button"
+        <button
+          type="button"
           onClick={(e) => { e.preventDefault(); navigate(`/posts/${post.id}#comments`) }}
           className="flex items-center gap-1 text-xs text-muted cursor-pointer"
         >
           💬 {post._count.comments}
-        </span>
+        </button>
       </div>
     </Link>
   )
