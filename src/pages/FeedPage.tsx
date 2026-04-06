@@ -65,11 +65,13 @@ export default function FeedPage() {
           const activeGroup = groupId
             ? groups?.find((g) => g.id === groupId)
             : groups?.length === 1 ? groups[0] : null
-          return activeGroup?._count ? (
+          if (!activeGroup?._count) return <span />
+          const displayCount = Math.max(0, activeGroup._count.members - 1)
+          return (
             <span className="text-[0.625rem] text-muted font-medium">
-              {activeGroup._count.members} {activeGroup._count.members === 1 ? 'member' : 'members'}
+              {displayCount} {displayCount === 1 ? 'member' : 'members'}
             </span>
-          ) : <span />
+          )
         })()}
         <SortPills sort={sort} onChange={handleSortChange} />
       </div>
