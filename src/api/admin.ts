@@ -89,6 +89,11 @@ export async function pinPost(postId: string): Promise<{ id: string; isPinned: b
   return res.data
 }
 
+export async function downrankPost(postId: string): Promise<{ id: string; isDownranked: boolean }> {
+  const res = await client.patch(`/api/admin/posts/${postId}/downrank`)
+  return res.data
+}
+
 // ── Flags ─────────────────────────────────────────────────────────────────────
 
 export async function listAdminFlags(cursor?: string): Promise<AdminFlagsResponse> {

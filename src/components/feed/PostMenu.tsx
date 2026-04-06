@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMutation, useQueryClient, type InfiniteData } from '@tanstack/react-query'
 import { deletePost, flagPost } from '../../api/posts'
-import { pinPost } from '../../api/admin'
+import { pinPost, downrankPost } from '../../api/admin'
 import { useAuthStore } from '../../stores/authStore'
 import { getApiError } from '../../lib/utils'
 import { useToast } from '../../stores/toastStore'
@@ -54,6 +54,16 @@ export default function PostMenu({ post }: PostMenuProps) {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['feed'] })
       toast(data.isPinned ? 'Post pinned' : 'Post unpinned')
+      setOpen(false)
+    },
+    onError: (err) => toast(getApiError(err), 'error'),
+  })
+
+  const downrankMutation = useMutation({
+    mutationFn: () => downrankPost(post.id),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['feed'] })
+      toast(data.isDownranked ? 'Post downranked' : 'Post restored')
       setOpen(false)
     },
     onError: (err) => toast(getApiError(err), 'error'),
@@ -135,13 +145,22 @@ export default function PostMenu({ post }: PostMenuProps) {
                 </button>
               )}
               {isAdmin && (
-                <button
-                  onClick={() => pinMutation.mutate()}
-                  disabled={pinMutation.isPending}
-                  className="flex items-center gap-2 w-full px-3 py-2 text-xs text-gray-700 hover:bg-surface text-left disabled:opacity-50"
-                >
-                  📌 {post.isPinned ? 'Unpin post' : 'Pin post'}
-                </button>
+                <>
+                  <button
+                    onClick={() => pinMutation.mutate()}
+                    disabled={pinMutation.isPending}
+                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-gray-700 hover:bg-surface text-left disabled:opacity-50"
+                  >
+                    📌 {post.isPinned ? 'Unpin post' : 'Pin post'}
+                  </button>
+                  <button
+                    onClick={() => downrankMutation.mutate()}
+                    disabled={downrankMutation.isPending}
+                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-gray-700 hover:bg-surface text-left disabled:opacity-50"
+                  >
+                    ⬇️ {post.isDownranked ? 'Restore ranking' : 'Downrank post'}
+                  </button>
+                </>
               )}
               {(isOwner || isAdmin) && (
                 confirmDelete ? (

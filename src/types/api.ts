@@ -65,6 +65,7 @@ export interface Post {
   isFlagged: boolean
   isPinned: boolean
   pinnedAt?: string | null
+  isDownranked: boolean
   createdAt: string
   updatedAt: string
   user?: PostUser | null
