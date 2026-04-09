@@ -111,6 +111,24 @@ export interface FeedResult {
 
 export type ReactionType = 'with_you' | 'helped_me' | 'hug'
 
+export interface Reactor {
+  id: string
+  firstName: string
+  lastName?: string | null
+  avatarUrl?: string | null
+}
+
+export interface ReactorGroup {
+  users: Reactor[]
+  total: number
+}
+
+export interface PostReactors {
+  with_you: ReactorGroup
+  helped_me: ReactorGroup
+  hug: ReactorGroup
+}
+
 export interface Comment {
   id: string
   postId: string

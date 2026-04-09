@@ -1,5 +1,6 @@
-import { useMutation, useQueryClient, type InfiniteData } from '@tanstack/react-query'
-import { upsertReaction, removeReaction } from '../../api/reactions'
+import { useState, useRef, useEffect } from 'react'
+import { useMutation, useQuery, useQueryClient, type InfiniteData } from '@tanstack/react-query'
+import { upsertReaction, removeReaction, getReactors } from '../../api/reactions'
 import { useInstallPromptStore } from '../../stores/installPromptStore'
 import type { Post, ReactionType, FeedResult } from '../../types/api'
 
@@ -57,6 +58,27 @@ export default function ReactionButton({ post, type }: ReactionButtonProps) {
   const { emoji, label, activeClass } = config[type]
   const count = type === 'with_you' ? post.withYouCount : type === 'helped_me' ? post.helpedMeCount : post.hugCount
 
+  const [showPopover, setShowPopover] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  const { data: reactorsData, isLoading: reactorsLoading } = useQuery({
+    queryKey: ['reactions', post.id],
+    queryFn: () => getReactors(post.id),
+    enabled: showPopover,
+    staleTime: 30_000,
+  })
+
+  useEffect(() => {
+    if (!showPopover) return
+    function handleClickOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setShowPopover(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [showPopover])
+
   const mutation = useMutation({
     mutationFn: async () => {
       if (isActive) return removeReaction(post.id)
@@ -111,20 +133,63 @@ export default function ReactionButton({ post, type }: ReactionButtonProps) {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['post', post.id] })
+      queryClient.removeQueries({ queryKey: ['reactions', post.id] })
     },
   })
 
+  const reactorGroup = reactorsData?.[type]
+  const reactors = reactorGroup?.users ?? []
+  const remaining = (reactorGroup?.total ?? 0) - reactors.length
+
   return (
-    <button
-      onClick={() => mutation.mutate()}
-      disabled={mutation.isPending}
-      title={label}
-      className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold transition ${
-        isActive ? activeClass : 'bg-surface text-muted hover:bg-gray-100'
-      } disabled:opacity-60`}
-    >
-      <span>{emoji}</span>
-      {count > 0 && <span>{count}</span>}
-    </button>
+    <div className="relative" ref={containerRef}>
+      <div className={`inline-flex items-center rounded-full text-xs font-semibold transition ${
+        isActive ? activeClass : 'bg-surface text-muted'
+      } ${mutation.isPending ? 'opacity-60' : ''}`}>
+        <button
+          type="button"
+          onClick={() => mutation.mutate()}
+          disabled={mutation.isPending}
+          title={label}
+          className={`flex items-center ${count > 0 ? 'pl-2 pr-1' : 'px-2'} py-1 rounded-full transition ${!isActive ? 'hover:bg-gray-100' : ''}`}
+        >
+          <span>{emoji}</span>
+        </button>
+        {count > 0 && (
+          <>
+            <span className="w-px self-stretch bg-black/10 my-1" />
+            <button
+              type="button"
+              onClick={() => setShowPopover((v) => !v)}
+              className="pr-2 pl-1.5 py-1 hover:underline"
+            >
+              {count}
+            </button>
+          </>
+        )}
+      </div>
+
+      {showPopover && (
+        <div className="absolute bottom-full left-0 mb-1.5 z-50 bg-card border border-border rounded-xl shadow-lg p-3 min-w-[150px] max-w-[220px]">
+          <p className="text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-2">{emoji} {label}</p>
+          {reactorsLoading ? (
+            <p className="text-xs text-muted">Loading…</p>
+          ) : (
+            <>
+              <ul className="space-y-1 max-h-48 overflow-y-auto">
+                {reactors.map((r) => (
+                  <li key={r.id} className="text-xs text-gray-800">
+                    {r.firstName}{r.lastName ? ` ${r.lastName}` : ''}
+                  </li>
+                ))}
+              </ul>
+              {remaining > 0 && (
+                <p className="text-[0.625rem] text-muted mt-2">and {remaining} more</p>
+              )}
+            </>
+          )}
+        </div>
+      )}
+    </div>
   )
 }
