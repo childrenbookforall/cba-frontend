@@ -12,6 +12,7 @@ import { useAuthStore } from '../stores/authStore'
 const schema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Max 200 characters'),
   content: z.string().max(10000).optional(),
+  linkUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
 })
 
 type Fields = z.infer<typeof schema>
@@ -38,7 +39,7 @@ export default function EditPostPage() {
 
   useEffect(() => {
     if (post) {
-      reset({ title: post.title, content: post.content ?? '' })
+      reset({ title: post.title, content: post.content ?? '', linkUrl: post.linkUrl ?? '' })
     }
   }, [post, reset])
 
@@ -52,7 +53,7 @@ export default function EditPostPage() {
   async function onSubmit(data: Fields) {
     if (!postId) return
     try {
-      await updatePost(postId, { title: data.title, content: data.content })
+      await updatePost(postId, { title: data.title, content: data.content, linkUrl: data.linkUrl || undefined })
       queryClient.invalidateQueries({ queryKey: ['feed'] })
       queryClient.invalidateQueries({ queryKey: ['post', postId] })
       navigate(`/posts/${postId}`)
@@ -104,6 +105,47 @@ export default function EditPostPage() {
               className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
             />
           </div>
+        )}
+
+        {post?.type === 'photo' && (
+          <div className="mb-4">
+            <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
+              Caption
+            </label>
+            <textarea
+              {...register('content')}
+              rows={4}
+              className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
+            />
+          </div>
+        )}
+
+        {post?.type === 'link' && (
+          <>
+            <div className="mb-3">
+              <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
+                URL
+              </label>
+              <input
+                {...register('linkUrl')}
+                type="url"
+                className={`w-full px-3 py-2.5 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+                  errors.linkUrl ? 'border-danger bg-red-50' : 'border-border'
+                }`}
+              />
+              {errors.linkUrl && <p className="text-[0.625rem] text-danger mt-1">{errors.linkUrl.message}</p>}
+            </div>
+            <div className="mb-4">
+              <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
+                Description
+              </label>
+              <textarea
+                {...register('content')}
+                rows={4}
+                className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
+              />
+            </div>
+          </>
         )}
 
         {errors.root && (

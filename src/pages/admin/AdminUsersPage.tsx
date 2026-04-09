@@ -206,15 +206,21 @@ export default function AdminUsersPage() {
                         Admin
                       </span>
                     )}
-                    <span
-                      className={`text-[0.5625rem] font-bold uppercase px-1.5 py-0.5 rounded ${
-                        user.isActive
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-red-100 text-red-600'
-                      }`}
-                    >
-                      {user.isActive ? 'Active' : 'Suspended'}
-                    </span>
+                    {user.invitePending ? (
+                      <span className="text-[0.5625rem] font-bold uppercase px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-700">
+                        Pending
+                      </span>
+                    ) : (
+                      <span
+                        className={`text-[0.5625rem] font-bold uppercase px-1.5 py-0.5 rounded ${
+                          user.isActive
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-red-100 text-red-600'
+                        }`}
+                      >
+                        {user.isActive ? 'Active' : 'Suspended'}
+                      </span>
+                    )}
                   </div>
                   <p className="text-[0.625rem] text-muted truncate">{user.email}</p>
                   <p className="text-[0.625rem] text-gray-300 font-mono truncate select-all" title="User ID - copy this to add as group member">

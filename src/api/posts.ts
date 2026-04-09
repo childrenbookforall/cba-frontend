@@ -66,7 +66,7 @@ export async function createPost(data: CreatePostData): Promise<Post> {
   return res.data
 }
 
-export async function updatePost(postId: string, data: { title: string; content?: string }): Promise<Post> {
+export async function updatePost(postId: string, data: { title: string; content?: string; linkUrl?: string }): Promise<Post> {
   const res = await client.put<Post>(`/api/posts/${postId}`, data)
   return res.data
 }

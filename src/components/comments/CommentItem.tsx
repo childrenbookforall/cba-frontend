@@ -124,7 +124,12 @@ export default function CommentItem({ comment, postId, onReply }: CommentItemPro
       {comment.replies && comment.replies.length > 0 && (
         <div className="mt-1">
           {comment.replies.map((reply) => (
-            <ReplyItem key={reply.id} reply={reply} postId={postId} />
+            <ReplyItem
+              key={reply.id}
+              reply={reply}
+              postId={postId}
+              onReply={(name) => onReply(comment.id, name)}
+            />
           ))}
         </div>
       )}

@@ -154,6 +154,7 @@ export interface AdminUser {
   email: string
   role: 'admin' | 'member'
   isActive: boolean
+  invitePending: boolean
   createdAt: string
 }
 

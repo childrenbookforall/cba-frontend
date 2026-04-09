@@ -12,9 +12,10 @@ import type { Comment } from '../../types/api'
 interface ReplyItemProps {
   reply: Comment
   postId: string
+  onReply: (name: string) => void
 }
 
-export default function ReplyItem({ reply, postId }: ReplyItemProps) {
+export default function ReplyItem({ reply, postId, onReply }: ReplyItemProps) {
   const [editing, setEditing] = useState(false)
   const [editContent, setEditContent] = useState(reply.content)
   const queryClient = useQueryClient()
@@ -93,7 +94,20 @@ export default function ReplyItem({ reply, postId }: ReplyItemProps) {
             </div>
           </div>
         ) : (
-          <p className="text-[0.625rem] text-gray-600 leading-relaxed">{reply.content}</p>
+          <>
+            <p className="text-[0.625rem] text-gray-600 leading-relaxed">{reply.content}</p>
+            <button
+              onClick={() => {
+                const name = reply.user
+                  ? `${reply.user.firstName}${reply.user.lastName ? ` ${reply.user.lastName}` : ''}`
+                  : 'Deleted user'
+                onReply(name)
+              }}
+              className="text-[0.625rem] text-muted hover:text-accent mt-1 font-medium transition"
+            >
+              Reply
+            </button>
+          </>
         )}
       </div>
     </div>

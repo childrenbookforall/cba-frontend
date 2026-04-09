@@ -25,6 +25,16 @@ class EmojiPickerErrorBoundary extends Component<{ children: ReactNode }, { fail
 
 type PostType = 'text' | 'link' | 'photo'
 
+const DRAFT_KEY = 'cba_post_draft'
+
+interface DraftData {
+  type: PostType
+  groupId?: string
+  title?: string
+  content?: string
+  linkUrl?: string
+}
+
 const baseSchema = z.object({
   groupId: z.string().min(1, 'Select a group'),
   title: z.string().min(1, 'Title is required').max(200, 'Max 200 characters'),
@@ -52,10 +62,12 @@ export default function CreatePostPage() {
   const [photoFiles, setPhotoFiles] = useState<File[]>([])
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([])
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+  const [draftBanner, setDraftBanner] = useState(false)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [emojiData, setEmojiData] = useState<any>(null)
   const contentTextareaRef = useRef<HTMLTextAreaElement>(null)
   const emojiPickerRef = useRef<HTMLDivElement>(null)
+  const draftTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const {
     register,
@@ -69,6 +81,8 @@ export default function CreatePostPage() {
 
   const titleValue = watch('title') ?? ''
   const contentValue = watch('content') ?? ''
+  const linkUrlValue = watch('linkUrl') ?? ''
+  const groupIdValue = watch('groupId') ?? ''
 
   // Pre-fill group when there's only one option
   useEffect(() => {
@@ -76,6 +90,60 @@ export default function CreatePostPage() {
       setValue('groupId', groups[0].id)
     }
   }, [groups, setValue])
+
+  // Scroll to top on mount so the banner and form top are always visible
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
+  // Show restore banner if a meaningful draft exists
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY)
+      if (!raw) return
+      const draft: DraftData = JSON.parse(raw)
+      if (draft.title || draft.content || draft.linkUrl) {
+        setDraftBanner(true)
+      }
+    } catch {
+      localStorage.removeItem(DRAFT_KEY)
+    }
+  }, [])
+
+  // Auto-save draft to localStorage (debounced)
+  useEffect(() => {
+    if (draftTimerRef.current) clearTimeout(draftTimerRef.current)
+    draftTimerRef.current = setTimeout(() => {
+      if (titleValue || contentValue || linkUrlValue) {
+        const draft: DraftData = { type, groupId: groupIdValue, title: titleValue, content: contentValue, linkUrl: linkUrlValue }
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(draft))
+      }
+    }, 800)
+    return () => {
+      if (draftTimerRef.current) clearTimeout(draftTimerRef.current)
+    }
+  }, [type, titleValue, contentValue, linkUrlValue, groupIdValue])
+
+  function restoreDraft() {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY)
+      if (!raw) return
+      const draft: DraftData = JSON.parse(raw)
+      setType(draft.type ?? 'text')
+      if (draft.title) setValue('title', draft.title)
+      if (draft.content) setValue('content', draft.content)
+      if (draft.linkUrl) setValue('linkUrl', draft.linkUrl)
+      if (draft.groupId) setValue('groupId', draft.groupId)
+    } catch {
+      localStorage.removeItem(DRAFT_KEY)
+    }
+    setDraftBanner(false)
+  }
+
+  function discardDraft() {
+    localStorage.removeItem(DRAFT_KEY)
+    setDraftBanner(false)
+  }
 
   // Load emoji data on first open
   useEffect(() => {
@@ -165,6 +233,7 @@ export default function CreatePostPage() {
         linkUrl: data.linkUrl,
         files: photoFiles.length > 0 ? photoFiles : undefined,
       })
+      localStorage.removeItem(DRAFT_KEY)
       queryClient.invalidateQueries({ queryKey: ['feed'] })
       toast('Post shared')
       navigate('/feed?sort=latest')
@@ -186,6 +255,16 @@ export default function CreatePostPage() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="p-4 max-w-lg mx-auto">
+        {draftBanner && (
+          <div className="flex items-center justify-between gap-3 px-3 py-2.5 mb-4 bg-amber-50 border border-amber-200 rounded-xl text-xs">
+            <span className="text-amber-800 font-medium">You have an unsaved draft.</span>
+            <div className="flex gap-2 flex-shrink-0">
+              <button type="button" onClick={restoreDraft} className="text-primary font-semibold hover:underline">Restore</button>
+              <button type="button" onClick={discardDraft} className="text-muted hover:text-gray-700">Discard</button>
+            </div>
+          </div>
+        )}
+
         {/* Type picker */}
         <div className="flex gap-2 mb-4">
           {(['text', 'link', 'photo'] as PostType[]).map((t) => (
