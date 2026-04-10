@@ -96,11 +96,14 @@ export default function PostCard({ post }: PostCardProps) {
 
         {post.type === 'photo' && (post.mediaUrls?.length || post.mediaUrl) && (
           <>
-            <MediaCarousel
-              urls={post.mediaUrls?.length ? post.mediaUrls : [post.mediaUrl!]}
-              alt={post.title}
-              compact
-            />
+            <div onClick={(e) => e.preventDefault()}>
+              <MediaCarousel
+                urls={post.mediaUrls?.length ? post.mediaUrls : [post.mediaUrl!]}
+                alt={post.title}
+                compact
+                postUrl={`/posts/${post.id}`}
+              />
+            </div>
             {post.content && (
               <p className="text-xs text-gray-500 mt-1.5 leading-relaxed text-center whitespace-pre-wrap">{post.content}</p>
             )}

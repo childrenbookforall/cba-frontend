@@ -1,15 +1,19 @@
 import { useState, useRef } from 'react'
 import { cloudinaryUrl } from '../../lib/utils'
+import ImageLightbox from '../ui/ImageLightbox'
 
 interface MediaCarouselProps {
   urls: string[]
   alt: string
   compact?: boolean
+  postUrl?: string
 }
 
-export default function MediaCarousel({ urls, alt, compact = false }: MediaCarouselProps) {
+export default function MediaCarousel({ urls, alt, compact = false, postUrl }: MediaCarouselProps) {
   const [index, setIndex] = useState(0)
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const transforms = compact ? 'f_auto,q_auto,w_800' : 'f_auto,q_auto,w_1200'
+  const fullResUrls = urls.map((u) => cloudinaryUrl(u, 'f_auto,q_auto') ?? u)
   const maxH = compact ? 'max-h-52' : 'max-h-80'
   const touchStartX = useRef<number | null>(null)
 
@@ -17,12 +21,25 @@ export default function MediaCarousel({ urls, alt, compact = false }: MediaCarou
 
   if (urls.length === 1) {
     return (
-      <img
-        src={cloudinaryUrl(urls[0], transforms) ?? urls[0]}
-        alt={alt}
-        loading="lazy"
-        className={`mt-1.5 w-full rounded-lg object-contain ${maxH} bg-gray-50`}
-      />
+      <>
+        <img
+          src={cloudinaryUrl(urls[0], transforms) ?? urls[0]}
+          alt={alt}
+          loading="lazy"
+          onClick={() => setLightboxIndex(0)}
+          className={`mt-1.5 w-full rounded-lg object-contain ${maxH} bg-gray-50 cursor-zoom-in`}
+        />
+        {lightboxIndex !== null && (
+          <ImageLightbox
+            urls={fullResUrls}
+            index={lightboxIndex}
+            alt={alt}
+            onClose={() => setLightboxIndex(null)}
+            onChangeIndex={setLightboxIndex}
+            postUrl={postUrl}
+          />
+        )}
+      </>
     )
   }
 
@@ -48,6 +65,7 @@ export default function MediaCarousel({ urls, alt, compact = false }: MediaCarou
   }
 
   return (
+    <>
     <div
       className={`relative mt-1.5 w-full rounded-lg overflow-hidden bg-gray-50 ${maxH}`}
       onTouchStart={handleTouchStart}
@@ -57,7 +75,8 @@ export default function MediaCarousel({ urls, alt, compact = false }: MediaCarou
         src={cloudinaryUrl(urls[index], transforms) ?? urls[index]}
         alt={`${alt} (${index + 1} of ${urls.length})`}
         loading="lazy"
-        className={`w-full object-contain ${maxH}`}
+        onClick={() => setLightboxIndex(index)}
+        className={`w-full object-contain ${maxH} cursor-zoom-in`}
       />
 
       {/* Prev button */}
@@ -93,5 +112,16 @@ export default function MediaCarousel({ urls, alt, compact = false }: MediaCarou
         ))}
       </div>
     </div>
+    {lightboxIndex !== null && (
+      <ImageLightbox
+        urls={fullResUrls}
+        index={lightboxIndex}
+        alt={alt}
+        onClose={() => setLightboxIndex(null)}
+        onChangeIndex={setLightboxIndex}
+        postUrl={postUrl}
+      />
+    )}
+    </>
   )
 }
