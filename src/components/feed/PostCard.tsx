@@ -105,7 +105,7 @@ export default function PostCard({ post }: PostCardProps) {
               />
             </div>
             {post.content && (
-              <p className="text-xs text-gray-500 mt-1.5 leading-relaxed text-center whitespace-pre-wrap">{post.content}</p>
+              <p className="text-xs text-gray-500 mt-1.5 leading-relaxed text-center whitespace-pre-wrap line-clamp-3">{post.content}</p>
             )}
           </>
         )}
