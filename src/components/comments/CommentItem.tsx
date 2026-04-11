@@ -105,7 +105,7 @@ export default function CommentItem({ comment, postId, onReply }: CommentItemPro
               </div>
             </div>
           ) : (
-            <p className="text-xs text-gray-600 leading-relaxed">{comment.content}</p>
+            <p className="text-xs text-gray-600 leading-relaxed whitespace-pre-wrap">{comment.content}</p>
           )}
 
           {/* Reply button */}

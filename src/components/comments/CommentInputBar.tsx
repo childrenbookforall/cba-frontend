@@ -20,7 +20,7 @@ interface CommentInputBarProps {
 }
 
 export default function CommentInputBar({ postId, replyingTo, onCancelReply }: CommentInputBarProps) {
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
   const queryClient = useQueryClient()
   const toast = useToast()
   const triggerInstall = useInstallPromptStore((s) => s.trigger)
@@ -104,7 +104,7 @@ export default function CommentInputBar({ postId, replyingTo, onCancelReply }: C
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && e.shiftKey) {
       e.preventDefault()
       handleSubmit()
     }
@@ -127,7 +127,7 @@ export default function CommentInputBar({ postId, replyingTo, onCancelReply }: C
         </div>
       )}
 
-      <div className="relative flex items-center gap-2 px-3 py-2.5">
+      <div className="relative flex items-end gap-2 px-3 py-2.5">
         {/* Emoji picker popover */}
         {showPicker && emojiData && (
           <div ref={pickerRef} className="absolute bottom-full left-3 mb-1 z-50">
@@ -153,18 +153,23 @@ export default function CommentInputBar({ postId, replyingTo, onCancelReply }: C
           🙂
         </button>
 
-        <input
+        <textarea
           ref={inputRef}
-          type="text"
+          rows={1}
           placeholder={replyingTo ? `Reply to ${replyingTo.name}…` : 'Write a comment…'}
           onKeyDown={handleKeyDown}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          className="flex-1 text-xs border border-border rounded-full px-4 py-2 bg-surface focus:outline-none focus:border-primary transition"
+          onInput={(e) => {
+            const el = e.currentTarget
+            el.style.height = 'auto'
+            el.style.height = `${el.scrollHeight}px`
+          }}
+          className="flex-1 text-xs border border-border rounded-xl px-4 py-2 bg-surface focus:outline-none focus:border-primary transition resize-none overflow-hidden leading-relaxed"
         />
         {focused && !showPicker && (
           <span className="hidden sm:block text-[0.625rem] text-muted whitespace-nowrap flex-shrink-0">
-            Enter ↵ to send
+            Shift+Enter ↵ to send
           </span>
         )}
         <button

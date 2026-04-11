@@ -95,7 +95,7 @@ export default function ReplyItem({ reply, postId, onReply }: ReplyItemProps) {
           </div>
         ) : (
           <>
-            <p className="text-[0.625rem] text-gray-600 leading-relaxed">{reply.content}</p>
+            <p className="text-[0.625rem] text-gray-600 leading-relaxed whitespace-pre-wrap">{reply.content}</p>
             <button
               onClick={() => {
                 const name = reply.user
