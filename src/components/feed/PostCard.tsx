@@ -9,6 +9,10 @@ import { formatRelativeTime } from '../../lib/utils'
 import { useAuthStore } from '../../stores/authStore'
 import type { Post } from '../../types/api'
 
+function textAlign(content: string) {
+  return content.trim().split(/\s+/).length > 15 ? 'text-left' : 'text-center'
+}
+
 interface PostCardProps {
   post: Post
 }
@@ -91,7 +95,7 @@ export default function PostCard({ post }: PostCardProps) {
         )}
 
         {post.type === 'link' && post.content && (
-          <p className="text-xs text-gray-500 mt-1.5 leading-relaxed line-clamp-3 whitespace-pre-wrap text-center">{post.content}</p>
+          <p className={`text-xs text-gray-500 mt-1.5 leading-relaxed line-clamp-3 whitespace-pre-wrap ${textAlign(post.content)}`}>{post.content}</p>
         )}
 
         {post.type === 'photo' && (post.mediaUrls?.length || post.mediaUrl) && (
@@ -105,7 +109,7 @@ export default function PostCard({ post }: PostCardProps) {
               />
             </div>
             {post.content && (
-              <p className="text-xs text-gray-500 mt-1.5 leading-relaxed text-center whitespace-pre-wrap line-clamp-3">{post.content}</p>
+              <p className={`text-xs text-gray-500 mt-1 leading-relaxed line-clamp-3 whitespace-pre-wrap ${textAlign(post.content)}`}>{post.content}</p>
             )}
           </>
         )}

@@ -17,6 +17,10 @@ import { formatRelativeTime } from '../lib/utils'
 import { useAuthStore } from '../stores/authStore'
 import NavLinks from '../components/layout/NavLinks'
 
+function textAlign(content: string) {
+  return content.trim().split(/\s+/).length > 15 ? 'text-left' : 'text-center'
+}
+
 interface ReplyingTo {
   id: string
   name: string
@@ -140,7 +144,7 @@ export default function PostDetailPage() {
           )}
 
           {post.type === 'link' && post.content && (
-            <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap mt-2 text-center">{post.content}</p>
+            <p className={`text-sm text-gray-600 leading-relaxed whitespace-pre-wrap mt-2 ${textAlign(post.content)}`}>{post.content}</p>
           )}
 
           {post.type === 'photo' && (post.mediaUrls?.length || post.mediaUrl) && (
@@ -150,7 +154,7 @@ export default function PostDetailPage() {
                 alt={post.title}
               />
               {post.content && (
-                <p className="text-xs text-muted italic text-center mt-2 leading-relaxed px-4 whitespace-pre-wrap">{post.content}</p>
+                <p className={`text-sm text-gray-600 leading-relaxed whitespace-pre-wrap ${textAlign(post.content)}`}>{post.content}</p>
               )}
             </>
           )}
