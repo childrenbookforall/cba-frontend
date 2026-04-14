@@ -116,7 +116,7 @@ export default function PostMenu({ post }: PostMenuProps) {
                 value={flagReason}
                 onChange={(e) => setFlagReason(e.target.value)}
                 placeholder="What's the issue?"
-                className="w-full text-xs border border-border rounded-lg px-2 py-1.5 mb-2 focus:outline-none focus:border-primary"
+                className="w-full text-xs border border-border rounded-lg px-2 py-1.5 mb-2 focus:outline-none focus:border-accent"
               />
               <div className="flex gap-1.5">
                 <button

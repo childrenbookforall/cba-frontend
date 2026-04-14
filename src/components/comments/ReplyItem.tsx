@@ -75,13 +75,13 @@ export default function ReplyItem({ reply, postId, onReply }: ReplyItemProps) {
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
               rows={2}
-              className="w-full text-xs border border-border rounded-lg px-2 py-1.5 resize-none focus:outline-none focus:border-primary bg-white"
+              className="w-full text-xs border border-border rounded-lg px-2 py-1.5 resize-none focus:outline-none focus:border-accent bg-white"
             />
             <div className="flex gap-1.5 mt-1">
               <button
                 onClick={() => updateMutation.mutate()}
                 disabled={updateMutation.isPending || !editContent.trim()}
-                className="text-[0.625rem] font-semibold text-white bg-primary px-2.5 py-1 rounded-lg disabled:opacity-60"
+                className="text-[0.625rem] font-semibold text-white bg-accent px-2.5 py-1 rounded-lg disabled:opacity-60"
               >
                 Save
               </button>

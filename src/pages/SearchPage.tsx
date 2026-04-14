@@ -83,7 +83,7 @@ export default function SearchPage() {
           value={query}
           onChange={(e) => handleChange(e.target.value)}
           placeholder="Search posts…"
-          className="flex-1 text-sm bg-surface border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
+          className="flex-1 text-sm bg-surface border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition"
         />
 
         <NavLinks />

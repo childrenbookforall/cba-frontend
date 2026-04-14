@@ -45,7 +45,7 @@ export default function FeedPage() {
     <div className="min-h-svh bg-surface pb-20 sm:pb-0">
       <title>Community - CBA</title>
       {/* Top nav */}
-      <div className="bg-card border-b border-border px-4 py-2.5 flex items-center justify-between sticky top-0 z-10">
+      <div className="bg-card border-b border-border border-t-[3px] border-t-accent px-4 py-2.5 flex items-center justify-between sticky top-0 z-10">
         <Link to="/feed"><img src={logo} alt="Children's Book for All" className="h-8 object-contain" /></Link>
         <NavLinks />
       </div>
@@ -95,7 +95,7 @@ export default function FeedPage() {
         {!isLoading && posts.length === 0 && (
           <p className="text-center text-xs text-muted py-12">
             No posts yet.{' '}
-            <Link to="/posts/new" className="text-accent underline">
+            <Link to="/posts/new" className="text-coral underline">
               Be the first to share something.
             </Link>
           </p>
@@ -126,7 +126,7 @@ export default function FeedPage() {
       {/* FAB */}
       <Link
         to="/posts/new"
-        className="fixed bottom-20 right-4 w-11 h-11 bg-primary text-white rounded-full flex items-center justify-center shadow-lg z-20"
+        className="fixed bottom-20 right-4 w-11 h-11 bg-accent text-white rounded-full flex items-center justify-center shadow-lg z-20 hover:scale-105 active:scale-95 transition-transform"
         aria-label="New post"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

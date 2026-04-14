@@ -115,7 +115,7 @@ export default function AdminUsersPage() {
           placeholder="Search by name or email…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 text-xs border border-border rounded-full px-4 py-2 bg-card focus:outline-none focus:border-primary"
+          className="flex-1 text-xs border border-border rounded-full px-4 py-2 bg-card focus:outline-none focus:border-accent"
         />
         <button
           onClick={() => setShowCreate((v) => !v)}
@@ -138,13 +138,13 @@ export default function AdminUsersPage() {
               placeholder="First name"
               value={createForm.firstName}
               onChange={(e) => setCreateForm((f) => ({ ...f, firstName: e.target.value }))}
-              className="text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-primary"
+              className="text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-accent"
             />
             <input
               placeholder="Last name (optional)"
               value={createForm.lastName}
               onChange={(e) => setCreateForm((f) => ({ ...f, lastName: e.target.value }))}
-              className="text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-primary"
+              className="text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-accent"
             />
           </div>
           <input
@@ -153,7 +153,7 @@ export default function AdminUsersPage() {
             placeholder="Email address"
             value={createForm.email}
             onChange={(e) => setCreateForm((f) => ({ ...f, email: e.target.value }))}
-            className="text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-primary"
+            className="text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-accent"
           />
           <div className="flex gap-2">
             <button

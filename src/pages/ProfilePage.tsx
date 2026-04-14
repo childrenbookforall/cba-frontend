@@ -156,13 +156,13 @@ export default function ProfilePage() {
               onChange={(e) => setBioValue(e.target.value)}
               rows={4}
               placeholder="Tell the community a little about yourself…"
-              className="w-full text-xs border border-border rounded-xl px-3 py-2 resize-none focus:outline-none focus:border-primary bg-surface"
+              className="w-full text-xs border border-border rounded-xl px-3 py-2 resize-none focus:outline-none focus:border-accent bg-surface"
             />
             <div className="flex gap-1.5 mt-2">
               <button
                 onClick={() => bioMutation.mutate(bioValue)}
                 disabled={bioMutation.isPending}
-                className="text-[0.625rem] font-semibold text-white bg-primary px-4 py-1.5 rounded-lg disabled:opacity-60"
+                className="text-[0.625rem] font-semibold text-white bg-accent px-4 py-1.5 rounded-lg disabled:opacity-60"
               >
                 {bioMutation.isPending ? 'Saving…' : 'Save'}
               </button>

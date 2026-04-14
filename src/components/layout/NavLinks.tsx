@@ -8,7 +8,7 @@ export default function NavLinks() {
 
   function cls(path: string) {
     return `transition ${
-      pathname.startsWith(path) ? 'text-primary' : 'text-muted hover:text-gray-700'
+      pathname.startsWith(path) ? 'text-accent' : 'text-muted hover:text-gray-700'
     }`
   }
 

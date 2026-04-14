@@ -12,7 +12,7 @@ export default function BottomNav() {
 
   function navCls(path: string) {
     return pathname.startsWith(path)
-      ? 'text-primary'
+      ? 'text-accent'
       : 'text-muted'
   }
 

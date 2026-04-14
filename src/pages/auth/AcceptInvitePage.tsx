@@ -126,7 +126,7 @@ export default function AcceptInvitePage() {
             <input
               type="text"
               autoComplete="given-name"
-              className={`w-full px-3 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 ${errors.firstName ? 'border-danger bg-red-50' : 'border-border bg-white'}`}
+              className={`w-full px-3 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 ${errors.firstName ? 'border-danger bg-red-50' : 'border-border bg-white'}`}
               {...register('firstName')}
             />
             {errors.firstName && (
@@ -140,7 +140,7 @@ export default function AcceptInvitePage() {
             <input
               type="text"
               autoComplete="family-name"
-              className="w-full px-3 py-2.5 rounded-xl border border-border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+              className="w-full px-3 py-2.5 rounded-xl border border-border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-accent/40"
               {...register('lastName')}
             />
           </div>
@@ -185,7 +185,7 @@ export default function AcceptInvitePage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-3 bg-primary text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 transition"
+            className="w-full py-3 bg-accent text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 transition"
           >
             {isSubmitting && <Spinner size="sm" />}
             Join Community

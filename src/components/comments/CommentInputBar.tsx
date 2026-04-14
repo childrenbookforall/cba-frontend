@@ -165,7 +165,7 @@ export default function CommentInputBar({ postId, replyingTo, onCancelReply }: C
             el.style.height = 'auto'
             el.style.height = `${el.scrollHeight}px`
           }}
-          className="flex-1 text-xs border border-border rounded-xl px-4 py-2 bg-surface focus:outline-none focus:border-primary transition resize-none overflow-hidden leading-relaxed"
+          className="flex-1 text-xs border border-border rounded-xl px-4 py-2 bg-surface focus:outline-none focus:border-accent transition resize-none overflow-hidden leading-relaxed"
         />
         {focused && !showPicker && (
           <span className="hidden sm:block text-[0.625rem] text-muted whitespace-nowrap flex-shrink-0">
@@ -175,7 +175,7 @@ export default function CommentInputBar({ postId, replyingTo, onCancelReply }: C
         <button
           onClick={handleSubmit}
           disabled={mutation.isPending}
-          className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm disabled:opacity-60 flex-shrink-0"
+          className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm disabled:opacity-60 flex-shrink-0"
           aria-label="Send"
         >
           ↑

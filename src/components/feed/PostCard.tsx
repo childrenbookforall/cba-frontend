@@ -26,7 +26,7 @@ export default function PostCard({ post }: PostCardProps) {
   return (
     <Link
       to={`/posts/${post.id}`}
-      className="block bg-card rounded-xl shadow-sm mx-2 mb-2"
+      className="block bg-card rounded-xl shadow-sm mx-2 mb-2 hover:shadow-md transition-shadow border border-transparent hover:border-border"
     >
       {/* Header */}
       <div className="flex items-center gap-2.5 px-3 pt-3 pb-2">

@@ -273,7 +273,7 @@ export default function CreatePostPage() {
               type="button"
               onClick={() => handleTypeChange(t)}
               className={`flex-1 py-2 rounded-xl text-xs font-semibold capitalize transition ${
-                type === t ? 'bg-primary text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                type === t ? 'bg-accent text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
               }`}
             >
               {t}
@@ -294,7 +294,7 @@ export default function CreatePostPage() {
             <select
               {...register('groupId')}
               disabled={groupsLoading || groupsError || groups?.length === 0}
-              className={`w-full px-3 py-2.5 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60 ${
+              className={`w-full px-3 py-2.5 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 disabled:opacity-60 ${
                 errors.groupId ? 'border-danger' : 'border-border'
               }`}
             >
@@ -333,7 +333,7 @@ export default function CreatePostPage() {
           <input
             {...register('title')}
             placeholder="What's on your mind?"
-            className={`w-full px-3 py-2.5 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+            className={`w-full px-3 py-2.5 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 ${
               errors.title ? 'border-danger bg-red-50' : 'border-border'
             }`}
           />
@@ -371,7 +371,7 @@ export default function CreatePostPage() {
                 }}
                 rows={5}
                 placeholder="Share more details…"
-                className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
+                className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
               />
               <button
                 type="button"
@@ -395,7 +395,7 @@ export default function CreatePostPage() {
                 {...register('linkUrl')}
                 type="url"
                 placeholder="https://"
-                className={`w-full px-3 py-2.5 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+                className={`w-full px-3 py-2.5 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 ${
                   errors.linkUrl ? 'border-danger bg-red-50' : 'border-border'
                 }`}
               />
@@ -428,7 +428,7 @@ export default function CreatePostPage() {
                   }}
                   rows={3}
                   placeholder="Add a description…"
-                  className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
+                  className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
                 />
                 <button
                   type="button"
@@ -517,7 +517,7 @@ export default function CreatePostPage() {
                   }}
                   rows={3}
                   placeholder="Add a caption…"
-                  className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
+                  className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
                 />
                 <button
                   type="button"
@@ -541,7 +541,7 @@ export default function CreatePostPage() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full py-3 bg-primary text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 transition"
+          className="w-full py-3 bg-accent text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 transition"
         >
           {isSubmitting && <Spinner size="sm" />}
           Post

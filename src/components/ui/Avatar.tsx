@@ -1,6 +1,25 @@
 import { useState, useEffect } from 'react'
 import { getInitials, cloudinaryUrl } from '../../lib/utils'
 
+const AVATAR_PALETTES = [
+  'bg-purple-100 text-purple-700',
+  'bg-teal-100 text-teal-700',
+  'bg-rose-100 text-rose-700',
+  'bg-amber-100 text-amber-700',
+  'bg-indigo-100 text-indigo-700',
+  'bg-green-100 text-green-700',
+  'bg-pink-100 text-pink-700',
+  'bg-sky-100 text-sky-700',
+  'bg-orange-100 text-orange-700',
+  'bg-cyan-100 text-cyan-700',
+]
+
+function pickAvatarColor(firstName: string, lastName?: string | null) {
+  const key = `${firstName}${lastName ?? ''}`
+  const hash = [...key].reduce((acc, c) => acc + c.charCodeAt(0), 0)
+  return AVATAR_PALETTES[hash % AVATAR_PALETTES.length]
+}
+
 interface AvatarProps {
   firstName: string
   lastName?: string | null
@@ -43,7 +62,7 @@ export default function Avatar({ firstName, lastName, avatarUrl, size = 'md' }: 
   }
 
   return (
-    <div className={`${cls} bg-gray-200 text-gray-600`}>
+    <div className={`${cls} ${pickAvatarColor(firstName, lastName)}`}>
       {getInitials(firstName, lastName)}
     </div>
   )

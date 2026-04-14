@@ -233,7 +233,7 @@ export default function AdminGroupsPage() {
             placeholder="Group name"
             value={createForm.name}
             onChange={(e) => handleNameChange(e.target.value)}
-            className="text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-primary"
+            className="text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-accent"
           />
           <div>
             <input
@@ -242,7 +242,7 @@ export default function AdminGroupsPage() {
               value={createForm.slug}
               onChange={(e) => setCreateForm((f) => ({ ...f, slug: e.target.value }))}
               pattern="[a-z0-9-]+"
-              className="w-full text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-primary"
+              className="w-full text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-accent"
             />
             <p className="text-[0.625rem] text-muted mt-1">Lowercase letters, numbers, and hyphens only</p>
           </div>
@@ -251,7 +251,7 @@ export default function AdminGroupsPage() {
             value={createForm.description}
             onChange={(e) => setCreateForm((f) => ({ ...f, description: e.target.value }))}
             rows={2}
-            className="text-xs border border-border rounded-lg px-3 py-2 resize-none focus:outline-none focus:border-primary"
+            className="text-xs border border-border rounded-lg px-3 py-2 resize-none focus:outline-none focus:border-accent"
           />
           <button
             type="submit"
@@ -337,7 +337,7 @@ export default function AdminGroupsPage() {
                             value={userSearch}
                             onChange={(e) => { setUserSearch(e.target.value); setShowSuggestions(true) }}
                             onFocus={() => setShowSuggestions(true)}
-                            className="w-full text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-primary bg-card"
+                            className="w-full text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-accent bg-card"
                           />
                         )}
                         {showSuggestions && !addUserId && userSearch.trim() && (() => {
@@ -407,7 +407,7 @@ export default function AdminGroupsPage() {
                           loadMembers(group.id, q)
                         }, 300)
                       }}
-                      className="w-full text-xs border border-border rounded-lg px-3 py-2 bg-card focus:outline-none focus:border-primary mb-3"
+                      className="w-full text-xs border border-border rounded-lg px-3 py-2 bg-card focus:outline-none focus:border-accent mb-3"
                     />
                     {membersLoading ? (
                       <div className="flex justify-center py-4">

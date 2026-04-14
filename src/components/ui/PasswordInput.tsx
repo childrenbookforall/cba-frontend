@@ -12,7 +12,7 @@ export default function PasswordInput({ hasError, className, ...props }: Props) 
       <input
         {...props}
         type={visible ? 'text' : 'password'}
-        className={`w-full px-3 py-2.5 pr-10 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition ${
+        className={`w-full px-3 py-2.5 pr-10 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition ${
           hasError ? 'border-danger bg-red-50' : 'border-border'
         } ${className ?? ''}`}
       />

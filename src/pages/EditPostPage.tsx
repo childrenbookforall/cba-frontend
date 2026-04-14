@@ -87,7 +87,7 @@ export default function EditPostPage() {
           </label>
           <input
             {...register('title')}
-            className={`w-full px-3 py-2.5 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+            className={`w-full px-3 py-2.5 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 ${
               errors.title ? 'border-danger bg-red-50' : 'border-border'
             }`}
           />
@@ -102,7 +102,7 @@ export default function EditPostPage() {
             <textarea
               {...register('content')}
               rows={6}
-              className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
+              className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
             />
           </div>
         )}
@@ -115,7 +115,7 @@ export default function EditPostPage() {
             <textarea
               {...register('content')}
               rows={4}
-              className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
+              className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
             />
           </div>
         )}
@@ -129,7 +129,7 @@ export default function EditPostPage() {
               <input
                 {...register('linkUrl')}
                 type="url"
-                className={`w-full px-3 py-2.5 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+                className={`w-full px-3 py-2.5 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 ${
                   errors.linkUrl ? 'border-danger bg-red-50' : 'border-border'
                 }`}
               />
@@ -142,7 +142,7 @@ export default function EditPostPage() {
               <textarea
                 {...register('content')}
                 rows={4}
-                className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
+                className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
               />
             </div>
           </>
@@ -165,7 +165,7 @@ export default function EditPostPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 py-3 bg-primary text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60"
+            className="flex-1 py-3 bg-accent text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60"
           >
             {isSubmitting && <Spinner size="sm" />}
             Save changes

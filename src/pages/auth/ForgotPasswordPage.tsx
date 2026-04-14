@@ -64,7 +64,7 @@ export default function ForgotPasswordPage() {
                 autoComplete="email"
                 placeholder="your@email.com"
                 {...register('email')}
-                className={`w-full px-3 py-2.5 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition ${
+                className={`w-full px-3 py-2.5 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition ${
                   errors.email ? 'border-danger bg-red-50' : 'border-border'
                 }`}
               />
@@ -76,7 +76,7 @@ export default function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3 bg-primary text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 transition"
+              className="w-full py-3 bg-accent text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 transition"
             >
               {isSubmitting && <Spinner size="sm" />}
               Send Reset Link

@@ -86,13 +86,13 @@ export default function CommentItem({ comment, postId, onReply }: CommentItemPro
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
                 rows={3}
-                className="w-full text-xs border border-border rounded-xl px-3 py-2 resize-none focus:outline-none focus:border-primary bg-surface"
+                className="w-full text-xs border border-border rounded-xl px-3 py-2 resize-none focus:outline-none focus:border-accent bg-surface"
               />
               <div className="flex gap-1.5 mt-1.5">
                 <button
                   onClick={() => updateMutation.mutate()}
                   disabled={updateMutation.isPending || !editContent.trim()}
-                  className="text-[0.625rem] font-semibold text-white bg-primary px-3 py-1.5 rounded-lg disabled:opacity-60"
+                  className="text-[0.625rem] font-semibold text-white bg-accent px-3 py-1.5 rounded-lg disabled:opacity-60"
                 >
                   Save
                 </button>
