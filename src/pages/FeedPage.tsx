@@ -93,12 +93,14 @@ export default function FeedPage() {
         )}
 
         {!isLoading && posts.length === 0 && (
-          <p className="text-center text-xs text-muted py-12">
-            No posts yet.{' '}
-            <Link to="/posts/new" className="text-coral underline">
-              Be the first to share something.
+          <div className="text-center py-16 px-6">
+            <div className="text-5xl mb-3">💬</div>
+            <p className="text-sm font-semibold text-gray-700 mb-1">Nothing here yet!</p>
+            <p className="text-xs text-muted mb-4">Be the first to share a story with the community.</p>
+            <Link to="/posts/new" className="inline-block px-4 py-2 bg-accent text-white rounded-full text-xs font-semibold hover:opacity-90 transition">
+              Share something
             </Link>
-          </p>
+          </div>
         )}
 
         {pinnedPosts.map((post) => (
@@ -126,7 +128,7 @@ export default function FeedPage() {
       {/* FAB */}
       <Link
         to="/posts/new"
-        className="fixed bottom-20 right-4 w-11 h-11 bg-accent text-white rounded-full flex items-center justify-center shadow-lg z-20 hover:scale-105 active:scale-95 transition-transform"
+        className="fixed bottom-20 right-4 w-12 h-12 bg-gradient-to-br from-[#5c8c7a] to-[#7ab5a0] text-white rounded-full flex items-center justify-center shadow-lg shadow-[#5c8c7a]/40 z-20 hover:scale-110 active:scale-95 transition-transform"
         aria-label="New post"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

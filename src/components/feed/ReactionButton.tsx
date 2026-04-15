@@ -59,6 +59,7 @@ export default function ReactionButton({ post, type }: ReactionButtonProps) {
   const count = type === 'with_you' ? post.withYouCount : type === 'helped_me' ? post.helpedMeCount : post.hugCount
 
   const [showPopover, setShowPopover] = useState(false)
+  const [popKey, setPopKey] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
 
   const { data: reactorsData, isLoading: reactorsLoading } = useQuery({
@@ -148,12 +149,12 @@ export default function ReactionButton({ post, type }: ReactionButtonProps) {
       } ${mutation.isPending ? 'opacity-60' : ''}`}>
         <button
           type="button"
-          onClick={() => mutation.mutate()}
+          onClick={() => { if (!isActive) setPopKey((k) => k + 1); mutation.mutate() }}
           disabled={mutation.isPending}
           title={label}
           className={`flex items-center ${count > 0 ? 'pl-2 pr-1' : 'px-2'} py-1 rounded-full transition ${!isActive ? 'hover:bg-gray-100' : ''}`}
         >
-          <span>{emoji}</span>
+          <span key={popKey} className={popKey > 0 ? 'animate-reaction-pop inline-block' : 'inline-block'}>{emoji}</span>
         </button>
         {count > 0 && (
           <>
