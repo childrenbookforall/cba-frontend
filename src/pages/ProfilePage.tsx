@@ -83,9 +83,9 @@ export default function ProfilePage() {
       <div className="max-w-2xl mx-auto w-full">
 
       {/* Profile card */}
-      <div className="bg-card mt-2 px-4 pt-6 pb-5">
+      <div className="bg-card mt-2 pb-5">
         {/* Avatar with upload overlay */}
-        <div className="flex flex-col items-center mb-5">
+        <div className="bg-gradient-to-br from-accent/20 to-transparent pt-8 pb-4 px-4 flex flex-col items-center mb-1">
           <div
             {...getRootProps()}
             role="button"
@@ -115,7 +115,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Name + role */}
-        <div className="text-center mb-4">
+        <div className="text-center mb-4 px-4">
           <h2 className="text-base font-bold text-gray-900">
             {user.firstName} {user.lastName}
           </h2>
@@ -128,7 +128,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Email */}
-        <div className="border-t border-border pt-4">
+        <div className="border-t border-border pt-4 px-4">
           <p className="text-[0.625rem] font-semibold text-muted uppercase tracking-wide mb-1">Email</p>
           <p className="text-xs text-gray-700">{user.email}</p>
         </div>

@@ -31,8 +31,9 @@ const refreshChannel = typeof BroadcastChannel !== 'undefined'
   : null
 
 refreshChannel?.addEventListener('message', ({ data }) => {
+  if (!data || typeof data !== 'object' || typeof data.type !== 'string') return
   const { user, setAuth, clearAuth } = useAuthStore.getState()
-  if (data.type === 'done' && user) {
+  if (data.type === 'done' && typeof data.token === 'string' && user) {
     setAuth(data.token, user)
     // Resolve any queued requests in this tab that were waiting
     onTokenRefreshed(data.token)

@@ -160,7 +160,7 @@ export default function PostDetailPage() {
           )}
 
           {/* Reactions */}
-          <div className="flex items-center gap-3 mt-3 pt-3 border-t border-gray-50">
+          <div className="flex items-center gap-3 mt-3 pt-3 border-t border-border">
             <ReactionButton post={post} type="hug" />
             <ReactionButton post={post} type="with_you" />
             <ReactionButton post={post} type="helped_me" />

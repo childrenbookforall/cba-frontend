@@ -11,7 +11,7 @@ export default function Toaster() {
         <div
           key={t.id}
           onClick={() => dismiss(t.id)}
-          className="pointer-events-auto bg-gray-800 px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold text-white max-w-sm w-full flex items-center gap-2.5 cursor-pointer"
+          className="animate-toast-in pointer-events-auto bg-gray-800 px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold text-white max-w-sm w-full flex items-center gap-2.5 cursor-pointer"
         >
           {t.type === 'error' ? (
             <span className="text-danger flex-shrink-0">✕</span>

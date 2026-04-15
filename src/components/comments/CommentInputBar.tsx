@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState, lazy, Suspense } from 'react'
+import { CornerDownRight, SendHorizonal } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createComment } from '../../api/comments'
 
@@ -114,8 +115,9 @@ export default function CommentInputBar({ postId, replyingTo, onCancelReply }: C
     <div className="border-t border-border bg-card pb-[env(safe-area-inset-bottom)]">
       {/* Replying-to banner */}
       {replyingTo && (
-        <div className="flex items-center justify-between px-3 py-1.5 bg-blue-50 border-b border-blue-100">
-          <span className="text-[0.625rem] text-accent font-medium">
+        <div className="flex items-center justify-between px-3 py-1.5 bg-surface border-b border-border">
+          <span className="flex items-center gap-1 text-[0.625rem] text-accent font-medium">
+            <CornerDownRight size={14} strokeWidth={2.5} className="text-accent flex-shrink-0" />
             Replying to {replyingTo.name}
           </span>
           <button
@@ -178,7 +180,7 @@ export default function CommentInputBar({ postId, replyingTo, onCancelReply }: C
           className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm disabled:opacity-60 flex-shrink-0"
           aria-label="Send"
         >
-          ↑
+          <SendHorizonal size={16} strokeWidth={2} />
         </button>
       </div>
     </div>

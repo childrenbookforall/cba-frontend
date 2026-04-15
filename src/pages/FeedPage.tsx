@@ -60,7 +60,7 @@ export default function FeedPage() {
       )}
 
       {/* Sort bar */}
-      <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-100">
+      <div className="flex items-center justify-between px-4 py-2 bg-surface border-b border-border">
         {(() => {
           const activeGroup = groupId
             ? groups?.find((g) => g.id === groupId)
@@ -103,12 +103,12 @@ export default function FeedPage() {
           </div>
         )}
 
-        {pinnedPosts.map((post) => (
-          <PostCard key={post.id} post={post} />
+        {pinnedPosts.map((post, i) => (
+          <PostCard key={post.id} post={post} index={i} />
         ))}
 
-        {posts.map((post) => (
-          <PostCard key={post.id} post={post} />
+        {posts.map((post, i) => (
+          <PostCard key={post.id} post={post} index={pinnedPosts.length + i} />
         ))}
 
         {/* Load more */}

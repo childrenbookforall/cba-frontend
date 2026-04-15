@@ -79,6 +79,8 @@ export default function CreatePostPage() {
     formState: { errors, isSubmitting },
   } = useForm<Fields>({ resolver: zodResolver(buildSchema(type)) })
 
+  const { ref: contentRhfRef, ...contentRegisterProps } = register('content')
+
   const titleValue = watch('title') ?? ''
   const contentValue = watch('content') ?? ''
   const linkUrlValue = watch('linkUrl') ?? ''
@@ -364,9 +366,9 @@ export default function CreatePostPage() {
                 </div>
               )}
               <textarea
-                {...register('content')}
+                {...contentRegisterProps}
                 ref={(el) => {
-                  register('content').ref(el)
+                  contentRhfRef(el)
                   contentTextareaRef.current = el
                 }}
                 rows={5}

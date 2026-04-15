@@ -15,9 +15,10 @@ function textAlign(content: string) {
 
 interface PostCardProps {
   post: Post
+  index?: number
 }
 
-export default function PostCard({ post }: PostCardProps) {
+export default function PostCard({ post, index = 0 }: PostCardProps) {
   const author = post.user
   const isAdmin = useAuthStore((s) => s.user?.role === 'admin')
   const showFlagDot = post.isFlagged && (isAdmin || post.flaggedByMe)
@@ -26,13 +27,14 @@ export default function PostCard({ post }: PostCardProps) {
   return (
     <Link
       to={`/posts/${post.id}`}
-      className="block bg-card rounded-xl shadow-sm mx-2 mb-2 hover:shadow-md transition-shadow border border-transparent hover:border-border"
+      className="animate-fade-up block bg-card rounded-xl shadow-sm shadow-black/5 mx-2 mb-2 hover:shadow-md hover:shadow-accent/10 hover:-translate-y-0.5 transition-all border border-transparent hover:border-border"
+      style={{ animationDelay: `${Math.min(index * 50, 250)}ms` }}
     >
       {/* Header */}
       <div className="flex items-center gap-2.5 px-3 pt-3 pb-2">
         <div
           onClick={(e) => { e.preventDefault(); if (author) navigate(`/profile/${author.id}`) }}
-          className={author ? 'cursor-pointer' : ''}
+          className={author ? 'cursor-pointer rounded-full hover:ring-2 hover:ring-accent/40 transition' : ''}
         >
           {author ? (
             <Avatar
@@ -117,16 +119,19 @@ export default function PostCard({ post }: PostCardProps) {
 
       {/* Actions */}
       <div
-        onClick={(e) => e.preventDefault()}
-        className="flex items-center gap-3 px-3 py-2 border-t border-gray-50"
+        onClick={(e) => {
+          e.preventDefault()
+          if (e.target === e.currentTarget) navigate(`/posts/${post.id}`)
+        }}
+        className="flex items-center gap-3 px-3 py-2 border-t border-border"
       >
         <ReactionButton post={post} type="hug" />
         <ReactionButton post={post} type="with_you" />
         <ReactionButton post={post} type="helped_me" />
         <button
           type="button"
-          onClick={(e) => { e.preventDefault(); navigate(`/posts/${post.id}#comments`) }}
-          className="flex items-center gap-1 text-xs text-muted cursor-pointer"
+          onClick={() => navigate(`/posts/${post.id}#comments`)}
+          className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-surface text-muted hover:bg-gray-100 hover:text-primary transition"
         >
           💬 {post._count.comments}
         </button>
