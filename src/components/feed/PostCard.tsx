@@ -82,7 +82,7 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
         </h3>
 
         {post.type === 'text' && post.content && (
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed line-clamp-3 whitespace-pre-wrap">
+          <p className="text-xs text-gray-500 dark:text-gray-300 mt-1 leading-relaxed line-clamp-3 whitespace-pre-wrap">
             {post.content}
           </p>
         )}
@@ -97,7 +97,7 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
         )}
 
         {post.type === 'link' && post.content && (
-          <p className={`text-xs text-gray-500 mt-1.5 leading-relaxed line-clamp-3 whitespace-pre-wrap ${textAlign(post.content)}`}>{post.content}</p>
+          <p className={`text-xs text-gray-500 dark:text-gray-300 mt-1.5 leading-relaxed line-clamp-3 whitespace-pre-wrap ${textAlign(post.content)}`}>{post.content}</p>
         )}
 
         {post.type === 'photo' && (post.mediaUrls?.length || post.mediaUrl) && (
@@ -111,7 +111,7 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
               />
             </div>
             {post.content && (
-              <p className={`text-xs text-gray-500 mt-1 leading-relaxed line-clamp-3 whitespace-pre-wrap ${textAlign(post.content)}`}>{post.content}</p>
+              <p className={`text-xs text-gray-500 dark:text-gray-300 mt-1 leading-relaxed line-clamp-3 whitespace-pre-wrap ${textAlign(post.content)}`}>{post.content}</p>
             )}
           </>
         )}
