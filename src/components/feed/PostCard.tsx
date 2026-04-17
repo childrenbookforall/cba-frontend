@@ -44,7 +44,7 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
               size="md"
             />
           ) : (
-            <div className="w-8 h-8 rounded-full bg-gray-100 flex-shrink-0" />
+            <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-[#2a2a2a] flex-shrink-0" />
           )}
         </div>
 
@@ -52,7 +52,7 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
           <div className="flex items-center gap-1.5 flex-wrap">
             <span
               onClick={(e) => { e.preventDefault(); if (author) navigate(`/profile/${author.id}`) }}
-              className={`text-xs font-semibold text-gray-900 truncate${author ? ' cursor-pointer hover:underline' : ''}`}
+              className={`text-xs font-semibold text-gray-900 dark:text-gray-100 truncate${author ? ' cursor-pointer hover:underline' : ''}`}
             >
               {author ? `${author.firstName}${author.lastName ? ` ${author.lastName}` : ''}` : 'Deleted user'}
             </span>
@@ -77,12 +77,12 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
 
       {/* Body */}
       <div className="px-3 pb-2">
-        <h3 className="text-sm font-semibold text-gray-900 leading-snug">
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 leading-snug">
           {post.title}
         </h3>
 
         {post.type === 'text' && post.content && (
-          <p className="text-xs text-gray-500 mt-1 leading-relaxed line-clamp-3 whitespace-pre-wrap">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed line-clamp-3 whitespace-pre-wrap">
             {post.content}
           </p>
         )}
@@ -131,7 +131,7 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
         <button
           type="button"
           onClick={() => navigate(`/posts/${post.id}#comments`)}
-          className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-surface text-muted hover:bg-gray-100 hover:text-primary transition"
+          className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-surface text-muted hover:bg-gray-100 dark:hover:bg-[#2a2a2a] hover:text-primary transition"
         >
           💬 {post._count.comments}
         </button>

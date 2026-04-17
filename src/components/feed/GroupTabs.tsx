@@ -14,7 +14,7 @@ export default function GroupTabs({ groups, activeGroupId, onChange }: GroupTabs
         className={`whitespace-nowrap px-3 py-1 rounded-full text-xs font-semibold transition ${
           activeGroupId === null
             ? 'bg-accent text-white'
-            : 'bg-surface text-gray-500 hover:bg-gray-100'
+            : 'bg-surface text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#2a2a2a]'
         }`}
       >
         All Groups
@@ -26,7 +26,7 @@ export default function GroupTabs({ groups, activeGroupId, onChange }: GroupTabs
           className={`whitespace-nowrap px-3 py-1 rounded-full text-xs font-semibold transition ${
             activeGroupId === g.id
               ? 'bg-accent text-white'
-              : 'bg-surface text-gray-500 hover:bg-gray-100'
+              : 'bg-surface text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#2a2a2a]'
           }`}
         >
           {g.name}

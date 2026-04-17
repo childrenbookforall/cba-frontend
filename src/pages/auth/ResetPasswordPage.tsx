@@ -7,7 +7,7 @@ import { validateResetToken, resetPassword } from '../../api/auth'
 import { getApiError } from '../../lib/utils'
 import Spinner from '../../components/ui/Spinner'
 import PasswordInput from '../../components/ui/PasswordInput'
-import logoWithName from '../../assets/logo-with-name.png'
+import LogoWithName from '../../components/ui/LogoWithName'
 
 const passwordSchema = z
   .string()
@@ -73,13 +73,13 @@ export default function ResetPasswordPage() {
         <title>Reset Password - CBA</title>
         <div className="flex-1 sm:flex-none w-full sm:max-w-sm bg-card sm:rounded-2xl sm:shadow-sm p-8 flex flex-col justify-center text-center">
           <div className="text-center mb-6">
-            <img src={logoWithName} alt="Children's Book for All" className="h-16 mx-auto object-contain" />
+            <LogoWithName className="mx-auto" />
           </div>
-          <h1 className="text-base font-bold text-gray-900 mb-2">Link unavailable</h1>
+          <h1 className="text-base font-bold text-gray-900 dark:text-gray-100 mb-2">Link unavailable</h1>
           <p className="text-xs text-muted leading-relaxed mb-6">{tokenError}</p>
           <Link
             to="/forgot-password"
-            className="block w-full py-3 bg-primary text-white text-sm font-bold rounded-xl text-center"
+            className="block w-full py-3 bg-primary text-white dark:text-surface text-sm font-bold rounded-xl text-center"
           >
             Request a new link
           </Link>
@@ -97,15 +97,15 @@ export default function ResetPasswordPage() {
       <div className="flex-1 sm:flex-none w-full sm:max-w-sm bg-card sm:rounded-2xl sm:shadow-sm p-8 flex flex-col justify-center">
 
         <div className="text-center mb-6">
-          <img src={logoWithName} alt="Children's Book for All" className="h-16 mx-auto object-contain" />
+          <LogoWithName className="mx-auto" />
         </div>
-        <h1 className="text-base font-bold text-gray-900 mb-1">Set new password</h1>
+        <h1 className="text-base font-bold text-gray-900 dark:text-gray-100 mb-1">Set new password</h1>
         <p className="text-xs text-muted mb-6 leading-relaxed">
           Choose a strong password for your account.
         </p>
 
         {errors.root && (
-          <div className="mb-4 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl">
+          <div className="mb-4 px-3 py-2.5 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-900 rounded-xl">
             <p className="text-xs text-danger">{errors.root.message}</p>
           </div>
         )}
@@ -144,7 +144,7 @@ export default function ResetPasswordPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-3 bg-primary text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 transition"
+            className="w-full py-3 bg-primary text-white dark:text-surface text-sm font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 transition"
           >
             {isSubmitting && <Spinner size="sm" />}
             Set Password

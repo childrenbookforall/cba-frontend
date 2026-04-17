@@ -11,7 +11,7 @@ export default function SortPills({ sort, onChange }: SortPillsProps) {
           key={s}
           onClick={() => onChange(s)}
           className={`px-2.5 py-1 rounded-full text-[0.625rem] font-semibold transition capitalize ${
-            sort === s ? 'bg-accent text-white' : 'bg-surface text-gray-500 hover:bg-gray-100'
+            sort === s ? 'bg-accent text-white' : 'bg-surface text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#2a2a2a]'
           }`}
         >
           {s === 'latest' ? 'New' : 'Top'}

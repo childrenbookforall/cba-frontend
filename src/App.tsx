@@ -9,6 +9,15 @@ import InstallBanner from './components/ui/InstallBanner'
 import { useInstallPromptStore } from './stores/installPromptStore'
 import { useAuthStore } from './stores/authStore'
 import { usePushSubscription } from './hooks/usePushSubscription'
+import { useThemeStore } from './stores/themeStore'
+
+function ThemeApplier() {
+  const theme = useThemeStore((s) => s.theme)
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark')
+  }, [theme])
+  return null
+}
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
   state = { hasError: false }
@@ -19,7 +28,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
     if (this.state.hasError) {
       return (
         <div className="min-h-svh flex flex-col items-center justify-center gap-3 p-8 text-center">
-          <p className="text-sm font-semibold text-gray-900">Something went wrong</p>
+          <p className="text-sm font-semibold text-primary">Something went wrong</p>
           <button
             className="text-xs text-primary underline"
             onClick={() => { this.setState({ hasError: false }); window.location.href = '/' }}
@@ -97,6 +106,7 @@ export default function App() {
       <InstallPromptCapture />
       <PushSubscriptionManager />
       <GoatCounter />
+      <ThemeApplier />
     </QueryClientProvider>
   )
 }

@@ -13,7 +13,7 @@ import NavLinks from '../components/layout/NavLinks'
 export default function FeedPage() {
   const [searchParams] = useSearchParams()
   const [sort, setSort] = useState<'latest' | 'top'>(
-    searchParams.get('sort') === 'latest' ? 'latest' : 'top'
+    searchParams.get('sort') === 'top' ? 'top' : 'latest'
   )
   const [groupId, setGroupId] = useState<string | null>(null)
 
@@ -95,7 +95,7 @@ export default function FeedPage() {
         {!isLoading && posts.length === 0 && (
           <div className="text-center py-16 px-6">
             <div className="text-5xl mb-3">💬</div>
-            <p className="text-sm font-semibold text-gray-700 mb-1">Nothing here yet!</p>
+            <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Nothing here yet!</p>
             <p className="text-xs text-muted mb-4">Be the first to share a story with the community.</p>
             <Link to="/posts/new" className="inline-block px-4 py-2 bg-accent text-white rounded-full text-xs font-semibold hover:opacity-90 transition">
               Share something
@@ -117,7 +117,7 @@ export default function FeedPage() {
             <button
               onClick={() => fetchNextPage()}
               disabled={isFetchingNextPage}
-              className="px-6 py-2 rounded-full bg-surface border border-border text-xs font-semibold text-gray-600 hover:bg-gray-100 transition disabled:opacity-60"
+              className="px-6 py-2 rounded-full bg-surface border border-border text-xs font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition disabled:opacity-60"
             >
               {isFetchingNextPage ? 'Loading…' : 'Load more'}
             </button>

@@ -27,7 +27,7 @@ export default function MediaCarousel({ urls, alt, compact = false, postUrl }: M
           alt={alt}
           loading="lazy"
           onClick={() => setLightboxIndex(0)}
-          className={`mt-1.5 w-full rounded-lg object-contain ${maxH} bg-gray-50 cursor-zoom-in`}
+          className={`mt-1.5 w-full rounded-lg object-contain ${maxH} bg-gray-50 dark:bg-[#1a1a1a] cursor-zoom-in`}
         />
         {lightboxIndex !== null && (
           <ImageLightbox
@@ -67,7 +67,7 @@ export default function MediaCarousel({ urls, alt, compact = false, postUrl }: M
   return (
     <>
     <div
-      className={`relative mt-1.5 w-full rounded-lg overflow-hidden bg-gray-50 ${maxH}`}
+      className={`relative mt-1.5 w-full rounded-lg overflow-hidden bg-gray-50 dark:bg-[#1a1a1a] ${maxH}`}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >

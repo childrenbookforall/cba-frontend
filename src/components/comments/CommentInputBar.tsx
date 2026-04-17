@@ -7,6 +7,7 @@ const Picker = lazy(() => import('@emoji-mart/react'))
 import { getApiError } from '../../lib/utils'
 import { useToast } from '../../stores/toastStore'
 import { useInstallPromptStore } from '../../stores/installPromptStore'
+import { useThemeStore } from '../../stores/themeStore'
 import type { Comment } from '../../types/api'
 
 interface ReplyingTo {
@@ -25,6 +26,7 @@ export default function CommentInputBar({ postId, replyingTo, onCancelReply }: C
   const queryClient = useQueryClient()
   const toast = useToast()
   const triggerInstall = useInstallPromptStore((s) => s.trigger)
+  const theme = useThemeStore((s) => s.theme)
   const [focused, setFocused] = useState(false)
   const [showPicker, setShowPicker] = useState(false)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -122,7 +124,7 @@ export default function CommentInputBar({ postId, replyingTo, onCancelReply }: C
           </span>
           <button
             onClick={onCancelReply}
-            className="text-[0.625rem] text-muted hover:text-gray-600"
+            className="text-[0.625rem] text-muted hover:text-primary"
           >
             ✕ Cancel
           </button>
@@ -137,7 +139,7 @@ export default function CommentInputBar({ postId, replyingTo, onCancelReply }: C
               <Picker
                 data={emojiData}
                 onEmojiSelect={handleEmojiSelect}
-                theme="light"
+                theme={theme}
                 previewPosition="none"
                 skinTonePosition="none"
                 maxFrequentRows={1}
@@ -150,7 +152,7 @@ export default function CommentInputBar({ postId, replyingTo, onCancelReply }: C
           type="button"
           onClick={() => setShowPicker((v) => !v)}
           aria-label="Insert emoji"
-          className="text-lg leading-none text-muted hover:text-gray-600 transition flex-shrink-0 hidden sm:block"
+          className="text-lg leading-none text-muted hover:text-primary transition flex-shrink-0 hidden sm:block"
         >
           🙂
         </button>

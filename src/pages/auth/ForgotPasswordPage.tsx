@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { forgotPassword } from '../../api/auth'
 import { getApiError } from '../../lib/utils'
 import Spinner from '../../components/ui/Spinner'
-import logoWithName from '../../assets/logo-with-name.png'
+import LogoWithName from '../../components/ui/LogoWithName'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -34,10 +34,10 @@ export default function ForgotPasswordPage() {
       <title>Reset Password - CBA</title>
       <div className="flex-1 sm:flex-none w-full sm:max-w-sm bg-card sm:rounded-2xl sm:shadow-sm p-8 flex flex-col justify-center">
 
-        <div className="text-center mb-6">
-          <img src={logoWithName} alt="Children's Book for All" className="h-16 mx-auto object-contain" />
+        <div className="flex justify-center mb-6">
+          <LogoWithName />
         </div>
-        <h1 className="text-base font-bold text-gray-900 mb-1">Reset your password</h1>
+        <h1 className="text-base font-bold text-gray-900 dark:text-gray-100 mb-1">Reset your password</h1>
         <p className="text-xs text-muted mb-6 leading-relaxed">
           Enter your email and we'll send a reset link if your account exists.
         </p>

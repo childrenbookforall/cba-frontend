@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@variant dark (&:is(.dark, .dark *));
 
 @theme {
   --color-primary: #222222;
@@ -14,6 +15,16 @@
   --color-admin-bg: #1a1a2e;
 
   --font-sans: 'Inter', system-ui, sans-serif;
+  --font-gluten: 'Gluten', cursive;
+}
+
+html.dark {
+  --color-primary: #e8e8e8;
+  --color-accent: #7ab5a0;
+  --color-surface: #111111;
+  --color-card: #1e1e1e;
+  --color-border: #2e2e2e;
+  --color-muted: #777777;
 }
 
 html {
@@ -24,6 +35,7 @@ body {
   margin: 0;
   font-family: var(--font-sans);
   background: var(--color-surface);
+  color: var(--color-primary);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -38,6 +50,12 @@ body {
 
 .skeleton {
   background: linear-gradient(90deg, #efefef 25%, #e0e0e0 50%, #efefef 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+html.dark .skeleton {
+  background: linear-gradient(90deg, #2a2a2a 25%, #333333 50%, #2a2a2a 75%);
   background-size: 200% 100%;
   animation: shimmer 1.4s ease-in-out infinite;
 }

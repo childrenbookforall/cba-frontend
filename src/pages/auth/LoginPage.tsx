@@ -8,7 +8,7 @@ import { useAuthStore } from '../../stores/authStore'
 import { getApiError } from '../../lib/utils'
 import Spinner from '../../components/ui/Spinner'
 import PasswordInput from '../../components/ui/PasswordInput'
-import logoWithName from '../../assets/logo-with-name.png'
+import LogoWithName from '../../components/ui/LogoWithName'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -54,13 +54,9 @@ export default function LoginPage() {
       <div className="flex-1 sm:flex-none w-full sm:max-w-sm bg-card sm:rounded-2xl sm:shadow-sm p-8 flex flex-col justify-center">
 
         {/* Logo */}
-        <div className="text-center mb-8">
-          <img
-            src={logoWithName}
-            alt="Children's Book for All"
-            className="h-16 mx-auto mb-3 object-contain"
-          />
-          <p className="text-xs text-muted leading-relaxed">A loving and nurturing community<br />anchored in children's books</p>
+        <div className="flex flex-col items-center mb-8">
+          <LogoWithName className="mb-3" />
+          <p className="text-xs text-muted leading-relaxed text-center">A loving and nurturing community<br />anchored in children's books</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>

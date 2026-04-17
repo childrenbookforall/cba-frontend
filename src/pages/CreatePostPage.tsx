@@ -9,6 +9,7 @@ import { createPost } from '../api/posts'
 import { useGroups } from '../hooks/useGroups'
 import { getApiError } from '../lib/utils'
 import { useToast } from '../stores/toastStore'
+import { useThemeStore } from '../stores/themeStore'
 import Spinner from '../components/ui/Spinner'
 
 const Picker = lazy(() => import('@emoji-mart/react'))
@@ -58,6 +59,7 @@ export default function CreatePostPage() {
   const queryClient = useQueryClient()
   const toast = useToast()
   const { data: groups, isLoading: groupsLoading, isError: groupsError } = useGroups()
+  const theme = useThemeStore((s) => s.theme)
   const [type, setType] = useState<PostType>('text')
   const [photoFiles, setPhotoFiles] = useState<File[]>([])
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([])
@@ -249,20 +251,20 @@ export default function CreatePostPage() {
       <title>New Post - CBA</title>
       {/* Header */}
       <div className="bg-card border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
-        <button onClick={() => navigate(-1)} className="text-gray-500 hover:text-gray-700 transition" aria-label="Go back">
+        <button onClick={() => navigate(-1)} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition" aria-label="Go back">
           <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
         </button>
-        <h1 className="text-sm font-bold text-gray-900 flex-1">New Post</h1>
+        <h1 className="text-sm font-bold text-gray-900 dark:text-gray-100 flex-1">New Post</h1>
         <NavLinks />
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="p-4 max-w-lg mx-auto">
         {draftBanner && (
-          <div className="flex items-center justify-between gap-3 px-3 py-2.5 mb-4 bg-amber-50 border border-amber-200 rounded-xl text-xs">
-            <span className="text-amber-800 font-medium">You have an unsaved draft.</span>
+          <div className="flex items-center justify-between gap-3 px-3 py-2.5 mb-4 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-xl text-xs">
+            <span className="text-amber-800 dark:text-amber-300 font-medium">You have an unsaved draft.</span>
             <div className="flex gap-2 flex-shrink-0">
               <button type="button" onClick={restoreDraft} className="text-primary font-semibold hover:underline">Restore</button>
-              <button type="button" onClick={discardDraft} className="text-muted hover:text-gray-700">Discard</button>
+              <button type="button" onClick={discardDraft} className="text-muted hover:text-primary">Discard</button>
             </div>
           </div>
         )}
@@ -275,7 +277,7 @@ export default function CreatePostPage() {
               type="button"
               onClick={() => handleTypeChange(t)}
               className={`flex-1 py-2 rounded-xl text-xs font-semibold capitalize transition ${
-                type === t ? 'bg-accent text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                type === t ? 'bg-accent text-white' : 'bg-gray-100 dark:bg-[#2a2a2a] text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#333]'
               }`}
             >
               {t}
@@ -289,7 +291,7 @@ export default function CreatePostPage() {
             Group
           </label>
           {groups?.length === 1 ? (
-            <div className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface text-gray-900">
+            <div className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface text-gray-900 dark:text-gray-100">
               {groups[0].name}
             </div>
           ) : (
@@ -360,7 +362,7 @@ export default function CreatePostPage() {
                 <div ref={emojiPickerRef} className="absolute top-full right-0 mt-1 z-50">
                   <EmojiPickerErrorBoundary>
                     <Suspense fallback={null}>
-                      <Picker data={emojiData} onEmojiSelect={handleEmojiSelect} theme="light" previewPosition="none" skinTonePosition="none" maxFrequentRows={1} />
+                      <Picker data={emojiData} onEmojiSelect={handleEmojiSelect} theme={theme} previewPosition="none" skinTonePosition="none" maxFrequentRows={1} />
                     </Suspense>
                   </EmojiPickerErrorBoundary>
                 </div>
@@ -379,7 +381,7 @@ export default function CreatePostPage() {
                 type="button"
                 onClick={() => setShowEmojiPicker((v) => !v)}
                 aria-label="Insert emoji"
-                className="absolute bottom-2 right-2.5 text-lg leading-none text-muted hover:text-gray-600 transition"
+                className="absolute bottom-2 right-2.5 text-lg leading-none text-muted hover:text-primary transition"
               >
                 🙂
               </button>
@@ -418,7 +420,7 @@ export default function CreatePostPage() {
                 {showEmojiPicker && emojiData && (
                   <div ref={emojiPickerRef} className="absolute top-full right-0 mt-1 z-50">
                     <Suspense fallback={null}>
-                      <Picker data={emojiData} onEmojiSelect={handleEmojiSelect} theme="light" previewPosition="none" skinTonePosition="none" maxFrequentRows={1} />
+                      <Picker data={emojiData} onEmojiSelect={handleEmojiSelect} theme={theme} previewPosition="none" skinTonePosition="none" maxFrequentRows={1} />
                     </Suspense>
                   </div>
                 )}
@@ -436,7 +438,7 @@ export default function CreatePostPage() {
                   type="button"
                   onClick={() => setShowEmojiPicker((v) => !v)}
                   aria-label="Insert emoji"
-                  className="absolute bottom-2 right-2.5 text-lg leading-none text-muted hover:text-gray-600 transition"
+                  className="absolute bottom-2 right-2.5 text-lg leading-none text-muted hover:text-primary transition"
                 >
                   🙂
                 </button>
@@ -455,7 +457,7 @@ export default function CreatePostPage() {
                 <div className="flex gap-2 overflow-x-auto pb-1 mb-2">
                   {photoPreviews.map((src, i) => (
                     <div key={i} className="relative flex-shrink-0">
-                      <img src={src} alt={`Preview ${i + 1}`} className="w-20 h-20 rounded-lg object-cover bg-gray-50" />
+                      <img src={src} alt={`Preview ${i + 1}`} className="w-20 h-20 rounded-lg object-cover bg-gray-50 dark:bg-[#1a1a1a]" />
                       <button
                         type="button"
                         onClick={() => removePhoto(i)}
@@ -472,7 +474,7 @@ export default function CreatePostPage() {
                 <div
                   {...getRootProps()}
                   className={`border-2 border-dashed rounded-xl h-28 flex flex-col items-center justify-center gap-1.5 text-muted cursor-pointer transition ${
-                    isDragActive ? 'border-primary bg-blue-50' : 'border-border hover:border-gray-400'
+                    isDragActive ? 'border-primary bg-blue-50 dark:bg-blue-950' : 'border-border hover:border-gray-400 dark:hover:border-gray-500'
                   }`}
                 >
                   <input {...getInputProps()} />
@@ -507,7 +509,7 @@ export default function CreatePostPage() {
                 {showEmojiPicker && emojiData && (
                   <div ref={emojiPickerRef} className="absolute top-full right-0 mt-1 z-50">
                     <Suspense fallback={null}>
-                      <Picker data={emojiData} onEmojiSelect={handleEmojiSelect} theme="light" previewPosition="none" skinTonePosition="none" maxFrequentRows={1} />
+                      <Picker data={emojiData} onEmojiSelect={handleEmojiSelect} theme={theme} previewPosition="none" skinTonePosition="none" maxFrequentRows={1} />
                     </Suspense>
                   </div>
                 )}
@@ -525,7 +527,7 @@ export default function CreatePostPage() {
                   type="button"
                   onClick={() => setShowEmojiPicker((v) => !v)}
                   aria-label="Insert emoji"
-                  className="absolute bottom-2 right-2.5 text-lg leading-none text-muted hover:text-gray-600 transition"
+                  className="absolute bottom-2 right-2.5 text-lg leading-none text-muted hover:text-primary transition"
                 >
                   🙂
                 </button>
@@ -535,7 +537,7 @@ export default function CreatePostPage() {
         )}
 
         {errors.root && (
-          <div className="mb-4 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl">
+          <div className="mb-4 px-3 py-2.5 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-900 rounded-xl">
             <p className="text-xs text-danger">{errors.root.message}</p>
           </div>
         )}

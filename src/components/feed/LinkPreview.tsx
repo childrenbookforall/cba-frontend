@@ -55,10 +55,10 @@ export default function LinkPreview({ url, previewImage, previewTitle, previewDe
         )}
         <div className="px-3 py-2">
           {previewTitle && (
-            <p className="text-xs font-semibold text-gray-800 truncate">{previewTitle}</p>
+            <p className="text-xs font-semibold text-gray-800 dark:text-gray-200 truncate">{previewTitle}</p>
           )}
           {previewDescription && (
-            <p className="text-[0.625rem] text-gray-500 mt-0.5 line-clamp-2 leading-relaxed">{previewDescription}</p>
+            <p className="text-[0.625rem] text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2 leading-relaxed">{previewDescription}</p>
           )}
           <p className="text-[0.625rem] text-muted mt-0.5 truncate">🔗 {displayUrl}</p>
         </div>

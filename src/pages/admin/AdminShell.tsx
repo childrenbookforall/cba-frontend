@@ -16,8 +16,8 @@ export default function AdminShell() {
       {/* Header */}
       <div className="bg-card border-b border-border px-4 py-3 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-bold text-gray-900">CBA</span>
-          <span className="text-[0.625rem] font-bold uppercase tracking-wide bg-primary text-white px-1.5 py-0.5 rounded">
+          <span className="text-sm font-bold text-gray-900 dark:text-gray-100">CBA</span>
+          <span className="text-[0.625rem] font-bold uppercase tracking-wide bg-primary text-white dark:text-surface px-1.5 py-0.5 rounded">
             Admin
           </span>
         </div>
@@ -27,7 +27,7 @@ export default function AdminShell() {
           </span>
           <Link
             to="/feed"
-            className="flex items-center gap-1 text-xs text-muted hover:text-gray-700 transition"
+            className="flex items-center gap-1 text-xs text-muted hover:text-gray-700 dark:hover:text-gray-300 transition"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
             Back to app
@@ -44,7 +44,7 @@ export default function AdminShell() {
             className={`px-4 py-2.5 text-xs font-semibold transition border-b-2 -mb-px ${
               pathname.startsWith(tab.path)
                 ? 'text-primary border-primary'
-                : 'text-muted border-transparent hover:text-gray-700'
+                : 'text-muted border-transparent hover:text-gray-700 dark:hover:text-gray-300'
             }`}
           >
             {tab.label}

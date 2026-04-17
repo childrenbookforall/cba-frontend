@@ -215,7 +215,7 @@ export default function AdminGroupsPage() {
         <p className="text-xs text-muted">{groups.length} group{groups.length !== 1 ? 's' : ''}</p>
         <button
           onClick={() => setShowCreate((v) => !v)}
-          className="text-xs font-semibold bg-primary text-white px-4 py-2 rounded-full"
+          className="text-xs font-semibold bg-primary text-white dark:text-surface px-4 py-2 rounded-full"
         >
           {showCreate ? 'Cancel' : '+ New group'}
         </button>
@@ -227,7 +227,7 @@ export default function AdminGroupsPage() {
           onSubmit={handleCreate}
           className="bg-card border border-border rounded-xl p-4 mb-4 flex flex-col gap-3"
         >
-          <p className="text-xs font-semibold text-gray-700">Create new group</p>
+          <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">Create new group</p>
           <input
             required
             placeholder="Group name"
@@ -256,7 +256,7 @@ export default function AdminGroupsPage() {
           <button
             type="submit"
             disabled={creating}
-            className="self-start text-xs font-semibold bg-primary text-white px-4 py-2 rounded-lg disabled:opacity-60"
+            className="self-start text-xs font-semibold bg-primary text-white dark:text-surface px-4 py-2 rounded-lg disabled:opacity-60"
           >
             {creating ? 'Creating…' : 'Create group'}
           </button>
@@ -277,12 +277,12 @@ export default function AdminGroupsPage() {
                   i < groups.length - 1 && selectedGroupId !== group.id
                     ? 'border-b border-border'
                     : ''
-                } ${selectedGroupId === group.id ? 'bg-blue-50' : ''} ${
+                } ${selectedGroupId === group.id ? 'bg-blue-50 dark:bg-blue-900/20' : ''} ${
                   i === 0 ? 'rounded-t-xl' : ''
                 } ${i === groups.length - 1 && selectedGroupId !== group.id ? 'rounded-b-xl' : ''}`}
               >
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-gray-900">{group.name}</p>
+                  <p className="text-xs font-semibold text-gray-900 dark:text-gray-100">{group.name}</p>
                   {group.description && (
                     <p className="text-[0.625rem] text-muted truncate">{group.description}</p>
                   )}
@@ -298,7 +298,7 @@ export default function AdminGroupsPage() {
                     </span>
                   )}
                 </div>
-                <span className="text-xs text-gray-400 flex-shrink-0">
+                <span className="text-xs text-gray-400 dark:text-gray-500 flex-shrink-0">
                   {selectedGroupId === group.id ? '▲' : '▼'}
                 </span>
               </button>
@@ -320,7 +320,7 @@ export default function AdminGroupsPage() {
                         {addUserId ? (
                           // Confirmed selection - show chip with clear button
                           <div className="flex items-center gap-2 border border-primary rounded-lg px-3 py-2 bg-card">
-                            <span className="text-xs text-gray-900 flex-1">{addUserName}</span>
+                            <span className="text-xs text-gray-900 dark:text-gray-100 flex-1">{addUserName}</span>
                             <button
                               type="button"
                               onClick={() => { setAddUserId(''); setAddUserName(''); setUserSearch('') }}
@@ -364,11 +364,12 @@ export default function AdminGroupsPage() {
                                   }}
                                   className="w-full flex items-center gap-2.5 px-3 py-2 text-left hover:bg-surface transition"
                                 >
-                                  <div className="w-6 h-6 rounded-full bg-gray-200 text-gray-600 text-[0.625rem] font-bold flex items-center justify-center flex-shrink-0">
+                                  <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-[0.625rem] font-bold flex items-center justify-center flex-shrink-0">
                                     {u.firstName[0]}{u.lastName?.[0]}
                                   </div>
                                   <div className="min-w-0">
-                                    <p className="text-xs font-medium text-gray-900 truncate">{u.firstName} {u.lastName}</p>
+                                    <p className="text-xs font-medium text-gray-900 dark:text-gray-100 truncate">{u.firstName} {u.lastName}</p>
+
                                     <p className="text-[0.625rem] text-muted truncate">{u.email}</p>
                                   </div>
                                 </button>
@@ -426,14 +427,14 @@ export default function AdminGroupsPage() {
                               className={`flex items-center gap-2.5 px-3 py-2 rounded-lg border ${
                                 m.isActive
                                   ? 'bg-card border-border'
-                                  : 'bg-red-50 border-red-200'
+                                  : 'bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-900'
                               }`}
                             >
                               <div className="flex-1 min-w-0">
-                                <p className={`text-xs font-medium ${m.isActive ? 'text-gray-800' : 'text-red-800'}`}>
+                                <p className={`text-xs font-medium ${m.isActive ? 'text-gray-800 dark:text-gray-200' : 'text-red-800 dark:text-red-300'}`}>
                                   {m.firstName} {m.lastName}
                                   {!m.isActive && (
-                                    <span className="ml-1.5 text-[0.5625rem] bg-red-200 text-red-700 font-bold uppercase px-1 rounded">
+                                    <span className="ml-1.5 text-[0.5625rem] bg-red-200 dark:bg-red-900 text-red-700 dark:text-red-300 font-bold uppercase px-1 rounded">
                                       Suspended
                                     </span>
                                   )}
@@ -472,7 +473,7 @@ export default function AdminGroupsPage() {
                           <button
                             onClick={() => loadMembers(group.id, memberSearch, membersNextCursor)}
                             disabled={membersLoadingMore}
-                            className="mt-3 w-full py-2 rounded-lg border border-border text-xs font-semibold text-gray-600 hover:bg-gray-50 transition disabled:opacity-50"
+                            className="mt-3 w-full py-2 rounded-lg border border-border text-xs font-semibold text-gray-600 hover:bg-gray-50 dark:hover:bg-[#2a2a2a] transition disabled:opacity-50"
                           >
                             {membersLoadingMore ? <Spinner size="sm" /> : 'Load more members'}
                           </button>

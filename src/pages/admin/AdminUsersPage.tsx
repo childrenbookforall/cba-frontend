@@ -119,7 +119,7 @@ export default function AdminUsersPage() {
         />
         <button
           onClick={() => setShowCreate((v) => !v)}
-          className="text-xs font-semibold bg-primary text-white px-4 py-2 rounded-full whitespace-nowrap"
+          className="text-xs font-semibold bg-primary text-white dark:text-surface px-4 py-2 rounded-full whitespace-nowrap"
         >
           {showCreate ? 'Cancel' : '+ New member'}
         </button>
@@ -131,7 +131,7 @@ export default function AdminUsersPage() {
           onSubmit={handleCreate}
           className="bg-card border border-border rounded-xl p-4 mb-4 flex flex-col gap-3"
         >
-          <p className="text-xs font-semibold text-gray-700">Create new member</p>
+          <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">Create new member</p>
           <div className="grid grid-cols-2 gap-3">
             <input
               required
@@ -159,7 +159,7 @@ export default function AdminUsersPage() {
             <button
               type="submit"
               disabled={creating}
-              className="text-xs font-semibold bg-primary text-white px-4 py-2 rounded-lg disabled:opacity-60"
+              className="text-xs font-semibold bg-primary text-white dark:text-surface px-4 py-2 rounded-lg disabled:opacity-60"
             >
               {creating ? 'Creating…' : 'Create member'}
             </button>
@@ -191,31 +191,31 @@ export default function AdminUsersPage() {
                 }`}
               >
                 {/* Initials avatar */}
-                <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-600 text-xs font-bold flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-bold flex items-center justify-center flex-shrink-0">
                   {user.firstName[0]}{user.lastName?.[0]}
                 </div>
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-xs font-semibold text-gray-900">
+                    <span className="text-xs font-semibold text-gray-900 dark:text-gray-100">
                       {user.firstName} {user.lastName}
                     </span>
                     {user.role === 'admin' && (
-                      <span className="text-[0.5625rem] font-bold uppercase bg-primary text-white px-1.5 py-0.5 rounded">
+                      <span className="text-[0.5625rem] font-bold uppercase bg-primary text-white dark:text-surface px-1.5 py-0.5 rounded">
                         Admin
                       </span>
                     )}
                     {user.invitePending ? (
-                      <span className="text-[0.5625rem] font-bold uppercase px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-700">
+                      <span className="text-[0.5625rem] font-bold uppercase px-1.5 py-0.5 rounded bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400">
                         Pending
                       </span>
                     ) : (
                       <span
                         className={`text-[0.5625rem] font-bold uppercase px-1.5 py-0.5 rounded ${
                           user.isActive
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-red-100 text-red-600'
+                            ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                            : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400'
                         }`}
                       >
                         {user.isActive ? 'Active' : 'Suspended'}
@@ -223,7 +223,7 @@ export default function AdminUsersPage() {
                     )}
                   </div>
                   <p className="text-[0.625rem] text-muted truncate">{user.email}</p>
-                  <p className="text-[0.625rem] text-gray-300 font-mono truncate select-all" title="User ID - copy this to add as group member">
+                  <p className="text-[0.625rem] text-gray-300 dark:text-gray-600 font-mono truncate select-all" title="User ID - copy this to add as group member">
                     {user.id}
                   </p>
                 </div>
@@ -234,7 +234,7 @@ export default function AdminUsersPage() {
                     onClick={() => handleInvite(user.id)}
                     disabled={!!busy}
                     title="Send invite email"
-                    className="text-[0.625rem] font-semibold text-accent border border-accent px-2 py-1 rounded-lg disabled:opacity-40 hover:bg-blue-50 transition"
+                    className="text-[0.625rem] font-semibold text-accent border border-accent px-2 py-1 rounded-lg disabled:opacity-40 hover:bg-blue-50 dark:hover:bg-blue-950 transition"
                   >
                     {busy === 'invite' ? <Spinner size="sm" /> : 'Invite'}
                   </button>
@@ -242,7 +242,7 @@ export default function AdminUsersPage() {
                     onClick={() => handleSuspend(user.id)}
                     disabled={!!busy}
                     title={user.isActive ? 'Suspend member' : 'Reactivate member'}
-                    className="text-[0.625rem] font-semibold text-gray-600 border border-border px-2 py-1 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition"
+                    className="text-[0.625rem] font-semibold text-gray-600 dark:text-gray-400 border border-border px-2 py-1 rounded-lg disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-[#2a2a2a] transition"
                   >
                     {busy === 'suspend' ? <Spinner size="sm" /> : user.isActive ? 'Suspend' : 'Reactivate'}
                   </button>
@@ -267,7 +267,7 @@ export default function AdminUsersPage() {
                       onClick={() => setConfirmDeleteId(user.id)}
                       disabled={!!busy}
                       title="Delete member"
-                      className="text-[0.625rem] font-semibold text-danger border border-danger px-2 py-1 rounded-lg disabled:opacity-40 hover:bg-red-50 transition"
+                      className="text-[0.625rem] font-semibold text-danger border border-danger px-2 py-1 rounded-lg disabled:opacity-40 hover:bg-red-50 dark:hover:bg-red-950 transition"
                     >
                       {busy === 'delete' ? <Spinner size="sm" /> : 'Delete'}
                     </button>
@@ -285,7 +285,7 @@ export default function AdminUsersPage() {
           <button
             onClick={() => fetchNextPage()}
             disabled={isFetchingNextPage}
-            className="px-6 py-2 rounded-full bg-surface border border-border text-xs font-semibold text-gray-600 hover:bg-gray-100 transition"
+            className="px-6 py-2 rounded-full bg-surface border border-border text-xs font-semibold text-gray-600 hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition"
           >
             {isFetchingNextPage ? <Spinner size="sm" /> : 'More'}
           </button>

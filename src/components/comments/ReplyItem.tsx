@@ -33,7 +33,7 @@ export default function ReplyItem({ reply, postId, onReply }: ReplyItemProps) {
   })
 
   return (
-    <div className="flex gap-2 mt-2 ml-8 bg-gray-50 rounded-lg p-2.5">
+    <div className="flex gap-2 mt-2 ml-8 bg-gray-50 dark:bg-[#1a1a1a] rounded-lg p-2.5">
       {reply.user ? (
         <Link to={`/profile/${reply.user.id}`}>
           <Avatar
@@ -44,17 +44,17 @@ export default function ReplyItem({ reply, postId, onReply }: ReplyItemProps) {
           />
         </Link>
       ) : (
-        <div className="w-6 h-6 rounded-full bg-gray-200 flex-shrink-0" />
+        <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0" />
       )}
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 mb-0.5">
           {reply.user ? (
-            <Link to={`/profile/${reply.user.id}`} className="text-[0.625rem] font-semibold text-gray-700 hover:underline">
+            <Link to={`/profile/${reply.user.id}`} className="text-[0.625rem] font-semibold text-gray-700 dark:text-gray-300 hover:underline">
               {`${reply.user.firstName}${reply.user.lastName ? ` ${reply.user.lastName}` : ''}`}
             </Link>
           ) : (
-            <span className="text-[0.625rem] font-semibold text-gray-700">Deleted user</span>
+            <span className="text-[0.625rem] font-semibold text-gray-700 dark:text-gray-300">Deleted user</span>
           )}
           <span className="text-[0.625rem] text-muted">{formatRelativeTime(reply.createdAt)}</span>
           {showFlagDot && (
@@ -75,7 +75,7 @@ export default function ReplyItem({ reply, postId, onReply }: ReplyItemProps) {
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
               rows={2}
-              className="w-full text-xs border border-border rounded-lg px-2 py-1.5 resize-none focus:outline-none focus:border-accent bg-white"
+              className="w-full text-xs border border-border rounded-lg px-2 py-1.5 resize-none focus:outline-none focus:border-accent bg-white dark:bg-card"
             />
             <div className="flex gap-1.5 mt-1">
               <button
@@ -95,7 +95,7 @@ export default function ReplyItem({ reply, postId, onReply }: ReplyItemProps) {
           </div>
         ) : (
           <>
-            <p className="text-[0.625rem] text-gray-600 leading-relaxed whitespace-pre-wrap">{reply.content}</p>
+            <p className="text-[0.625rem] text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-wrap">{reply.content}</p>
             <button
               onClick={() => {
                 const name = reply.user

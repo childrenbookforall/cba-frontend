@@ -37,17 +37,17 @@ const config = {
   with_you: {
     emoji: '💛',
     label: 'With You',
-    activeClass: 'bg-yellow-50 text-yellow-500',
+    activeClass: 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-500 dark:text-yellow-400',
   },
   helped_me: {
     emoji: '🌱',
     label: 'This Helped Me',
-    activeClass: 'bg-green-50 text-reaction-hm',
+    activeClass: 'bg-green-50 dark:bg-green-900/20 text-reaction-hm',
   },
   hug: {
     emoji: '🫂',
     label: 'Hug',
-    activeClass: 'bg-orange-50 text-orange-400',
+    activeClass: 'bg-orange-50 dark:bg-orange-900/20 text-orange-400',
   },
 }
 
@@ -152,7 +152,7 @@ export default function ReactionButton({ post, type }: ReactionButtonProps) {
           onClick={() => { if (!isActive) setPopKey((k) => k + 1); mutation.mutate() }}
           disabled={mutation.isPending}
           title={label}
-          className={`flex items-center ${count > 0 ? 'pl-2 pr-1' : 'px-2'} py-1 rounded-full transition ${!isActive ? 'hover:bg-gray-100' : ''}`}
+          className={`flex items-center ${count > 0 ? 'pl-2 pr-1' : 'px-2'} py-1 rounded-full transition ${!isActive ? 'hover:bg-gray-100 dark:hover:bg-[#2a2a2a]' : ''}`}
         >
           <span key={popKey} className={popKey > 0 ? 'animate-reaction-pop inline-block' : 'inline-block'}>{emoji}</span>
         </button>
@@ -179,7 +179,7 @@ export default function ReactionButton({ post, type }: ReactionButtonProps) {
             <>
               <ul className="space-y-1 max-h-48 overflow-y-auto">
                 {reactors.map((r) => (
-                  <li key={r.id} className="text-xs text-gray-800">
+                  <li key={r.id} className="text-xs text-gray-800 dark:text-gray-200">
                     {r.firstName}{r.lastName ? ` ${r.lastName}` : ''}
                   </li>
                 ))}

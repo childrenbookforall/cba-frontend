@@ -52,17 +52,17 @@ export default function CommentItem({ comment, postId, onReply }: CommentItemPro
             />
           </Link>
         ) : (
-          <div className="w-8 h-8 rounded-full bg-gray-200 flex-shrink-0" />
+          <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex-shrink-0" />
         )}
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 mb-0.5">
             {comment.user ? (
-              <Link to={`/profile/${comment.user.id}`} className="text-xs font-semibold text-gray-900 hover:underline">
+              <Link to={`/profile/${comment.user.id}`} className="text-xs font-semibold text-gray-900 dark:text-gray-100 hover:underline">
                 {authorName}
               </Link>
             ) : (
-              <span className="text-xs font-semibold text-gray-900">{authorName}</span>
+              <span className="text-xs font-semibold text-gray-900 dark:text-gray-100">{authorName}</span>
             )}
             <span className="text-[0.625rem] text-muted">{formatRelativeTime(comment.createdAt)}</span>
             {showFlagDot && (
@@ -105,7 +105,7 @@ export default function CommentItem({ comment, postId, onReply }: CommentItemPro
               </div>
             </div>
           ) : (
-            <p className="text-xs text-gray-600 leading-relaxed whitespace-pre-wrap">{comment.content}</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-wrap">{comment.content}</p>
           )}
 
           {/* Reply button */}

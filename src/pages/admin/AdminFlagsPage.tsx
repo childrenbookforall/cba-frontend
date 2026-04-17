@@ -90,8 +90,8 @@ export default function AdminFlagsPage() {
                   <span
                     className={`text-[0.5625rem] font-bold uppercase px-2 py-0.5 rounded-full ${
                       flag.contentType === 'post'
-                        ? 'bg-blue-100 text-blue-700'
-                        : 'bg-purple-100 text-purple-700'
+                        ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
+                        : 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400'
                     }`}
                   >
                     {flag.contentType}
@@ -100,7 +100,7 @@ export default function AdminFlagsPage() {
                   {/* Flagged by */}
                   <span className="text-[0.625rem] text-muted">
                     Flagged by{' '}
-                    <span className="font-medium text-gray-700">
+                    <span className="font-medium text-gray-700 dark:text-gray-300">
                       {flag.flaggedBy
                         ? `${flag.flaggedBy.firstName}${flag.flaggedBy.lastName ? ` ${flag.flaggedBy.lastName}` : ''}`
                         : 'deleted user'}
@@ -124,7 +124,7 @@ export default function AdminFlagsPage() {
                       </button>
                       <button
                         onClick={() => setConfirmDeleteId(null)}
-                        className="text-[0.625rem] font-semibold text-muted border border-border px-3 py-1.5 rounded-lg hover:bg-gray-50 transition"
+                        className="text-[0.625rem] font-semibold text-muted border border-border px-3 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#2a2a2a] transition"
                       >
                         No
                       </button>
@@ -134,14 +134,14 @@ export default function AdminFlagsPage() {
                       <button
                         onClick={() => setConfirmDeleteId(flag.id)}
                         disabled={!!deletingId || !!dismissingId}
-                        className="text-[0.625rem] font-semibold text-danger border border-danger px-3 py-1.5 rounded-lg disabled:opacity-40 hover:bg-red-50 transition"
+                        className="text-[0.625rem] font-semibold text-danger border border-danger px-3 py-1.5 rounded-lg disabled:opacity-40 hover:bg-red-50 dark:hover:bg-red-950 transition"
                       >
                         {deletingId === flag.id ? <Spinner size="sm" /> : `Delete ${flag.contentType}`}
                       </button>
                       <button
                         onClick={() => handleDismiss(flag.id)}
                         disabled={!!deletingId || !!dismissingId}
-                        className="text-[0.625rem] font-semibold text-gray-600 border border-border px-3 py-1.5 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition"
+                        className="text-[0.625rem] font-semibold text-gray-600 dark:text-gray-400 border border-border px-3 py-1.5 rounded-lg disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-[#2a2a2a] transition"
                       >
                         {dismissingId === flag.id ? <Spinner size="sm" /> : 'Dismiss'}
                       </button>
@@ -152,9 +152,9 @@ export default function AdminFlagsPage() {
 
               {/* Reason */}
               {flag.reason && (
-                <div className="mb-3 bg-yellow-50 border border-yellow-100 rounded-lg px-3 py-2">
-                  <p className="text-[0.625rem] font-semibold text-yellow-800 mb-0.5">Reason given</p>
-                  <p className="text-xs text-yellow-900">{flag.reason}</p>
+                <div className="mb-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-100 dark:border-yellow-800/50 rounded-lg px-3 py-2">
+                  <p className="text-[0.625rem] font-semibold text-yellow-800 dark:text-yellow-300 mb-0.5">Reason given</p>
+                  <p className="text-xs text-yellow-900 dark:text-yellow-200">{flag.reason}</p>
                 </div>
               )}
 
@@ -163,13 +163,13 @@ export default function AdminFlagsPage() {
                 <div className="bg-surface rounded-lg px-3 py-2.5 flex items-center justify-between gap-3">
                   <div className="min-w-0">
                     <p className="text-[0.625rem] font-semibold text-muted uppercase tracking-wide mb-1">Post</p>
-                    <p className="text-xs font-semibold text-gray-800 truncate">{flag.post.title}</p>
+                    <p className="text-xs font-semibold text-gray-800 dark:text-gray-200 truncate">{flag.post.title}</p>
                   </div>
                   <Link
                     to={`/posts/${flag.post.id}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[0.625rem] font-semibold text-accent border border-accent px-2.5 py-1 rounded-lg hover:bg-blue-50 transition flex-shrink-0"
+                    className="text-[0.625rem] font-semibold text-accent border border-accent px-2.5 py-1 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950 transition flex-shrink-0"
                   >
                     View ↗
                   </Link>
@@ -185,13 +185,14 @@ export default function AdminFlagsPage() {
                         to={`/posts/${flag.comment.post.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[0.625rem] font-semibold text-accent border border-accent px-2.5 py-1 rounded-lg hover:bg-blue-50 transition flex-shrink-0"
+                        className="text-[0.625rem] font-semibold text-accent border border-accent px-2.5 py-1 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950 transition flex-shrink-0"
                       >
                         View in post ↗
                       </Link>
                     )}
                   </div>
-                  <p className="text-xs text-gray-700 italic">"{flag.comment.content}"</p>
+                  <p className="text-xs text-gray-700 dark:text-gray-300 italic">"{flag.comment.content}"</p>
+
                   {flag.comment.post && (
                     <p className="text-[0.625rem] text-muted mt-1 truncate">{flag.comment.post.title}</p>
                   )}
@@ -208,7 +209,7 @@ export default function AdminFlagsPage() {
           <button
             onClick={() => fetchNextPage()}
             disabled={isFetchingNextPage}
-            className="px-6 py-2 rounded-full bg-surface border border-border text-xs font-semibold text-gray-600 hover:bg-gray-100 transition"
+            className="px-6 py-2 rounded-full bg-surface border border-border text-xs font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition"
           >
             {isFetchingNextPage ? <Spinner size="sm" /> : 'More'}
           </button>

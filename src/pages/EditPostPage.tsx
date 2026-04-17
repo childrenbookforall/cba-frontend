@@ -74,10 +74,10 @@ export default function EditPostPage() {
     <div className="min-h-svh bg-surface">
       <title>Edit Post - CBA</title>
       <div className="bg-card border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
-        <button onClick={() => navigate(-1)} className="text-gray-500 hover:text-gray-700 transition" aria-label="Go back">
+        <button onClick={() => navigate(-1)} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition" aria-label="Go back">
           <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
         </button>
-        <h1 className="text-sm font-bold text-gray-900">Edit Post</h1>
+        <h1 className="text-sm font-bold text-gray-900 dark:text-gray-100">Edit Post</h1>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="p-4 max-w-lg mx-auto">
@@ -149,7 +149,7 @@ export default function EditPostPage() {
         )}
 
         {errors.root && (
-          <div className="mb-4 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl">
+          <div className="mb-4 px-3 py-2.5 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-900 rounded-xl">
             <p className="text-xs text-danger">{errors.root.message}</p>
           </div>
         )}
@@ -158,7 +158,7 @@ export default function EditPostPage() {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="flex-1 py-3 bg-gray-100 text-gray-600 text-sm font-semibold rounded-xl"
+            className="flex-1 py-3 bg-gray-100 dark:bg-[#2a2a2a] text-gray-600 dark:text-gray-400 text-sm font-semibold rounded-xl"
           >
             Cancel
           </button>

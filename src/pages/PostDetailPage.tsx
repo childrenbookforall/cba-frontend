@@ -68,7 +68,7 @@ export default function PostDetailPage() {
       <div className="bg-card border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
         <button
           onClick={() => navigate(-1)}
-          className="text-gray-500 hover:text-gray-700 transition"
+          className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition"
           aria-label="Go back"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
@@ -96,12 +96,12 @@ export default function PostDetailPage() {
                 />
               </div>
             ) : (
-              <div className="w-8 h-8 rounded-full bg-gray-200" />
+              <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700" />
             )}
             <div>
               <div className="flex items-center gap-1.5 flex-wrap">
                 <span
-                  className={`text-xs font-semibold text-gray-900${post.user ? ' cursor-pointer hover:underline' : ''}`}
+                  className={`text-xs font-semibold text-gray-900 dark:text-gray-100${post.user ? ' cursor-pointer hover:underline' : ''}`}
                   onClick={() => { if (post.user) navigate(`/profile/${post.user.id}`) }}
                 >
                   {post.user
@@ -125,13 +125,13 @@ export default function PostDetailPage() {
           </div>
 
           {/* Title */}
-          <h2 className="text-base font-bold text-gray-900 leading-snug mb-2">
+          <h2 className="text-base font-bold text-gray-900 dark:text-gray-100 leading-snug mb-2">
             {post.title}
           </h2>
 
           {/* Content by type */}
           {post.type === 'text' && post.content && (
-            <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{post.content}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-wrap">{post.content}</p>
           )}
 
           {post.type === 'link' && post.linkUrl && (
@@ -144,7 +144,7 @@ export default function PostDetailPage() {
           )}
 
           {post.type === 'link' && post.content && (
-            <p className={`text-sm text-gray-600 leading-relaxed whitespace-pre-wrap mt-2 ${textAlign(post.content)}`}>{post.content}</p>
+            <p className={`text-sm text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-wrap mt-2 ${textAlign(post.content)}`}>{post.content}</p>
           )}
 
           {post.type === 'photo' && (post.mediaUrls?.length || post.mediaUrl) && (
@@ -154,7 +154,7 @@ export default function PostDetailPage() {
                 alt={post.title}
               />
               {post.content && (
-                <p className={`text-sm text-gray-600 leading-relaxed whitespace-pre-wrap ${textAlign(post.content)}`}>{post.content}</p>
+                <p className={`text-sm text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-wrap ${textAlign(post.content)}`}>{post.content}</p>
               )}
             </>
           )}
