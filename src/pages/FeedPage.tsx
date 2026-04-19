@@ -13,7 +13,7 @@ import NavLinks from '../components/layout/NavLinks'
 export default function FeedPage() {
   const [searchParams] = useSearchParams()
   const [sort, setSort] = useState<'latest' | 'top'>(
-    searchParams.get('sort') === 'top' ? 'top' : 'latest'
+    searchParams.get('sort') === 'latest' ? 'latest' : 'top'
   )
   const [groupId, setGroupId] = useState<string | null>(null)
 
