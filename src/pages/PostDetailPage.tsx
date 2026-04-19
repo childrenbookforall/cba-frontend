@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import cbaLogo from '../assets/logo.png'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { getPost } from '../api/posts'
@@ -96,7 +97,7 @@ export default function PostDetailPage() {
                 />
               </div>
             ) : (
-              <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700" />
+              <img src={cbaLogo} alt="CBA" className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
             )}
             <div>
               <div className="flex items-center gap-1.5 flex-wrap">
@@ -106,7 +107,7 @@ export default function PostDetailPage() {
                 >
                   {post.user
                     ? `${post.user.firstName}${post.user.lastName ? ` ${post.user.lastName}` : ''}`
-                    : 'Deleted user'}
+                    : "Children's Book for All"}
                 </span>
                 {post.group && <GroupChip id={post.group.id} name={post.group.name} />}
               </div>

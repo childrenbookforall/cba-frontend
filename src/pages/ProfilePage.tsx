@@ -19,12 +19,24 @@ export default function ProfilePage() {
   const [confirmSignOut, setConfirmSignOut] = useState(false)
   const [editingBio, setEditingBio] = useState(false)
   const [bioValue, setBioValue] = useState(user?.bio ?? '')
+  const [editingBirthday, setEditingBirthday] = useState(false)
+  const [birthdayValue, setBirthdayValue] = useState(user?.birthday ? user.birthday.slice(0, 10) : '')
 
   const bioMutation = useMutation({
     mutationFn: (bio: string) => updateMe({ bio }),
     onSuccess: (updatedUser) => {
       setAuth(token!, { ...user!, ...updatedUser })
       setEditingBio(false)
+      toast('Profile updated')
+    },
+    onError: (err) => toast(getApiError(err), 'error'),
+  })
+
+  const birthdayMutation = useMutation({
+    mutationFn: (birthday: string | null) => updateMe({ birthday }),
+    onSuccess: (updatedUser) => {
+      setAuth(token!, { ...user!, ...updatedUser })
+      setEditingBirthday(false)
       toast('Profile updated')
     },
     onError: (err) => toast(getApiError(err), 'error'),
@@ -177,6 +189,62 @@ export default function ProfilePage() {
         ) : (
           <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
             {user.bio || <span className="text-muted italic">No bio yet.</span>}
+          </p>
+        )}
+      </div>
+
+      {/* Birthday section */}
+      <div className="bg-card mt-2 px-4 py-4">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-[0.625rem] font-semibold text-muted uppercase tracking-wide">Birthday</p>
+          {!editingBirthday && (
+            <button
+              onClick={() => {
+                setBirthdayValue(user.birthday ? user.birthday.slice(0, 10) : '')
+                setEditingBirthday(true)
+              }}
+              className="text-[0.625rem] text-accent font-medium"
+            >
+              Edit
+            </button>
+          )}
+        </div>
+
+        {editingBirthday ? (
+          <div>
+            <input
+              type="date"
+              autoFocus
+              value={birthdayValue}
+              onChange={(e) => setBirthdayValue(e.target.value)}
+              max={new Date().toISOString().slice(0, 10)}
+              className="text-xs border border-border rounded-xl px-3 py-2 focus:outline-none focus:border-accent bg-surface"
+            />
+            <div className="flex gap-1.5 mt-2">
+              <button
+                onClick={() => birthdayMutation.mutate(birthdayValue || null)}
+                disabled={birthdayMutation.isPending}
+                className="text-[0.625rem] font-semibold text-white bg-accent px-4 py-1.5 rounded-lg disabled:opacity-60"
+              >
+                {birthdayMutation.isPending ? 'Saving…' : 'Save'}
+              </button>
+              <button
+                onClick={() => setEditingBirthday(false)}
+                className="text-[0.625rem] font-semibold text-muted px-3 py-1.5 rounded-lg"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <p className="text-xs text-gray-600 dark:text-gray-400">
+            {user.birthday
+              ? (() => {
+                  const [y, m, d] = user.birthday.slice(0, 10).split('-').map(Number)
+                  return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+                })()
+              : <span className="text-muted italic">Not set.</span>
+            }
           </p>
         )}
       </div>

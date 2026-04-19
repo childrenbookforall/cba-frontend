@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
+import cbaLogo from '../../assets/logo.png'
 import Avatar from '../ui/Avatar'
 import GroupChip from './GroupChip'
 import ReactionButton from './ReactionButton'
@@ -44,7 +45,7 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
               size="md"
             />
           ) : (
-            <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-[#2a2a2a] flex-shrink-0" />
+            <img src={cbaLogo} alt="CBA" className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
           )}
         </div>
 
@@ -54,7 +55,7 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
               onClick={(e) => { e.preventDefault(); if (author) navigate(`/profile/${author.id}`) }}
               className={`text-xs font-semibold text-gray-900 dark:text-gray-100 truncate${author ? ' cursor-pointer hover:underline' : ''}`}
             >
-              {author ? `${author.firstName}${author.lastName ? ` ${author.lastName}` : ''}` : 'Deleted user'}
+              {author ? `${author.firstName}${author.lastName ? ` ${author.lastName}` : ''}` : "Children's Book for All"}
             </span>
             {post.group && <GroupChip id={post.group.id} name={post.group.name} />}
           </div>

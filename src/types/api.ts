@@ -4,6 +4,7 @@ export interface User {
   firstName: string
   lastName?: string | null
   bio?: string | null
+  birthday?: string | null
   avatarUrl?: string | null
   role: 'admin' | 'member'
   createdAt: string

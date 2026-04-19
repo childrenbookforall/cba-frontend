@@ -118,6 +118,8 @@ export default function LoginPage() {
         >
           Forgot password?
         </Link>
+
+        <p className="text-[0.625rem] text-muted text-center mt-6">This is an invite-only community.</p>
       </div>
     </div>
   )

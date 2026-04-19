@@ -217,7 +217,12 @@ export default function CreatePostPage() {
 
   function handleTypeChange(newType: PostType) {
     setType(newType)
-    reset({ groupId: groups?.length === 1 ? groups[0].id : undefined })
+    reset({
+      groupId: groupIdValue || (groups?.length === 1 ? groups[0].id : undefined),
+      title: titleValue,
+      content: contentValue,
+      linkUrl: newType === 'link' ? linkUrlValue : undefined,
+    })
     photoPreviews.forEach((url) => URL.revokeObjectURL(url))
     setPhotoFiles([])
     setPhotoPreviews([])

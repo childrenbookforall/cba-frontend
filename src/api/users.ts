@@ -6,7 +6,7 @@ export async function getMe(): Promise<User> {
   return res.data
 }
 
-export async function updateMe(data: { bio: string }): Promise<User> {
+export async function updateMe(data: { bio?: string; birthday?: string | null }): Promise<User> {
   const res = await client.put<User>('/api/users/me', data)
   return res.data
 }
