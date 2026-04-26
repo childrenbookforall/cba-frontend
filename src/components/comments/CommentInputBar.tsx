@@ -8,6 +8,7 @@ import { getApiError } from '../../lib/utils'
 import { useToast } from '../../stores/toastStore'
 import { useInstallPromptStore } from '../../stores/installPromptStore'
 import { useThemeStore } from '../../stores/themeStore'
+import MentionTextarea from '../ui/MentionTextarea'
 import type { Comment } from '../../types/api'
 
 interface ReplyingTo {
@@ -17,11 +18,12 @@ interface ReplyingTo {
 
 interface CommentInputBarProps {
   postId: string
+  groupId?: string
   replyingTo: ReplyingTo | null
   onCancelReply: () => void
 }
 
-export default function CommentInputBar({ postId, replyingTo, onCancelReply }: CommentInputBarProps) {
+export default function CommentInputBar({ postId, groupId, replyingTo, onCancelReply }: CommentInputBarProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const queryClient = useQueryClient()
   const toast = useToast()
@@ -32,6 +34,7 @@ export default function CommentInputBar({ postId, replyingTo, onCancelReply }: C
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [emojiData, setEmojiData] = useState<any>(null)
   const pickerRef = useRef<HTMLDivElement>(null)
+  const [commentText, setCommentText] = useState('')
 
   // Focus input when reply target changes
   useEffect(() => {
@@ -60,39 +63,37 @@ export default function CommentInputBar({ postId, replyingTo, onCancelReply }: C
   function handleEmojiSelect(emoji: { native: string }) {
     const input = inputRef.current
     if (!input) return
-    const start = input.selectionStart ?? input.value.length
-    const end = input.selectionEnd ?? input.value.length
-    input.value = input.value.slice(0, start) + emoji.native + input.value.slice(end)
-    // Restore cursor after inserted emoji
-    const pos = start + emoji.native.length
-    input.setSelectionRange(pos, pos)
-    input.focus()
+    const start = input.selectionStart ?? commentText.length
+    const end = input.selectionEnd ?? commentText.length
+    const newValue = commentText.slice(0, start) + emoji.native + commentText.slice(end)
+    setCommentText(newValue)
     setShowPicker(false)
+    const pos = start + emoji.native.length
+    requestAnimationFrame(() => {
+      input.focus()
+      input.setSelectionRange(pos, pos)
+    })
   }
 
   const mutation = useMutation({
     mutationFn: (content: string) =>
       createComment(postId, content, replyingTo?.id),
     onSuccess: (newComment) => {
-      // Append to cache immediately without waiting for refetch
       queryClient.setQueryData<Comment[]>(['comments', postId], (old = []) => {
         if (replyingTo) {
-          // Insert reply into parent's replies array
           return old.map((c) => {
             if (c.id !== replyingTo.id) return c
             return { ...c, replies: [...(c.replies ?? []), newComment] }
           })
         }
-        // New top-level comment
         return [...old, { ...newComment, replies: [] }]
       })
-      // Invalidate so any in-flight or subsequent refetch reflects the new comment
       queryClient.invalidateQueries({ queryKey: ['comments', postId] })
-      // Update comment count on post
       queryClient.invalidateQueries({ queryKey: ['post', postId] })
       queryClient.invalidateQueries({ queryKey: ['feed'] })
 
-      if (inputRef.current) inputRef.current.value = ''
+      setCommentText('')
+      if (inputRef.current) inputRef.current.style.height = 'auto'
       onCancelReply()
       toast(replyingTo ? 'Reply added' : 'Comment added')
       triggerInstall()
@@ -101,12 +102,12 @@ export default function CommentInputBar({ postId, replyingTo, onCancelReply }: C
   })
 
   function handleSubmit() {
-    const content = inputRef.current?.value.trim()
+    const content = commentText.trim()
     if (!content) return
     mutation.mutate(content)
   }
 
-  function handleKeyDown(e: React.KeyboardEvent) {
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === 'Enter' && e.shiftKey) {
       e.preventDefault()
       handleSubmit()
@@ -157,10 +158,15 @@ export default function CommentInputBar({ postId, replyingTo, onCancelReply }: C
           🙂
         </button>
 
-        <textarea
-          ref={inputRef}
-          rows={1}
+        <MentionTextarea
+          value={commentText}
+          onChange={setCommentText}
+          groupId={groupId}
           placeholder={replyingTo ? `Reply to ${replyingTo.name}…` : 'Write a comment…'}
+          rows={1}
+          wrapperClassName="flex-1"
+          className="w-full text-xs border border-border rounded-xl px-4 py-2 bg-surface focus:outline-none focus:border-accent transition resize-none overflow-hidden leading-relaxed"
+          textareaRef={inputRef}
           onKeyDown={handleKeyDown}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
@@ -169,8 +175,9 @@ export default function CommentInputBar({ postId, replyingTo, onCancelReply }: C
             el.style.height = 'auto'
             el.style.height = `${el.scrollHeight}px`
           }}
-          className="flex-1 text-xs border border-border rounded-xl px-4 py-2 bg-surface focus:outline-none focus:border-accent transition resize-none overflow-hidden leading-relaxed"
+          dropdownPlacement="above"
         />
+
         {focused && !showPicker && (
           <span className="hidden sm:block text-[0.625rem] text-muted whitespace-nowrap flex-shrink-0">
             Shift+Enter ↵ to send

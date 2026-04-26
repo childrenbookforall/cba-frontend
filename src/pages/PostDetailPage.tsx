@@ -17,6 +17,7 @@ import LinkPreview from '../components/feed/LinkPreview'
 import { formatRelativeTime } from '../lib/utils'
 import { useAuthStore } from '../stores/authStore'
 import NavLinks from '../components/layout/NavLinks'
+import MentionText from '../components/ui/MentionText'
 
 function textAlign(content: string) {
   return content.trim().split(/\s+/).length > 15 ? 'text-left' : 'text-center'
@@ -127,12 +128,14 @@ export default function PostDetailPage() {
 
           {/* Title */}
           <h2 className="text-base font-bold text-gray-900 dark:text-gray-100 leading-snug mb-2">
-            {post.title}
+            <MentionText content={post.title} />
           </h2>
 
           {/* Content by type */}
           {post.type === 'text' && post.content && (
-            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">{post.content}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
+              <MentionText content={post.content} />
+            </p>
           )}
 
           {post.type === 'link' && post.linkUrl && (
@@ -145,7 +148,9 @@ export default function PostDetailPage() {
           )}
 
           {post.type === 'link' && post.content && (
-            <p className={`text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap mt-2 ${textAlign(post.content)}`}>{post.content}</p>
+            <p className={`text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap mt-2 ${textAlign(post.content)}`}>
+              <MentionText content={post.content} />
+            </p>
           )}
 
           {post.type === 'photo' && (post.mediaUrls?.length || post.mediaUrl) && (
@@ -155,7 +160,9 @@ export default function PostDetailPage() {
                 alt={post.title}
               />
               {post.content && (
-                <p className={`text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap ${textAlign(post.content)}`}>{post.content}</p>
+                <p className={`text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap ${textAlign(post.content)}`}>
+                  <MentionText content={post.content} />
+                </p>
               )}
             </>
           )}
@@ -187,6 +194,7 @@ export default function PostDetailPage() {
             <CommentThread
               comments={comments ?? []}
               postId={post.id}
+              groupId={post.groupId}
               onReply={(id, name) => setReplyingTo({ id, name })}
             />
           )}
@@ -198,6 +206,7 @@ export default function PostDetailPage() {
       <div className="fixed bottom-0 inset-x-0 z-10">
         <CommentInputBar
           postId={post.id}
+          groupId={post.groupId}
           replyingTo={replyingTo}
           onCancelReply={() => setReplyingTo(null)}
         />

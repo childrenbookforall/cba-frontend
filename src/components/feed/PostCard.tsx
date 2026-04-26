@@ -8,6 +8,7 @@ import MediaCarousel from './MediaCarousel'
 import LinkPreview from './LinkPreview'
 import { formatRelativeTime } from '../../lib/utils'
 import { useAuthStore } from '../../stores/authStore'
+import MentionText from '../ui/MentionText'
 import type { Post } from '../../types/api'
 
 function textAlign(content: string) {
@@ -84,7 +85,7 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
 
         {post.type === 'text' && post.content && (
           <p className="text-xs text-gray-500 dark:text-gray-300 mt-1 leading-relaxed line-clamp-3 whitespace-pre-wrap">
-            {post.content}
+            <MentionText content={post.content} />
           </p>
         )}
 
@@ -98,7 +99,9 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
         )}
 
         {post.type === 'link' && post.content && (
-          <p className={`text-xs text-gray-500 dark:text-gray-300 mt-1.5 leading-relaxed line-clamp-3 whitespace-pre-wrap ${textAlign(post.content)}`}>{post.content}</p>
+          <p className={`text-xs text-gray-500 dark:text-gray-300 mt-1.5 leading-relaxed line-clamp-3 whitespace-pre-wrap ${textAlign(post.content)}`}>
+            <MentionText content={post.content} />
+          </p>
         )}
 
         {post.type === 'photo' && (post.mediaUrls?.length || post.mediaUrl) && (
@@ -112,7 +115,9 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
               />
             </div>
             {post.content && (
-              <p className={`text-xs text-gray-500 dark:text-gray-300 mt-1 leading-relaxed line-clamp-3 whitespace-pre-wrap ${textAlign(post.content)}`}>{post.content}</p>
+              <p className={`text-xs text-gray-500 dark:text-gray-300 mt-1 leading-relaxed line-clamp-3 whitespace-pre-wrap ${textAlign(post.content)}`}>
+                <MentionText content={post.content} />
+              </p>
             )}
           </>
         )}

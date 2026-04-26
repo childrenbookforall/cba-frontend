@@ -146,10 +146,10 @@ export interface Comment {
 
 export interface Notification {
   id: string
-  type: 'post_comment' | 'comment_reply' | 'thread_comment'
+  type: 'post_comment' | 'comment_reply' | 'thread_comment' | 'mention'
   triggeredBy?: PostUser | null
   post: Pick<Post, 'id' | 'title'>
-  comment: { id: string; content: string }
+  comment?: { id: string; content: string } | null
   isRead: boolean
   createdAt: string
 }

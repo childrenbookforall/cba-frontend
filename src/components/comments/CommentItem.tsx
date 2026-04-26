@@ -8,15 +8,18 @@ import { updateComment } from '../../api/comments'
 import { formatRelativeTime, getApiError } from '../../lib/utils'
 import { useAuthStore } from '../../stores/authStore'
 import { useToast } from '../../stores/toastStore'
+import MentionText from '../ui/MentionText'
+import MentionTextarea from '../ui/MentionTextarea'
 import type { Comment } from '../../types/api'
 
 interface CommentItemProps {
   comment: Comment
   postId: string
+  groupId?: string
   onReply: (commentId: string, name: string) => void
 }
 
-export default function CommentItem({ comment, postId, onReply }: CommentItemProps) {
+export default function CommentItem({ comment, postId, groupId, onReply }: CommentItemProps) {
   const [editing, setEditing] = useState(false)
   const [editContent, setEditContent] = useState(comment.content)
   const queryClient = useQueryClient()
@@ -81,12 +84,14 @@ export default function CommentItem({ comment, postId, onReply }: CommentItemPro
           {/* Body or edit form */}
           {editing ? (
             <div>
-              <textarea
+              <MentionTextarea
                 autoFocus
                 value={editContent}
-                onChange={(e) => setEditContent(e.target.value)}
+                onChange={setEditContent}
+                groupId={groupId}
                 rows={3}
                 className="w-full text-xs border border-border rounded-xl px-3 py-2 resize-none focus:outline-none focus:border-accent bg-surface"
+                dropdownPlacement="above"
               />
               <div className="flex gap-1.5 mt-1.5">
                 <button
@@ -105,7 +110,9 @@ export default function CommentItem({ comment, postId, onReply }: CommentItemPro
               </div>
             </div>
           ) : (
-            <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">{comment.content}</p>
+            <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
+              <MentionText content={comment.content} />
+            </p>
           )}
 
           {/* Reply button */}
@@ -128,6 +135,7 @@ export default function CommentItem({ comment, postId, onReply }: CommentItemPro
               key={reply.id}
               reply={reply}
               postId={postId}
+              groupId={groupId}
               onReply={(name) => onReply(comment.id, name)}
             />
           ))}

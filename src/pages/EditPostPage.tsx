@@ -1,12 +1,13 @@
 import { useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { getPost, updatePost } from '../api/posts'
 import { getApiError } from '../lib/utils'
 import Spinner from '../components/ui/Spinner'
+import MentionTextarea from '../components/ui/MentionTextarea'
 import { useAuthStore } from '../stores/authStore'
 
 const schema = z.object({
@@ -34,6 +35,7 @@ export default function EditPostPage() {
     handleSubmit,
     reset,
     setError,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<Fields>({ resolver: zodResolver(schema) })
 
@@ -99,10 +101,19 @@ export default function EditPostPage() {
             <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
               Content
             </label>
-            <textarea
-              {...register('content')}
-              rows={6}
-              className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
+            <Controller
+              name="content"
+              control={control}
+              render={({ field }) => (
+                <MentionTextarea
+                  value={field.value ?? ''}
+                  onChange={field.onChange}
+                  groupId={post.groupId}
+                  rows={6}
+                  className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
+                  dropdownPlacement="below"
+                />
+              )}
             />
           </div>
         )}
@@ -112,10 +123,19 @@ export default function EditPostPage() {
             <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
               Caption
             </label>
-            <textarea
-              {...register('content')}
-              rows={4}
-              className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
+            <Controller
+              name="content"
+              control={control}
+              render={({ field }) => (
+                <MentionTextarea
+                  value={field.value ?? ''}
+                  onChange={field.onChange}
+                  groupId={post.groupId}
+                  rows={4}
+                  className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
+                  dropdownPlacement="below"
+                />
+              )}
             />
           </div>
         )}
@@ -139,10 +159,19 @@ export default function EditPostPage() {
               <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
                 Description
               </label>
-              <textarea
-                {...register('content')}
-                rows={4}
-                className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
+              <Controller
+                name="content"
+                control={control}
+                render={({ field }) => (
+                  <MentionTextarea
+                    value={field.value ?? ''}
+                    onChange={field.onChange}
+                    groupId={post.groupId}
+                    rows={4}
+                    className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
+                    dropdownPlacement="below"
+                  />
+                )}
               />
             </div>
           </>

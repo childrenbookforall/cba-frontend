@@ -20,6 +20,9 @@ function notificationText(n: Notification): string {
   if (n.type === 'thread_comment') {
     return `${who} also commented on "${n.post.title}"`
   }
+  if (n.type === 'mention') {
+    return `${who} mentioned you in "${n.post.title}"`
+  }
   return `${who} commented on your post "${n.post.title}"`
 }
 
@@ -127,7 +130,7 @@ export default function NotificationsPage() {
                   <p className="text-xs text-gray-700 dark:text-gray-300 leading-snug">
                     {notificationText(n)}
                   </p>
-                  {n.comment.content && (
+                  {n.comment?.content && (
                     <p className="text-[0.625rem] text-muted mt-0.5 truncate">
                       "{n.comment.content}"
                     </p>

@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef, lazy, Suspense, Component, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useImageDropzone } from '../hooks/useImageDropzone'
@@ -11,6 +11,7 @@ import { getApiError } from '../lib/utils'
 import { useToast } from '../stores/toastStore'
 import { useThemeStore } from '../stores/themeStore'
 import Spinner from '../components/ui/Spinner'
+import MentionTextarea from '../components/ui/MentionTextarea'
 
 const Picker = lazy(() => import('@emoji-mart/react'))
 import NavLinks from '../components/layout/NavLinks'
@@ -78,10 +79,9 @@ export default function CreatePostPage() {
     reset,
     setValue,
     watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<Fields>({ resolver: zodResolver(buildSchema(type)) })
-
-  const { ref: contentRhfRef, ...contentRegisterProps } = register('content')
 
   const titleValue = watch('title') ?? ''
   const contentValue = watch('content') ?? ''
@@ -372,15 +372,21 @@ export default function CreatePostPage() {
                   </EmojiPickerErrorBoundary>
                 </div>
               )}
-              <textarea
-                {...contentRegisterProps}
-                ref={(el) => {
-                  contentRhfRef(el)
-                  contentTextareaRef.current = el
-                }}
-                rows={5}
-                placeholder="Share more details…"
-                className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
+              <Controller
+                name="content"
+                control={control}
+                render={({ field }) => (
+                  <MentionTextarea
+                    value={field.value ?? ''}
+                    onChange={field.onChange}
+                    groupId={groupIdValue || undefined}
+                    textareaRef={contentTextareaRef}
+                    rows={5}
+                    placeholder="Share more details…"
+                    className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
+                    dropdownPlacement="below"
+                  />
+                )}
               />
               <button
                 type="button"
@@ -429,15 +435,21 @@ export default function CreatePostPage() {
                     </Suspense>
                   </div>
                 )}
-                <textarea
-                  {...register('content')}
-                  ref={(el) => {
-                    register('content').ref(el)
-                    contentTextareaRef.current = el
-                  }}
-                  rows={3}
-                  placeholder="Add a description…"
-                  className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
+                <Controller
+                  name="content"
+                  control={control}
+                  render={({ field }) => (
+                    <MentionTextarea
+                      value={field.value ?? ''}
+                      onChange={field.onChange}
+                      groupId={groupIdValue || undefined}
+                      textareaRef={contentTextareaRef}
+                      rows={3}
+                      placeholder="Add a description…"
+                      className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
+                      dropdownPlacement="below"
+                    />
+                  )}
                 />
                 <button
                   type="button"
@@ -518,15 +530,21 @@ export default function CreatePostPage() {
                     </Suspense>
                   </div>
                 )}
-                <textarea
-                  {...register('content')}
-                  ref={(el) => {
-                    register('content').ref(el)
-                    contentTextareaRef.current = el
-                  }}
-                  rows={3}
-                  placeholder="Add a caption…"
-                  className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
+                <Controller
+                  name="content"
+                  control={control}
+                  render={({ field }) => (
+                    <MentionTextarea
+                      value={field.value ?? ''}
+                      onChange={field.onChange}
+                      groupId={groupIdValue || undefined}
+                      textareaRef={contentTextareaRef}
+                      rows={3}
+                      placeholder="Add a caption…"
+                      className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
+                      dropdownPlacement="below"
+                    />
+                  )}
                 />
                 <button
                   type="button"

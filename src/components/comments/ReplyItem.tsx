@@ -7,15 +7,18 @@ import { updateComment } from '../../api/comments'
 import { formatRelativeTime, getApiError } from '../../lib/utils'
 import { useAuthStore } from '../../stores/authStore'
 import { useToast } from '../../stores/toastStore'
+import MentionText from '../ui/MentionText'
+import MentionTextarea from '../ui/MentionTextarea'
 import type { Comment } from '../../types/api'
 
 interface ReplyItemProps {
   reply: Comment
   postId: string
+  groupId?: string
   onReply: (name: string) => void
 }
 
-export default function ReplyItem({ reply, postId, onReply }: ReplyItemProps) {
+export default function ReplyItem({ reply, postId, groupId, onReply }: ReplyItemProps) {
   const [editing, setEditing] = useState(false)
   const [editContent, setEditContent] = useState(reply.content)
   const queryClient = useQueryClient()
@@ -70,12 +73,14 @@ export default function ReplyItem({ reply, postId, onReply }: ReplyItemProps) {
 
         {editing ? (
           <div>
-            <textarea
+            <MentionTextarea
               autoFocus
               value={editContent}
-              onChange={(e) => setEditContent(e.target.value)}
+              onChange={setEditContent}
+              groupId={groupId}
               rows={2}
               className="w-full text-xs border border-border rounded-lg px-2 py-1.5 resize-none focus:outline-none focus:border-accent bg-white dark:bg-card"
+              dropdownPlacement="above"
             />
             <div className="flex gap-1.5 mt-1">
               <button
@@ -95,7 +100,9 @@ export default function ReplyItem({ reply, postId, onReply }: ReplyItemProps) {
           </div>
         ) : (
           <>
-            <p className="text-[0.625rem] text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">{reply.content}</p>
+            <p className="text-[0.625rem] text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
+              <MentionText content={reply.content} />
+            </p>
             <button
               onClick={() => {
                 const name = reply.user
