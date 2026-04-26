@@ -149,14 +149,14 @@ export default function PostMenu({ post }: PostMenuProps) {
                   <button
                     onClick={() => pinMutation.mutate()}
                     disabled={pinMutation.isPending}
-                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-gray-700 hover:bg-surface text-left disabled:opacity-50"
+                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-surface text-left disabled:opacity-50"
                   >
                     📌 {post.isPinned ? 'Unpin post' : 'Pin post'}
                   </button>
                   <button
                     onClick={() => downrankMutation.mutate()}
                     disabled={downrankMutation.isPending}
-                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-gray-700 hover:bg-surface text-left disabled:opacity-50"
+                    className="flex items-center gap-2 w-full px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-surface text-left disabled:opacity-50"
                   >
                     ⬇️ {post.isDownranked ? 'Restore ranking' : 'Downrank post'}
                   </button>
