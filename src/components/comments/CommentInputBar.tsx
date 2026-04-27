@@ -8,7 +8,7 @@ import { getApiError } from '../../lib/utils'
 import { useToast } from '../../stores/toastStore'
 import { useInstallPromptStore } from '../../stores/installPromptStore'
 import { useThemeStore } from '../../stores/themeStore'
-import MentionTextarea from '../ui/MentionTextarea'
+import MentionTextarea, { type MentionTextareaHandle } from '../ui/MentionTextarea'
 import type { Comment } from '../../types/api'
 
 interface ReplyingTo {
@@ -25,6 +25,7 @@ interface CommentInputBarProps {
 
 export default function CommentInputBar({ postId, groupId, replyingTo, onCancelReply }: CommentInputBarProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const mentionRef = useRef<MentionTextareaHandle>(null)
   const queryClient = useQueryClient()
   const toast = useToast()
   const triggerInstall = useInstallPromptStore((s) => s.trigger)
@@ -61,18 +62,8 @@ export default function CommentInputBar({ postId, groupId, replyingTo, onCancelR
   }, [showPicker])
 
   function handleEmojiSelect(emoji: { native: string }) {
-    const input = inputRef.current
-    if (!input) return
-    const start = input.selectionStart ?? commentText.length
-    const end = input.selectionEnd ?? commentText.length
-    const newValue = commentText.slice(0, start) + emoji.native + commentText.slice(end)
-    setCommentText(newValue)
+    mentionRef.current?.insertText(emoji.native)
     setShowPicker(false)
-    const pos = start + emoji.native.length
-    requestAnimationFrame(() => {
-      input.focus()
-      input.setSelectionRange(pos, pos)
-    })
   }
 
   const mutation = useMutation({
@@ -159,6 +150,7 @@ export default function CommentInputBar({ postId, groupId, replyingTo, onCancelR
         </button>
 
         <MentionTextarea
+          ref={mentionRef}
           value={commentText}
           onChange={setCommentText}
           groupId={groupId}
@@ -175,7 +167,6 @@ export default function CommentInputBar({ postId, groupId, replyingTo, onCancelR
             el.style.height = 'auto'
             el.style.height = `${el.scrollHeight}px`
           }}
-          dropdownPlacement="above"
         />
 
         {focused && !showPicker && (

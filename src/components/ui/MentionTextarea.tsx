@@ -1,8 +1,10 @@
-import { useRef, useState, useEffect, useCallback } from 'react'
+import { useRef, useState, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { searchUsers } from '../../api/users'
 import Avatar from './Avatar'
 import type { PostUser } from '../../types/api'
+// @ts-expect-error - no types for textarea-caret
+import getCaretCoordinates from 'textarea-caret'
 
 interface MentionState {
   query: string
@@ -14,6 +16,37 @@ function getActiveMention(value: string, cursor: number): MentionState | null {
   const match = before.match(/@([^\s@]*)$/)
   if (!match) return null
   return { query: match[1], start: match.index! }
+}
+
+const MENTION_STORAGE_RE = /@\[([^\]]+)\]\(([^)]+)\)/g
+
+function toDisplay(storageValue: string): string {
+  return storageValue.replace(MENTION_STORAGE_RE, '@$1')
+}
+
+function extractMentions(storageValue: string): Record<string, string> {
+  const map: Record<string, string> = {}
+  let m: RegExpExecArray | null
+  const re = new RegExp(MENTION_STORAGE_RE.source, 'g')
+  while ((m = re.exec(storageValue)) !== null) {
+    map[m[1]] = m[2]
+  }
+  return map
+}
+
+function toStorage(displayValue: string, mentionedUsers: Record<string, string>): string {
+  const names = Object.keys(mentionedUsers)
+  if (names.length === 0) return displayValue
+  // Longest names first so "John Doe" is matched before "John"
+  names.sort((a, b) => b.length - a.length)
+  const escaped = names.map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+  // (?!\w) prevents @John matching inside @Johnny
+  const re = new RegExp('@(' + escaped.join('|') + ')(?!\\w)', 'g')
+  return displayValue.replace(re, (_, name: string) => `@[${name}](${mentionedUsers[name]})`)
+}
+
+export interface MentionTextareaHandle {
+  insertText(text: string): void
 }
 
 interface MentionTextareaProps {
@@ -31,10 +64,9 @@ interface MentionTextareaProps {
   textareaRef?: React.RefObject<HTMLTextAreaElement | null>
   autoFocus?: boolean
   disabled?: boolean
-  dropdownPlacement?: 'above' | 'below'
 }
 
-export default function MentionTextarea({
+const MentionTextarea = forwardRef<MentionTextareaHandle, MentionTextareaProps>(function MentionTextarea({
   value,
   onChange,
   groupId,
@@ -49,8 +81,7 @@ export default function MentionTextarea({
   textareaRef: externalRef,
   autoFocus,
   disabled,
-  dropdownPlacement = 'above',
-}: MentionTextareaProps) {
+}, ref) {
   const internalRef = useRef<HTMLTextAreaElement>(null)
 
   const setRef = useCallback(
@@ -63,10 +94,42 @@ export default function MentionTextarea({
     [externalRef],
   )
 
+  const [displayValue, setDisplayValue] = useState(() => toDisplay(value))
+  const mentionedUsersRef = useRef<Record<string, string>>(extractMentions(value))
+  const lastStorageRef = useRef(value)
+
+  useEffect(() => {
+    if (value !== lastStorageRef.current) {
+      lastStorageRef.current = value
+      setDisplayValue(toDisplay(value))
+      mentionedUsersRef.current = extractMentions(value)
+    }
+  }, [value])
+
+  useImperativeHandle(ref, () => ({
+    insertText(text: string) {
+      const el = internalRef.current
+      if (!el) return
+      const start = el.selectionStart ?? displayValue.length
+      const end = el.selectionEnd ?? displayValue.length
+      const newDisplay = displayValue.slice(0, start) + text + displayValue.slice(end)
+      setDisplayValue(newDisplay)
+      const newStorage = toStorage(newDisplay, mentionedUsersRef.current)
+      lastStorageRef.current = newStorage
+      onChange(newStorage)
+      const newCursor = start + text.length
+      requestAnimationFrame(() => {
+        el.focus()
+        el.setSelectionRange(newCursor, newCursor)
+      })
+    },
+  }), [displayValue, onChange])
+
   const [mention, setMention] = useState<MentionState | null>(null)
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [debouncedQuery, setDebouncedQuery] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number; above: boolean } | null>(null)
 
   const { data: searchResults = [] } = useQuery({
     queryKey: ['user-search', debouncedQuery, groupId ?? '__all'],
@@ -80,19 +143,40 @@ export default function MentionTextarea({
   function closeMention() {
     setMention(null)
     setDebouncedQuery(null)
+    setDropdownPos(null)
     if (debounceRef.current) clearTimeout(debounceRef.current)
   }
 
-  function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    const newValue = e.target.value
-    onChange(newValue)
+  function computeDropdownPos(atIndex: number) {
+    const el = internalRef.current
+    if (!el) return
+    const caret = getCaretCoordinates(el, atIndex)
+    const ta = el.getBoundingClientRect()
+    const wrapper = el.parentElement!.getBoundingClientRect()
+    // caret.top/left are relative to the textarea's top-left, accounting for scroll
+    const relTop = ta.top - wrapper.top + caret.top - el.scrollTop
+    const relLeft = ta.left - wrapper.left + caret.left
+    const lineHeight = caret.height ?? 20
+    const dropdownHeight = 200 // rough max height of the list
+    const spaceBelow = window.innerHeight - (ta.top + caret.top - el.scrollTop + lineHeight)
+    const above = spaceBelow < dropdownHeight
+    setDropdownPos({ top: relTop + (above ? 0 : lineHeight), left: relLeft, above })
+  }
 
-    const cursor = e.target.selectionStart ?? newValue.length
-    const active = getActiveMention(newValue, cursor)
+  function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    const newDisplay = e.target.value
+    setDisplayValue(newDisplay)
+    const newStorage = toStorage(newDisplay, mentionedUsersRef.current)
+    lastStorageRef.current = newStorage
+    onChange(newStorage)
+
+    const cursor = e.target.selectionStart ?? newDisplay.length
+    const active = getActiveMention(newDisplay, cursor)
 
     if (active) {
       setMention(active)
       setSelectedIndex(0)
+      computeDropdownPos(active.start)
       if (debounceRef.current) clearTimeout(debounceRef.current)
       debounceRef.current = setTimeout(() => setDebouncedQuery(active.query), 200)
     } else {
@@ -111,13 +195,17 @@ export default function MentionTextarea({
   function insertMention(user: PostUser) {
     const el = internalRef.current
     if (!mention || !el) return
-    const cursorPos = el.selectionStart ?? value.length
+    const cursorPos = el.selectionStart ?? displayValue.length
     const displayName = `${user.firstName}${user.lastName ? ` ${user.lastName}` : ''}`
-    const token = `@[${displayName}](${user.id})`
-    const newValue = value.slice(0, mention.start) + token + ' ' + value.slice(cursorPos)
-    onChange(newValue)
+    const mentionText = `@${displayName}`
+    const newDisplay = displayValue.slice(0, mention.start) + mentionText + ' ' + displayValue.slice(cursorPos)
+    mentionedUsersRef.current[displayName] = user.id
+    setDisplayValue(newDisplay)
+    const newStorage = toStorage(newDisplay, mentionedUsersRef.current)
+    lastStorageRef.current = newStorage
+    onChange(newStorage)
     closeMention()
-    const newCursor = mention.start + token.length + 1
+    const newCursor = mention.start + mentionText.length + 1
     requestAnimationFrame(() => {
       el.focus()
       el.setSelectionRange(newCursor, newCursor)
@@ -156,16 +244,11 @@ export default function MentionTextarea({
     }
   }, [])
 
-  const dropdownClasses =
-    dropdownPlacement === 'above'
-      ? 'absolute bottom-full left-0 mb-1'
-      : 'absolute top-full left-0 mt-1'
-
   return (
     <div className={`relative ${wrapperClassName}`}>
       <textarea
         ref={setRef}
-        value={value}
+        value={displayValue}
         onChange={handleChange}
         onSelect={handleSelect}
         onKeyDown={handleKeyDown}
@@ -179,8 +262,15 @@ export default function MentionTextarea({
         disabled={disabled}
       />
 
-      {isOpen && (
-        <div className={`${dropdownClasses} w-64 max-w-full bg-card border border-border rounded-xl shadow-lg z-50 overflow-hidden`}>
+      {isOpen && dropdownPos && (
+        <div
+          className="absolute w-64 max-w-full bg-card border border-border rounded-xl shadow-lg z-50 overflow-hidden"
+          style={
+            dropdownPos.above
+              ? { bottom: `calc(100% - ${dropdownPos.top}px + 4px)`, left: dropdownPos.left }
+              : { top: dropdownPos.top + 4, left: dropdownPos.left }
+          }
+        >
           {searchResults.map((user, i) => (
             <button
               key={user.id}
@@ -208,4 +298,6 @@ export default function MentionTextarea({
       )}
     </div>
   )
-}
+})
+
+export default MentionTextarea

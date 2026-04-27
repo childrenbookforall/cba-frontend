@@ -91,7 +91,6 @@ export default function CommentItem({ comment, postId, groupId, onReply }: Comme
                 groupId={groupId}
                 rows={3}
                 className="w-full text-xs border border-border rounded-xl px-3 py-2 resize-none focus:outline-none focus:border-accent bg-surface"
-                dropdownPlacement="above"
               />
               <div className="flex gap-1.5 mt-1.5">
                 <button

@@ -1,7 +1,5 @@
 import { useNavigate } from 'react-router-dom'
 
-const MENTION_RE = /@\[([^\]]+)\]\(([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\)/g
-
 interface MentionTextProps {
   content: string
   className?: string
@@ -11,10 +9,10 @@ export default function MentionText({ content, className }: MentionTextProps) {
   const navigate = useNavigate()
   const parts: React.ReactNode[] = []
   let lastIndex = 0
-  MENTION_RE.lastIndex = 0
+  const re = /@\[([^\]]+)\]\(([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\)/g
 
   let match
-  while ((match = MENTION_RE.exec(content)) !== null) {
+  while ((match = re.exec(content)) !== null) {
     if (match.index > lastIndex) {
       parts.push(content.slice(lastIndex, match.index))
     }

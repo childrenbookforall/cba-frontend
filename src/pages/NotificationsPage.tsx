@@ -132,7 +132,7 @@ export default function NotificationsPage() {
                   </p>
                   {n.comment?.content && (
                     <p className="text-[0.625rem] text-muted mt-0.5 truncate">
-                      "{n.comment.content}"
+                      "{n.comment.content.replace(/@\[([^\]]+)\]\([^)]+\)/g, '@$1')}"
                     </p>
                   )}
                   <p className="text-[0.625rem] text-muted mt-1">

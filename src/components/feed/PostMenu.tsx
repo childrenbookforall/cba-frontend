@@ -84,6 +84,7 @@ export default function PostMenu({ post }: PostMenuProps) {
           ...old,
           pages: old.pages.map((page) => ({
             ...page,
+            pinnedPosts: page.pinnedPosts.map((p) => p.id === post.id ? { ...p, ...patch } : p),
             posts: page.posts.map((p) => p.id === post.id ? { ...p, ...patch } : p),
           })),
         } : old

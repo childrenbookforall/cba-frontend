@@ -80,7 +80,6 @@ export default function ReplyItem({ reply, postId, groupId, onReply }: ReplyItem
               groupId={groupId}
               rows={2}
               className="w-full text-xs border border-border rounded-lg px-2 py-1.5 resize-none focus:outline-none focus:border-accent bg-white dark:bg-card"
-              dropdownPlacement="above"
             />
             <div className="flex gap-1.5 mt-1">
               <button

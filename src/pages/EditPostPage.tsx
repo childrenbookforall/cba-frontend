@@ -12,7 +12,10 @@ import { useAuthStore } from '../stores/authStore'
 
 const schema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Max 200 characters'),
-  content: z.string().max(10000).optional(),
+  content: z.string().refine(
+    (v) => v.replace(/@\[([^\]]+)\]\([^)]+\)/g, '@$1').length <= 10000,
+    'Max 10,000 characters'
+  ).optional(),
   linkUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
 })
 
@@ -111,7 +114,6 @@ export default function EditPostPage() {
                   groupId={post.groupId}
                   rows={6}
                   className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
-                  dropdownPlacement="below"
                 />
               )}
             />
@@ -133,7 +135,6 @@ export default function EditPostPage() {
                   groupId={post.groupId}
                   rows={4}
                   className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
-                  dropdownPlacement="below"
                 />
               )}
             />
@@ -169,7 +170,6 @@ export default function EditPostPage() {
                     groupId={post.groupId}
                     rows={4}
                     className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
-                    dropdownPlacement="below"
                   />
                 )}
               />

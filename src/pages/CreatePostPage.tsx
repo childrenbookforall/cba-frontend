@@ -11,7 +11,7 @@ import { getApiError } from '../lib/utils'
 import { useToast } from '../stores/toastStore'
 import { useThemeStore } from '../stores/themeStore'
 import Spinner from '../components/ui/Spinner'
-import MentionTextarea from '../components/ui/MentionTextarea'
+import MentionTextarea, { type MentionTextareaHandle } from '../components/ui/MentionTextarea'
 
 const Picker = lazy(() => import('@emoji-mart/react'))
 import NavLinks from '../components/layout/NavLinks'
@@ -40,7 +40,10 @@ interface DraftData {
 const baseSchema = z.object({
   groupId: z.string().min(1, 'Select a group'),
   title: z.string().min(1, 'Title is required').max(200, 'Max 200 characters'),
-  content: z.string().max(10000).optional(),
+  content: z.string().refine(
+    (v) => v.replace(/@\[([^\]]+)\]\([^)]+\)/g, '@$1').length <= 10000,
+    'Max 10,000 characters'
+  ).optional(),
   linkUrl: z.string().optional(),
 })
 
@@ -68,7 +71,7 @@ export default function CreatePostPage() {
   const [draftBanner, setDraftBanner] = useState(false)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [emojiData, setEmojiData] = useState<any>(null)
-  const contentTextareaRef = useRef<HTMLTextAreaElement>(null)
+  const mentionRef = useRef<MentionTextareaHandle>(null)
   const emojiPickerRef = useRef<HTMLDivElement>(null)
   const draftTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -85,6 +88,7 @@ export default function CreatePostPage() {
 
   const titleValue = watch('title') ?? ''
   const contentValue = watch('content') ?? ''
+  const contentDisplayLength = contentValue.replace(/@\[([^\]]+)\]\([^)]+\)/g, '@$1').length
   const linkUrlValue = watch('linkUrl') ?? ''
   const groupIdValue = watch('groupId') ?? ''
 
@@ -168,19 +172,8 @@ export default function CreatePostPage() {
   }, [showEmojiPicker])
 
   function handleEmojiSelect(emoji: { native: string }) {
-    const el = contentTextareaRef.current
-    if (!el) return
-    const start = el.selectionStart ?? el.value.length
-    const end = el.selectionEnd ?? el.value.length
-    const newValue = el.value.slice(0, start) + emoji.native + el.value.slice(end)
-    setValue('content', newValue, { shouldDirty: true })
+    mentionRef.current?.insertText(emoji.native)
     setShowEmojiPicker(false)
-    // Restore cursor after emoji
-    requestAnimationFrame(() => {
-      const pos = start + emoji.native.length
-      el.focus()
-      el.setSelectionRange(pos, pos)
-    })
   }
 
   // Revoke object URLs on unmount
@@ -356,9 +349,9 @@ export default function CreatePostPage() {
               <label className="text-[0.625rem] font-bold text-muted uppercase tracking-wide">
                 Content <span className="normal-case font-normal">(optional)</span>
               </label>
-              {contentValue.length > 0 && (
-                <span className={`text-[0.625rem] tabular-nums ${contentValue.length > 9500 ? 'text-danger font-semibold' : 'text-muted'}`}>
-                  {contentValue.length} / 10,000
+              {contentDisplayLength > 0 && (
+                <span className={`text-[0.625rem] tabular-nums ${contentDisplayLength > 9500 ? 'text-danger font-semibold' : 'text-muted'}`}>
+                  {contentDisplayLength} / 10,000
                 </span>
               )}
             </div>
@@ -380,11 +373,10 @@ export default function CreatePostPage() {
                     value={field.value ?? ''}
                     onChange={field.onChange}
                     groupId={groupIdValue || undefined}
-                    textareaRef={contentTextareaRef}
+                    ref={mentionRef}
                     rows={5}
                     placeholder="Share more details…"
                     className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
-                    dropdownPlacement="below"
                   />
                 )}
               />
@@ -421,9 +413,9 @@ export default function CreatePostPage() {
                 <label className="text-[0.625rem] font-bold text-muted uppercase tracking-wide">
                   Description <span className="normal-case font-normal">(optional)</span>
                 </label>
-                {contentValue.length > 0 && (
-                  <span className={`text-[0.625rem] tabular-nums ${contentValue.length > 9500 ? 'text-danger font-semibold' : 'text-muted'}`}>
-                    {contentValue.length} / 10,000
+                {contentDisplayLength > 0 && (
+                  <span className={`text-[0.625rem] tabular-nums ${contentDisplayLength > 9500 ? 'text-danger font-semibold' : 'text-muted'}`}>
+                    {contentDisplayLength} / 10,000
                   </span>
                 )}
               </div>
@@ -443,11 +435,10 @@ export default function CreatePostPage() {
                       value={field.value ?? ''}
                       onChange={field.onChange}
                       groupId={groupIdValue || undefined}
-                      textareaRef={contentTextareaRef}
+                      ref={mentionRef}
                       rows={3}
                       placeholder="Add a description…"
                       className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
-                      dropdownPlacement="below"
                     />
                   )}
                 />
@@ -516,9 +507,9 @@ export default function CreatePostPage() {
                 <label className="text-[0.625rem] font-bold text-muted uppercase tracking-wide">
                   Caption <span className="normal-case font-normal">(optional)</span>
                 </label>
-                {contentValue.length > 0 && (
-                  <span className={`text-[0.625rem] tabular-nums ${contentValue.length > 9500 ? 'text-danger font-semibold' : 'text-muted'}`}>
-                    {contentValue.length} / 10,000
+                {contentDisplayLength > 0 && (
+                  <span className={`text-[0.625rem] tabular-nums ${contentDisplayLength > 9500 ? 'text-danger font-semibold' : 'text-muted'}`}>
+                    {contentDisplayLength} / 10,000
                   </span>
                 )}
               </div>
@@ -538,11 +529,10 @@ export default function CreatePostPage() {
                       value={field.value ?? ''}
                       onChange={field.onChange}
                       groupId={groupIdValue || undefined}
-                      textareaRef={contentTextareaRef}
+                      ref={mentionRef}
                       rows={3}
                       placeholder="Add a caption…"
                       className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
-                      dropdownPlacement="below"
                     />
                   )}
                 />
