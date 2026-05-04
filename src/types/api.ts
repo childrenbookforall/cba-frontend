@@ -219,3 +219,13 @@ export interface AdminFlagsResponse {
   flags: AdminFlag[]
   nextCursor: string | null
 }
+
+export interface SiteNotification {
+  id: string
+  message: string
+  linkText?: string | null
+  linkUrl?: string | null
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}

@@ -6,6 +6,7 @@ import type {
   GroupMembersResponse,
   AdminFlagsResponse,
   MessageResponse,
+  SiteNotification,
 } from '../types/api'
 
 // ── Users ─────────────────────────────────────────────────────────────────────
@@ -105,5 +106,27 @@ export async function listAdminFlags(cursor?: string): Promise<AdminFlagsRespons
 
 export async function reviewFlag(flagId: string): Promise<MessageResponse> {
   const res = await client.patch<MessageResponse>(`/api/admin/flags/${flagId}/review`)
+  return res.data
+}
+
+// ── Site notification ─────────────────────────────────────────────────────────
+
+export async function getAdminSiteNotification(): Promise<SiteNotification | null> {
+  const res = await client.get<SiteNotification | null>('/api/admin/site-notification')
+  return res.data
+}
+
+export async function upsertSiteNotification(data: {
+  message: string
+  linkText?: string
+  linkUrl?: string
+  isActive?: boolean
+}): Promise<SiteNotification> {
+  const res = await client.put<SiteNotification>('/api/admin/site-notification', data)
+  return res.data
+}
+
+export async function toggleSiteNotification(): Promise<SiteNotification> {
+  const res = await client.patch<SiteNotification>('/api/admin/site-notification/toggle')
   return res.data
 }

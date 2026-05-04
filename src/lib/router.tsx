@@ -24,6 +24,7 @@ const AdminShell = lazy(() => import('../pages/admin/AdminShell'))
 const AdminUsersPage = lazy(() => import('../pages/admin/AdminUsersPage'))
 const AdminGroupsPage = lazy(() => import('../pages/admin/AdminGroupsPage'))
 const AdminFlagsPage = lazy(() => import('../pages/admin/AdminFlagsPage'))
+const AdminNotificationPage = lazy(() => import('../pages/admin/AdminNotificationPage'))
 
 function PageLoader() {
   return (
@@ -116,6 +117,7 @@ export const router = createBrowserRouter([
           { path: '/admin/users', element: <AdminUsersPage /> },
           { path: '/admin/groups', element: <AdminGroupsPage /> },
           { path: '/admin/flags', element: <AdminFlagsPage /> },
+          { path: '/admin/notification', element: <AdminNotificationPage /> },
         ],
       },
     ],

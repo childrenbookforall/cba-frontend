@@ -6,6 +6,7 @@ import { router } from './lib/router'
 import { queryClient } from './lib/queryClient'
 import Toaster from './components/ui/Toaster'
 import InstallBanner from './components/ui/InstallBanner'
+import NotificationBar from './components/ui/NotificationBar'
 import { useInstallPromptStore } from './stores/installPromptStore'
 import { useAuthStore } from './stores/authStore'
 import { usePushSubscription } from './hooks/usePushSubscription'
@@ -100,6 +101,7 @@ export default function App() {
       <ErrorBoundary>
         <RouterProvider router={router} />
       </ErrorBoundary>
+      <NotificationBar />
       <Toaster />
       <InstallBanner />
       <AuthInitializer />
