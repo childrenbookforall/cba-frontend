@@ -1,16 +1,13 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { useAuthStore } from '../../stores/authStore'
 import { getSiteNotification } from '../../api/siteNotification'
 
 export default function NotificationBar() {
-  const token = useAuthStore((s) => s.token)
   const [dismissed, setDismissed] = useState(false)
 
   const { data: notification } = useQuery({
     queryKey: ['site-notification'],
     queryFn: getSiteNotification,
-    enabled: !!token,
     staleTime: 60 * 1000,
     refetchInterval: 60 * 1000,
   })
@@ -18,7 +15,7 @@ export default function NotificationBar() {
   if (!notification || !notification.isActive || dismissed) return null
 
   return (
-    <div className="fixed top-0 inset-x-0 z-50 bg-primary text-white px-4 py-2 flex items-center justify-center gap-3 text-xs font-medium shadow-sm">
+    <div className="bg-accent text-white px-4 py-2 flex items-center justify-center gap-3 text-xs font-medium">
       <span className="flex-1 text-center leading-snug">
         {notification.message}
         {notification.linkUrl && (

@@ -97,7 +97,7 @@ export default function AdminNotificationPage() {
       {message && (
         <div className="mb-6 rounded-lg overflow-hidden border border-border">
           <p className="text-[0.625rem] font-semibold uppercase tracking-wide text-muted px-3 pt-2 pb-1">Preview</p>
-          <div className="bg-primary text-white px-4 py-2 flex items-center justify-center gap-3 text-xs font-medium">
+          <div className="bg-accent text-white px-4 py-2 flex items-center justify-center gap-3 text-xs font-medium">
             <span className="flex-1 text-center leading-snug">
               {message}
               {linkUrl && (

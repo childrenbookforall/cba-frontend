@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
 import Spinner from '../components/ui/Spinner'
+import NotificationBar from '../components/ui/NotificationBar'
 
 // Auth pages
 const LoginPage = lazy(() => import('../pages/auth/LoginPage'))
@@ -47,7 +48,12 @@ function ProtectedRoute() {
   const isInitialized = useAuthStore((s) => s.isInitialized)
   if (!isInitialized) return <PageLoader />
   if (!token) return <Navigate to="/login" replace />
-  return <SuspenseOutlet />
+  return (
+    <>
+      <NotificationBar />
+      <SuspenseOutlet />
+    </>
+  )
 }
 
 function AdminRoute() {
