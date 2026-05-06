@@ -9,6 +9,7 @@ import GroupTabs from '../components/feed/GroupTabs'
 import SortPills from '../components/feed/SortPills'
 import BottomNav from '../components/layout/BottomNav'
 import NavLinks from '../components/layout/NavLinks'
+import GroupMembersSheet from '../components/ui/GroupMembersSheet'
 
 export default function FeedPage() {
   const [searchParams] = useSearchParams()
@@ -16,8 +17,14 @@ export default function FeedPage() {
     searchParams.get('sort') === 'latest' ? 'latest' : 'top'
   )
   const [groupId, setGroupId] = useState<string | null>(null)
+  const [membersOpen, setMembersOpen] = useState(false)
 
   const { data: groups } = useGroups()
+
+  const activeGroup = groupId
+    ? groups?.find((g) => g.id === groupId)
+    : groups?.length === 1 ? groups[0] : null
+  const displayCount = activeGroup?._count?.members ?? null
 
   const {
     data,
@@ -61,18 +68,17 @@ export default function FeedPage() {
 
       {/* Sort bar */}
       <div className="flex items-center justify-between px-4 py-2 bg-surface border-b border-border">
-        {(() => {
-          const activeGroup = groupId
-            ? groups?.find((g) => g.id === groupId)
-            : groups?.length === 1 ? groups[0] : null
-          if (!activeGroup?._count) return <span />
-          const displayCount = Math.max(0, activeGroup._count.members - 1)
-          return (
-            <span className="text-[0.625rem] text-muted font-medium">
-              {displayCount} {displayCount === 1 ? 'member' : 'members'}
-            </span>
-          )
-        })()}
+        {displayCount !== null ? (
+          <button
+            type="button"
+            onClick={() => setMembersOpen(true)}
+            className="text-[0.625rem] text-muted font-medium hover:text-primary transition-colors"
+          >
+            {displayCount} {displayCount === 1 ? 'member' : 'members'}
+          </button>
+        ) : (
+          <span />
+        )}
         <SortPills sort={sort} onChange={handleSortChange} />
       </div>
 
@@ -138,6 +144,13 @@ export default function FeedPage() {
       </Link>
 
       <BottomNav />
+
+      <GroupMembersSheet
+        open={membersOpen}
+        onClose={() => setMembersOpen(false)}
+        groupId={activeGroup?.id ?? null}
+        groupName={activeGroup?.name}
+      />
     </div>
   )
 }

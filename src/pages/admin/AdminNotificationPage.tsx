@@ -164,7 +164,7 @@ export default function AdminNotificationPage() {
         <button
           type="submit"
           disabled={saving || !message.trim()}
-          className="w-full py-2 text-sm font-semibold rounded-lg bg-primary text-white hover:bg-primary/90 transition disabled:opacity-40"
+          className="w-full py-2 text-sm font-semibold rounded-lg bg-primary text-white dark:text-gray-900 hover:bg-primary/90 transition disabled:opacity-40"
         >
           {saving ? 'Saving…' : 'Save'}
         </button>
