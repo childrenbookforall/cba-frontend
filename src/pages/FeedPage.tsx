@@ -4,12 +4,24 @@ import logo from '../assets/logo.png'
 import { useFeed } from '../hooks/useFeed'
 import { useGroups } from '../hooks/useGroups'
 import PostCard from '../components/feed/PostCard'
+import PostListItem from '../components/feed/PostListItem'
 import PostCardSkeleton from '../components/feed/PostCardSkeleton'
 import GroupTabs from '../components/feed/GroupTabs'
 import SortPills from '../components/feed/SortPills'
 import BottomNav from '../components/layout/BottomNav'
 import NavLinks from '../components/layout/NavLinks'
 import GroupMembersSheet from '../components/ui/GroupMembersSheet'
+
+type FeedView = 'card' | 'list'
+
+function getStoredView(): FeedView {
+  try {
+    const v = localStorage.getItem('feed-view')
+    return v === 'list' ? 'list' : 'card'
+  } catch {
+    return 'card'
+  }
+}
 
 export default function FeedPage() {
   const [searchParams] = useSearchParams()
@@ -18,6 +30,15 @@ export default function FeedPage() {
   )
   const [groupId, setGroupId] = useState<string | null>(null)
   const [membersOpen, setMembersOpen] = useState(false)
+  const [view, setView] = useState<FeedView>(getStoredView)
+
+  function toggleView() {
+    setView((v) => {
+      const next = v === 'card' ? 'list' : 'card'
+      try { localStorage.setItem('feed-view', next) } catch {}
+      return next
+    })
+  }
 
   const { data: groups } = useGroups()
 
@@ -68,22 +89,46 @@ export default function FeedPage() {
 
       {/* Sort bar */}
       <div className="flex items-center justify-between px-4 py-2 bg-surface border-b border-border">
-        {displayCount !== null ? (
+        <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => setMembersOpen(true)}
-            className="text-[0.625rem] text-muted font-medium hover:text-primary transition-colors"
+            onClick={toggleView}
+            aria-label={view === 'card' ? 'Switch to list view' : 'Switch to card view'}
+            className="p-1 rounded text-muted hover:text-primary transition-colors"
           >
-            {displayCount} {displayCount === 1 ? 'member' : 'members'}
+            {view === 'card' ? (
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="8" y1="6" x2="21" y2="6" />
+                <line x1="8" y1="12" x2="21" y2="12" />
+                <line x1="8" y1="18" x2="21" y2="18" />
+                <circle cx="3" cy="6" r="1" fill="currentColor" stroke="none" />
+                <circle cx="3" cy="12" r="1" fill="currentColor" stroke="none" />
+                <circle cx="3" cy="18" r="1" fill="currentColor" stroke="none" />
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+              </svg>
+            )}
           </button>
-        ) : (
-          <span />
-        )}
+          {displayCount !== null && (
+            <button
+              type="button"
+              onClick={() => setMembersOpen(true)}
+              className="text-[0.625rem] text-muted font-medium hover:text-primary transition-colors"
+            >
+              {displayCount} {displayCount === 1 ? 'member' : 'members'}
+            </button>
+          )}
+        </div>
         <SortPills sort={sort} onChange={handleSortChange} />
       </div>
 
       {/* Feed */}
-      <div className="max-w-2xl mx-auto pt-2">
+      <div className={`max-w-2xl mx-auto${view === 'card' ? ' pt-2' : ''}`}>
         {isLoading && (
           <>
             <PostCardSkeleton />
@@ -109,13 +154,17 @@ export default function FeedPage() {
           </div>
         )}
 
-        {pinnedPosts.map((post, i) => (
-          <PostCard key={post.id} post={post} index={i} />
-        ))}
+        {pinnedPosts.map((post, i) =>
+          view === 'list'
+            ? <PostListItem key={post.id} post={post} index={i} />
+            : <PostCard key={post.id} post={post} index={i} />
+        )}
 
-        {posts.map((post, i) => (
-          <PostCard key={post.id} post={post} index={pinnedPosts.length + i} />
-        ))}
+        {posts.map((post, i) =>
+          view === 'list'
+            ? <PostListItem key={post.id} post={post} index={pinnedPosts.length + i} />
+            : <PostCard key={post.id} post={post} index={pinnedPosts.length + i} />
+        )}
 
         {/* Load more */}
         {hasNextPage && (
