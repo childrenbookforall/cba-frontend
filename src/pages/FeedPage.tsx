@@ -14,10 +14,9 @@ import GroupMembersSheet from '../components/ui/GroupMembersSheet'
 
 type FeedView = 'card' | 'list'
 
-function getStoredView(): FeedView {
+function getSessionView(): FeedView {
   try {
-    const v = localStorage.getItem('feed-view')
-    return v === 'list' ? 'list' : 'card'
+    return sessionStorage.getItem('feed-view') === 'list' ? 'list' : 'card'
   } catch {
     return 'card'
   }
@@ -30,12 +29,12 @@ export default function FeedPage() {
   )
   const [groupId, setGroupId] = useState<string | null>(null)
   const [membersOpen, setMembersOpen] = useState(false)
-  const [view, setView] = useState<FeedView>(getStoredView)
+  const [view, setView] = useState<FeedView>(getSessionView)
 
   function toggleView() {
     setView((v) => {
       const next = v === 'card' ? 'list' : 'card'
-      try { localStorage.setItem('feed-view', next) } catch {}
+      try { sessionStorage.setItem('feed-view', next) } catch {}
       return next
     })
   }
