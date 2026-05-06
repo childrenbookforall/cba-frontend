@@ -17,7 +17,7 @@ function MemberRow({ member, onNavigate }: { member: GroupMember; onNavigate: (i
   return (
     <button
       onClick={() => onNavigate(member.id)}
-      className="w-full flex items-center gap-3 py-2.5 border-t border-border first:border-t-0 text-left"
+      className="w-full flex items-center gap-3 py-2.5 border-t border-border first:border-t-0 text-left cursor-pointer hover:bg-surface active:bg-surface transition-colors"
     >
       <Avatar firstName={member.firstName} lastName={member.lastName} avatarUrl={member.avatarUrl} size="md" />
       <p className="text-sm font-medium text-primary truncate">
