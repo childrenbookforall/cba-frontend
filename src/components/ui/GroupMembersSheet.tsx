@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import BottomSheet from './BottomSheet'
 import Avatar from './Avatar'
 import Spinner from './Spinner'
@@ -12,18 +13,22 @@ interface GroupMembersSheetProps {
   groupName?: string
 }
 
-function MemberRow({ member }: { member: GroupMember }) {
+function MemberRow({ member, onNavigate }: { member: GroupMember; onNavigate: (id: string) => void }) {
   return (
-    <div className="flex items-center gap-3 py-2.5 border-b border-border last:border-0">
-      <Avatar firstName={member.firstName} lastName={member.lastName} size="md" />
+    <button
+      onClick={() => onNavigate(member.id)}
+      className="w-full flex items-center gap-3 py-2.5 border-t border-border first:border-t-0 text-left"
+    >
+      <Avatar firstName={member.firstName} lastName={member.lastName} avatarUrl={member.avatarUrl} size="md" />
       <p className="text-sm font-medium text-primary truncate">
         {member.firstName}{member.lastName ? ` ${member.lastName}` : ''}
       </p>
-    </div>
+    </button>
   )
 }
 
 export default function GroupMembersSheet({ open, onClose, groupId, groupName }: GroupMembersSheetProps) {
+  const navigate = useNavigate()
   const [searchRaw, setSearchRaw] = useState('')
   const [search, setSearch] = useState('')
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -67,6 +72,11 @@ export default function GroupMembersSheet({ open, onClose, groupId, groupName }:
     debounceRef.current = setTimeout(() => setSearch(value), 300)
   }
 
+  function handleMemberClick(id: string) {
+    onClose()
+    navigate(`/profile/${id}`)
+  }
+
   return (
     <BottomSheet
       open={open}
@@ -97,7 +107,7 @@ export default function GroupMembersSheet({ open, onClose, groupId, groupName }:
           <p className="text-xs text-muted text-center py-8">No members found</p>
         )}
         {members.map((member) => (
-          <MemberRow key={member.id} member={member} />
+          <MemberRow key={member.id} member={member} onNavigate={handleMemberClick} />
         ))}
         {isFetchingNextPage && (
           <div className="flex justify-center py-4 text-muted">

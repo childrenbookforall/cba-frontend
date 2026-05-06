@@ -195,6 +195,7 @@ export interface GroupMember {
   id: string
   firstName: string
   lastName?: string | null
+  avatarUrl?: string | null
   email: string
   isActive: boolean
   joinedAt: string
