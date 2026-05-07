@@ -4,28 +4,39 @@ import { useAuthStore } from '../stores/authStore'
 import Spinner from '../components/ui/Spinner'
 import NotificationBar from '../components/ui/NotificationBar'
 
+function lazyWithReload<T extends React.ComponentType<unknown>>(
+  factory: () => Promise<{ default: T }>
+) {
+  return lazy(() =>
+    factory().catch(() => {
+      window.location.reload()
+      return new Promise<{ default: T }>(() => {})
+    })
+  )
+}
+
 // Auth pages
-const LoginPage = lazy(() => import('../pages/auth/LoginPage'))
-const ForgotPasswordPage = lazy(() => import('../pages/auth/ForgotPasswordPage'))
-const AcceptInvitePage = lazy(() => import('../pages/auth/AcceptInvitePage'))
-const ResetPasswordPage = lazy(() => import('../pages/auth/ResetPasswordPage'))
+const LoginPage = lazyWithReload(() => import('../pages/auth/LoginPage'))
+const ForgotPasswordPage = lazyWithReload(() => import('../pages/auth/ForgotPasswordPage'))
+const AcceptInvitePage = lazyWithReload(() => import('../pages/auth/AcceptInvitePage'))
+const ResetPasswordPage = lazyWithReload(() => import('../pages/auth/ResetPasswordPage'))
 
 // Member pages
-const FeedPage = lazy(() => import('../pages/FeedPage'))
-const PostDetailPage = lazy(() => import('../pages/PostDetailPage'))
-const CreatePostPage = lazy(() => import('../pages/CreatePostPage'))
-const EditPostPage = lazy(() => import('../pages/EditPostPage'))
-const NotificationsPage = lazy(() => import('../pages/NotificationsPage'))
-const ProfilePage = lazy(() => import('../pages/ProfilePage'))
-const UserProfilePage = lazy(() => import('../pages/UserProfilePage'))
-const SearchPage = lazy(() => import('../pages/SearchPage'))
+const FeedPage = lazyWithReload(() => import('../pages/FeedPage'))
+const PostDetailPage = lazyWithReload(() => import('../pages/PostDetailPage'))
+const CreatePostPage = lazyWithReload(() => import('../pages/CreatePostPage'))
+const EditPostPage = lazyWithReload(() => import('../pages/EditPostPage'))
+const NotificationsPage = lazyWithReload(() => import('../pages/NotificationsPage'))
+const ProfilePage = lazyWithReload(() => import('../pages/ProfilePage'))
+const UserProfilePage = lazyWithReload(() => import('../pages/UserProfilePage'))
+const SearchPage = lazyWithReload(() => import('../pages/SearchPage'))
 
 // Admin pages
-const AdminShell = lazy(() => import('../pages/admin/AdminShell'))
-const AdminUsersPage = lazy(() => import('../pages/admin/AdminUsersPage'))
-const AdminGroupsPage = lazy(() => import('../pages/admin/AdminGroupsPage'))
-const AdminFlagsPage = lazy(() => import('../pages/admin/AdminFlagsPage'))
-const AdminNotificationPage = lazy(() => import('../pages/admin/AdminNotificationPage'))
+const AdminShell = lazyWithReload(() => import('../pages/admin/AdminShell'))
+const AdminUsersPage = lazyWithReload(() => import('../pages/admin/AdminUsersPage'))
+const AdminGroupsPage = lazyWithReload(() => import('../pages/admin/AdminGroupsPage'))
+const AdminFlagsPage = lazyWithReload(() => import('../pages/admin/AdminFlagsPage'))
+const AdminNotificationPage = lazyWithReload(() => import('../pages/admin/AdminNotificationPage'))
 
 function PageLoader() {
   return (
