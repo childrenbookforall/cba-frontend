@@ -51,7 +51,7 @@ export default function PostDetailPage() {
     )
   }
 
-  if (postError || (!postLoading && !post)) {
+  if (postError || !post) {
     return (
       <div className="min-h-svh bg-surface flex flex-col items-center justify-center gap-4 p-8 text-center">
         <title>Post not found - CBA</title>
