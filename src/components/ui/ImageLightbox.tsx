@@ -37,7 +37,7 @@ export default function ImageLightbox({ urls, index, alt, onClose, onChangeIndex
     }
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
-  }, [index, hasMultiple])
+  }, [index, hasMultiple, onClose, onChangeIndex])
 
   return createPortal(
     <div

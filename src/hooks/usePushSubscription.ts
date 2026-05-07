@@ -16,13 +16,16 @@ export function usePushSubscription(enabled = true) {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) return
     if (Notification.permission === 'denied') return
 
+    let cancelled = false
+
     async function subscribe() {
       try {
         const registration = await navigator.serviceWorker.ready
+        if (cancelled) return
 
         // Request permission if not already granted
         const permission = await Notification.requestPermission()
-        if (permission !== 'granted') return
+        if (cancelled || permission !== 'granted') return
 
         const vapidKey = urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY)
 
@@ -32,6 +35,7 @@ export function usePushSubscription(enabled = true) {
           applicationServerKey: vapidKey.buffer as ArrayBuffer,
         })
 
+        if (cancelled) return
         await subscribePush(subscription)
       } catch (err) {
         console.error('Push subscription failed:', err)
@@ -39,5 +43,6 @@ export function usePushSubscription(enabled = true) {
     }
 
     subscribe()
+    return () => { cancelled = true }
   }, [enabled])
 }

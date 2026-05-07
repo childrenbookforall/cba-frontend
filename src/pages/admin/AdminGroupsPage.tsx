@@ -92,8 +92,8 @@ export default function AdminGroupsPage() {
         iterations++
       } while (cursor && iterations < MAX_ITERATIONS)
       setAllUsers(collected)
-    } catch {
-      // non-critical - picker just won't populate
+    } catch (err) {
+      toast(getApiError(err), 'error')
     }
   }
 

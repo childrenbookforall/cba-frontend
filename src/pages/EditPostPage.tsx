@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Navigate } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -48,13 +48,6 @@ export default function EditPostPage() {
     }
   }, [post, reset])
 
-  // Guard: only owner can edit
-  useEffect(() => {
-    if (post && currentUser && post.userId !== currentUser.id) {
-      navigate(`/posts/${postId}`, { replace: true })
-    }
-  }, [post, currentUser, navigate, postId])
-
   async function onSubmit(data: Fields) {
     if (!postId) return
     try {
@@ -65,6 +58,10 @@ export default function EditPostPage() {
     } catch (err) {
       setError('root', { message: getApiError(err) })
     }
+  }
+
+  if (post && currentUser && post.userId !== currentUser.id) {
+    return <Navigate to={`/posts/${postId}`} replace />
   }
 
   if (isLoading) {

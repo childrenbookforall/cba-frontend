@@ -27,10 +27,18 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-svh flex flex-col items-center justify-center gap-3 p-8 text-center">
-          <p className="text-sm font-semibold text-primary">Something went wrong</p>
+        <div className="min-h-svh flex flex-col items-center justify-center gap-4 p-8 text-center bg-surface">
+          <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-950 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-danger" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1">Something went wrong</p>
+            <p className="text-xs text-muted">An unexpected error occurred. Reload the app to continue.</p>
+          </div>
           <button
-            className="text-xs text-primary underline"
+            className="px-5 py-2 bg-accent text-white text-xs font-semibold rounded-full"
             onClick={() => { this.setState({ hasError: false }); window.location.href = '/' }}
           >
             Reload app

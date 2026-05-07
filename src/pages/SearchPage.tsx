@@ -18,21 +18,26 @@ export default function SearchPage() {
   const [error, setError] = useState<string | null>(null)
   const [searched, setSearched] = useState(false)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const abortRef = useRef<AbortController | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   // Capture initialQ at mount so the effect below doesn't need it as a dep
   const initialQRef = useRef(initialQ)
 
   const runSearch = useCallback(async (q: string) => {
+    abortRef.current?.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
     setIsLoading(true)
     setSearched(true)
     setError(null)
     try {
-      const posts = await searchPosts(q)
+      const posts = await searchPosts(q, controller.signal)
       setResults(posts)
     } catch (err) {
+      if (controller.signal.aborted) return
       setError(getApiError(err))
     } finally {
-      setIsLoading(false)
+      if (!controller.signal.aborted) setIsLoading(false)
     }
   }, [])
 
@@ -41,7 +46,10 @@ export default function SearchPage() {
   useEffect(() => {
     if (initialQRef.current) runSearch(initialQRef.current)
     else inputRef.current?.focus()
-    return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+      abortRef.current?.abort()
+    }
   }, [runSearch])
 
   const handleChange = useCallback((q: string) => {

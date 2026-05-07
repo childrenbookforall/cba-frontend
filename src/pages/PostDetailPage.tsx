@@ -34,7 +34,7 @@ export default function PostDetailPage() {
   const [replyingTo, setReplyingTo] = useState<ReplyingTo | null>(null)
   const isAdmin = useAuthStore((s) => s.user?.role === 'admin')
 
-  const { data: post, isLoading: postLoading } = useQuery({
+  const { data: post, isLoading: postLoading, isError: postError, refetch: refetchPost } = useQuery({
     queryKey: ['post', postId],
     queryFn: () => getPost(postId!),
     enabled: !!postId,
@@ -51,14 +51,33 @@ export default function PostDetailPage() {
     )
   }
 
-  if (!post) {
+  if (postError || (!postLoading && !post)) {
     return (
-      <div className="min-h-svh bg-surface flex items-center justify-center flex-col gap-3">
+      <div className="min-h-svh bg-surface flex flex-col items-center justify-center gap-4 p-8 text-center">
         <title>Post not found - CBA</title>
-        <p className="text-sm text-muted">Post not found.</p>
-        <button onClick={() => navigate('/feed')} className="text-xs text-accent underline">
-          Back to feed
-        </button>
+        <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-950 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-danger" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1">
+            {postError ? 'Could not load post' : 'Post not found'}
+          </p>
+          <p className="text-xs text-muted">
+            {postError ? 'Check your connection and try again.' : 'This post may have been deleted.'}
+          </p>
+        </div>
+        <div className="flex gap-3">
+          {postError && (
+            <button onClick={() => refetchPost()} className="px-4 py-2 bg-accent text-white text-xs font-semibold rounded-full">
+              Try again
+            </button>
+          )}
+          <button onClick={() => navigate('/feed')} className="px-4 py-2 border border-border text-xs font-semibold text-gray-600 dark:text-gray-400 rounded-full">
+            Back to feed
+          </button>
+        </div>
       </div>
     )
   }

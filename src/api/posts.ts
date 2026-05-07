@@ -76,8 +76,8 @@ export async function deletePost(postId: string): Promise<MessageResponse> {
   return res.data
 }
 
-export async function searchPosts(q: string): Promise<Post[]> {
-  const res = await client.get<{ posts: Post[] }>('/api/posts/search', { params: { q } })
+export async function searchPosts(q: string, signal?: AbortSignal): Promise<Post[]> {
+  const res = await client.get<{ posts: Post[] }>('/api/posts/search', { params: { q }, signal })
   return res.data.posts
 }
 

@@ -44,6 +44,9 @@ export function getApiError(err: unknown): string {
     const e = err as { response?: { status?: number; data?: { error?: string } }; request?: unknown }
     if (e.response) {
       if (typeof e.response.data?.error === 'string') return e.response.data.error
+      if (e.response.status === 401) return 'Your session has expired. Please sign in again.'
+      if (e.response.status === 403) return "You don't have permission to do that."
+      if (e.response.status === 404) return 'Not found.'
       if (e.response.status === 429) return 'Too many requests. Please try again later.'
       if (e.response.status && e.response.status >= 500) return 'Server error. Please try again.'
     } else if (e.request) {

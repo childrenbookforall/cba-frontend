@@ -74,6 +74,7 @@ export default function CreatePostPage() {
   const mentionRef = useRef<MentionTextareaHandle>(null)
   const emojiPickerRef = useRef<HTMLDivElement>(null)
   const draftTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const photoPreviewsRef = useRef(photoPreviews)
 
   const {
     register,
@@ -176,12 +177,12 @@ export default function CreatePostPage() {
     setShowEmojiPicker(false)
   }
 
+  // Keep ref in sync so the unmount cleanup always sees the latest previews
+  useEffect(() => { photoPreviewsRef.current = photoPreviews }, [photoPreviews])
+
   // Revoke object URLs on unmount
   useEffect(() => {
-    return () => {
-      photoPreviews.forEach((url) => URL.revokeObjectURL(url))
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => { photoPreviewsRef.current.forEach((url) => URL.revokeObjectURL(url)) }
   }, [])
 
   const onDrop = useCallback((accepted: File[]) => {

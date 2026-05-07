@@ -29,7 +29,7 @@ function notificationText(n: Notification): string {
 export default function NotificationsPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const { data: notifications, isLoading, isError } = useNotifications()
+  const { data: notifications, isLoading, isError, refetch } = useNotifications()
 
   // Capture notifications on first load so they stay visible after marking as read
   const [displayed, setDisplayed] = useState<Notification[]>([])
@@ -93,9 +93,12 @@ export default function NotificationsPage() {
         )}
 
         {isError && (
-          <p className="text-center text-xs text-muted py-16">
-            Could not load notifications. Please try again.
-          </p>
+          <div className="flex flex-col items-center gap-2 py-16">
+            <p className="text-xs text-muted">Could not load notifications.</p>
+            <button onClick={() => refetch()} className="text-xs font-semibold text-accent">
+              Try again
+            </button>
+          </div>
         )}
 
         {!isLoading && !isError && displayed.length === 0 && (

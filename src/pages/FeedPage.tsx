@@ -50,6 +50,7 @@ export default function FeedPage() {
     data,
     isLoading,
     isError,
+    refetch,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
@@ -137,9 +138,12 @@ export default function FeedPage() {
         )}
 
         {isError && (
-          <p className="text-center text-xs text-muted py-8">
-            Could not load posts. Please try again later.
-          </p>
+          <div className="flex flex-col items-center gap-2 py-12">
+            <p className="text-xs text-muted">Could not load posts.</p>
+            <button onClick={() => refetch()} className="text-xs font-semibold text-accent">
+              Try again
+            </button>
+          </div>
         )}
 
         {!isLoading && posts.length === 0 && (

@@ -26,9 +26,9 @@ export default function ProfilePage() {
     mutationFn: (bio: string) => updateMe({ bio }),
     onSuccess: (updatedUser) => {
       setAuth(token!, { ...user!, ...updatedUser })
-      setEditingBio(false)
       toast('Profile updated')
     },
+    onSettled: () => setEditingBio(false),
     onError: (err) => toast(getApiError(err), 'error'),
   })
 
@@ -36,9 +36,9 @@ export default function ProfilePage() {
     mutationFn: (birthday: string | null) => updateMe({ birthday }),
     onSuccess: (updatedUser) => {
       setAuth(token!, { ...user!, ...updatedUser })
-      setEditingBirthday(false)
       toast('Profile updated')
     },
+    onSettled: () => setEditingBirthday(false),
     onError: (err) => toast(getApiError(err), 'error'),
   })
 
