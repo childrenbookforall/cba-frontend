@@ -3,6 +3,7 @@ import cbaLogo from '../../assets/logo.png'
 import Avatar from '../ui/Avatar'
 import GroupChip from './GroupChip'
 import ReactionButton from './ReactionButton'
+import BookmarkButton from './BookmarkButton'
 import PostMenu from './PostMenu'
 import MediaCarousel from './MediaCarousel'
 import LinkPreview from './LinkPreview'
@@ -141,6 +142,9 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
         >
           💬 {post._count.comments}
         </button>
+        <div className="ml-auto" onClick={(e) => e.preventDefault()}>
+          <BookmarkButton post={post} />
+        </div>
       </div>
     </Link>
   )

@@ -36,9 +36,16 @@ export default function NotificationsPage() {
   const loadedRef = useRef(false)
 
   useEffect(() => {
-    if (!isLoading && notifications && !loadedRef.current) {
-      loadedRef.current = true
-      setDisplayed(notifications)
+    if (!isLoading && notifications) {
+      setDisplayed((prev) => {
+        if (!loadedRef.current) {
+          loadedRef.current = true
+          return notifications
+        }
+        const prevIds = new Set(prev.map((n) => n.id))
+        const incoming = notifications.filter((n) => !prevIds.has(n.id))
+        return incoming.length > 0 ? [...incoming, ...prev] : prev
+      })
     }
   }, [isLoading, notifications])
 

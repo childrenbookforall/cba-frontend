@@ -90,13 +90,12 @@ export default function ReactionButton({ post, type }: ReactionButtonProps) {
       await queryClient.cancelQueries({ queryKey: ['post', post.id] })
 
       const prevPost = queryClient.getQueryData<Post>(['post', post.id])
-      const prevFeedSnapshots = new Map<unknown, InfiniteFeed>()
+      const prevFeedEntries = queryClient.getQueriesData<InfiniteFeed>({ queryKey: ['feed'], exact: false })
 
       queryClient.setQueriesData<InfiniteFeed>(
         { queryKey: ['feed'], exact: false },
         (old) => {
           if (!old) return old
-          prevFeedSnapshots.set(old, old)
           return {
             ...old,
             pages: old.pages.map((page) => ({
@@ -116,18 +115,15 @@ export default function ReactionButton({ post, type }: ReactionButtonProps) {
         old ? applyReactionToPost(old, type) : old
       )
 
-      return { prevPost, prevFeedSnapshots }
+      return { prevPost, prevFeedEntries }
     },
     onError: (_err, _vars, context) => {
       if (context?.prevPost !== undefined) {
         queryClient.setQueryData(['post', post.id], context.prevPost)
       }
-      context?.prevFeedSnapshots.forEach((snapshot) => {
-        queryClient.setQueriesData<InfiniteFeed>(
-          { queryKey: ['feed'], exact: false },
-          () => snapshot
-        )
-      })
+      for (const [queryKey, snapshot] of context?.prevFeedEntries ?? []) {
+        queryClient.setQueryData<InfiniteFeed>(queryKey, snapshot)
+      }
     },
     onSuccess: () => {
       if (!isActive) triggerInstall()

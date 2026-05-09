@@ -130,3 +130,55 @@ export async function toggleSiteNotification(): Promise<SiteNotification> {
   const res = await client.patch<SiteNotification>('/api/admin/site-notification/toggle')
   return res.data
 }
+
+// ── Messages ──────────────────────────────────────────────────────────────────
+
+export interface AdminConversation {
+  id: string
+  userA: { id: string; firstName: string; lastName?: string | null; avatarUrl?: string | null }
+  userB: { id: string; firstName: string; lastName?: string | null; avatarUrl?: string | null }
+  lastMessage: { id: string; content: string; senderId: string; createdAt: string } | null
+  messageCount: number
+  updatedAt: string
+}
+
+export interface AdminConversationsResponse {
+  conversations: AdminConversation[]
+  hasMore: boolean
+  nextCursor: string | null
+}
+
+export interface AdminMessageWithSender {
+  id: string
+  senderId: string
+  content: string
+  isRead: boolean
+  createdAt: string
+  sender: { id: string; firstName: string; lastName?: string | null; avatarUrl?: string | null }
+}
+
+export interface AdminThreadResponse {
+  conversation: {
+    id: string
+    userA: { id: string; firstName: string; lastName?: string | null }
+    userB: { id: string; firstName: string; lastName?: string | null }
+  }
+  messages: AdminMessageWithSender[]
+  hasMore: boolean
+  nextCursor: string | null
+}
+
+export async function listAdminConversations(cursor?: string, q?: string): Promise<AdminConversationsResponse> {
+  const params: Record<string, string> = {}
+  if (cursor) params.cursor = cursor
+  if (q) params.q = q
+  const res = await client.get<AdminConversationsResponse>('/api/admin/messages', { params })
+  return res.data
+}
+
+export async function getAdminThread(userId1: string, userId2: string, cursor?: string): Promise<AdminThreadResponse> {
+  const res = await client.get<AdminThreadResponse>(`/api/admin/messages/${userId1}/${userId2}`, {
+    params: cursor ? { cursor } : undefined,
+  })
+  return res.data
+}

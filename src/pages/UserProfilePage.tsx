@@ -1,6 +1,8 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { getUserById } from '../api/users'
+import { useAuthStore } from '../stores/authStore'
+import { useToast } from '../stores/toastStore'
 import Avatar from '../components/ui/Avatar'
 import Spinner from '../components/ui/Spinner'
 import BottomNav from '../components/layout/BottomNav'
@@ -9,6 +11,8 @@ import NavLinks from '../components/layout/NavLinks'
 export default function UserProfilePage() {
   const { userId } = useParams<{ userId: string }>()
   const navigate = useNavigate()
+  const currentUser = useAuthStore((s) => s.user)
+  const toast = useToast()
 
   const { data: user, isLoading, isError } = useQuery({
     queryKey: ['user', userId],
@@ -68,6 +72,24 @@ export default function UserProfilePage() {
           <h2 className="text-base font-bold text-gray-900 dark:text-gray-100">
             {user.firstName} {user.lastName}
           </h2>
+          {currentUser?.id !== userId && (
+            <button
+              onClick={() => {
+                if (!currentUser) return
+                if (currentUser.role === 'admin' || currentUser.canInitiateMessages) {
+                  navigate(`/messages/${userId}`)
+                } else {
+                  toast('Create more posts and comments to enable this feature', 'error')
+                }
+              }}
+              className="mt-3 inline-flex items-center gap-1.5 px-4 py-1.5 border border-border rounded-full text-xs font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+              Message
+            </button>
+          )}
         </div>
       </div>
 

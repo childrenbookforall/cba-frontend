@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useImageDropzone } from '../hooks/useImageDropzone'
 import { useMutation } from '@tanstack/react-query'
 import { useAuthStore } from '../stores/authStore'
@@ -132,9 +132,12 @@ export default function ProfilePage() {
             {user.firstName} {user.lastName}
           </h2>
           {user.role === 'admin' && (
-            <span className="inline-block mt-1 text-[0.625rem] font-semibold uppercase tracking-wide bg-primary text-white dark:text-surface px-2 py-0.5 rounded-full">
+            <Link
+              to="/admin"
+              className="inline-block mt-1 text-[0.625rem] font-semibold uppercase tracking-wide bg-primary text-white dark:text-surface px-2 py-0.5 rounded-full hover:opacity-80 transition"
+            >
               Admin
-            </span>
+            </Link>
           )}
           <p className="text-[0.625rem] text-muted mt-1">Member since {memberSince}</p>
         </div>
@@ -240,8 +243,14 @@ export default function ProfilePage() {
           <p className="text-xs text-gray-600 dark:text-gray-400">
             {user.birthday
               ? (() => {
-                  const [y, m, d] = user.birthday.slice(0, 10).split('-').map(Number)
-                  return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+                  try {
+                    const [y, m, d] = user.birthday.slice(0, 10).split('-').map(Number)
+                    const date = new Date(y, m - 1, d)
+                    if (isNaN(date.getTime())) return <span className="text-muted italic">Invalid date.</span>
+                    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+                  } catch {
+                    return <span className="text-muted italic">Invalid date.</span>
+                  }
                 })()
               : <span className="text-muted italic">Not set.</span>
             }

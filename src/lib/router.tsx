@@ -30,6 +30,9 @@ const NotificationsPage = lazyWithReload(() => import('../pages/NotificationsPag
 const ProfilePage = lazyWithReload(() => import('../pages/ProfilePage'))
 const UserProfilePage = lazyWithReload(() => import('../pages/UserProfilePage'))
 const SearchPage = lazyWithReload(() => import('../pages/SearchPage'))
+const SavedPostsPage = lazyWithReload(() => import('../pages/SavedPostsPage'))
+const MessagesPage = lazyWithReload(() => import('../pages/MessagesPage'))
+const ConversationPage = lazyWithReload(() => import('../pages/ConversationPage'))
 
 // Admin pages
 const AdminShell = lazyWithReload(() => import('../pages/admin/AdminShell'))
@@ -37,6 +40,7 @@ const AdminUsersPage = lazyWithReload(() => import('../pages/admin/AdminUsersPag
 const AdminGroupsPage = lazyWithReload(() => import('../pages/admin/AdminGroupsPage'))
 const AdminFlagsPage = lazyWithReload(() => import('../pages/admin/AdminFlagsPage'))
 const AdminNotificationPage = lazyWithReload(() => import('../pages/admin/AdminNotificationPage'))
+const AdminMessagesPage = lazyWithReload(() => import('../pages/admin/AdminMessagesPage'))
 
 function PageLoader() {
   return (
@@ -68,10 +72,11 @@ function ProtectedRoute() {
 }
 
 function AdminRoute() {
+  const token = useAuthStore((s) => s.token)
   const user = useAuthStore((s) => s.user)
   const isInitialized = useAuthStore((s) => s.isInitialized)
   if (!isInitialized) return <PageLoader />
-  if (!user) return <Navigate to="/login" replace />
+  if (!token || !user) return <Navigate to="/login" replace />
   if (user.role !== 'admin') return <Navigate to="/feed" replace />
   return <SuspenseOutlet />
 }
@@ -129,6 +134,9 @@ export const router = createBrowserRouter([
           { path: '/profile', element: <ProfilePage /> },
           { path: '/profile/:userId', element: <UserProfilePage /> },
           { path: '/search', element: <SearchPage /> },
+          { path: '/saved', element: <SavedPostsPage /> },
+          { path: '/messages', element: <MessagesPage /> },
+          { path: '/messages/:userId', element: <ConversationPage /> },
         ],
       },
       // Protected admin routes
@@ -147,6 +155,7 @@ export const router = createBrowserRouter([
               { path: '/admin/groups', element: <AdminGroupsPage /> },
               { path: '/admin/flags', element: <AdminFlagsPage /> },
               { path: '/admin/notification', element: <AdminNotificationPage /> },
+              { path: '/admin/messages', element: <AdminMessagesPage /> },
             ],
           },
         ],

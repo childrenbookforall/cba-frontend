@@ -64,7 +64,7 @@ export default function EditPostPage() {
     return <Navigate to={`/posts/${postId}`} replace />
   }
 
-  if (isLoading) {
+  if (isLoading || !post) {
     return (
       <div className="min-h-svh bg-surface flex items-center justify-center">
         <Spinner />

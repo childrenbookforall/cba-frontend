@@ -7,6 +7,7 @@ import { useComments } from '../hooks/useComments'
 import Avatar from '../components/ui/Avatar'
 import GroupChip from '../components/feed/GroupChip'
 import ReactionButton from '../components/feed/ReactionButton'
+import BookmarkButton from '../components/feed/BookmarkButton'
 import PostMenu from '../components/feed/PostMenu'
 import CommentThread from '../components/comments/CommentThread'
 import CommentInputBar from '../components/comments/CommentInputBar'
@@ -96,7 +97,6 @@ export default function PostDetailPage() {
         </button>
         <div className="flex-1" />
         <NavLinks />
-        <PostMenu post={post} />
       </div>
 
       {/* Scrollable content */}
@@ -107,8 +107,9 @@ export default function PostDetailPage() {
         <div className="bg-card mb-2 px-4 pt-4 pb-3">
           {/* Author + meta */}
           <div className="flex items-center gap-2.5 mb-3">
+            <div className="flex items-center gap-2.5 flex-1 min-w-0">
             {post.user ? (
-              <div className="cursor-pointer" onClick={() => navigate(`/profile/${post.user!.id}`)}>
+              <div className="cursor-pointer" onClick={() => navigate(`/profile/${post.user.id}`)}>
                 <Avatar
                   firstName={post.user.firstName}
                   lastName={post.user.lastName}
@@ -143,6 +144,8 @@ export default function PostDetailPage() {
                 )}
               </div>
             </div>
+            </div>
+            <PostMenu post={post} />
           </div>
 
           {/* Title */}
@@ -191,9 +194,12 @@ export default function PostDetailPage() {
             <ReactionButton post={post} type="hug" />
             <ReactionButton post={post} type="with_you" />
             <ReactionButton post={post} type="helped_me" />
-<span className="text-xs text-muted ml-1">
+            <span className="text-xs text-muted ml-1">
               💬 {post._count.comments} {post._count.comments === 1 ? 'comment' : 'comments'}
             </span>
+            <div className="ml-auto">
+              <BookmarkButton post={post} />
+            </div>
           </div>
         </div>
 

@@ -6,6 +6,7 @@ const tabs = [
   { path: '/admin/groups', label: 'Groups' },
   { path: '/admin/flags', label: 'Flags' },
   { path: '/admin/notification', label: 'Notification' },
+  { path: '/admin/messages', label: 'Messages' },
 ]
 
 export default function AdminShell() {

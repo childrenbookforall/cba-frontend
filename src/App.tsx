@@ -60,7 +60,11 @@ function AuthInitializer() {
       axios
         .post(`${import.meta.env.VITE_API_URL}/api/auth/refresh`, {}, { withCredentials: true })
         .then((res) => { setAuth(res.data.token, user); setInitialized() })
-        .catch(() => { clearAuth(); setInitialized() })
+        .catch((err) => {
+          const status = err?.response?.status
+          if (status === 401 || status === 403) clearAuth()
+          setInitialized()
+        })
     } else {
       setInitialized()
     }

@@ -7,6 +7,7 @@ export interface User {
   birthday?: string | null
   avatarUrl?: string | null
   role: 'admin' | 'member'
+  canInitiateMessages: boolean
   createdAt: string
 }
 
@@ -83,6 +84,8 @@ export interface Post {
   hugCount: number
   // flaggedByMe is true if the current user has flagged this post
   flaggedByMe: boolean
+  // isBookmarked is true if the current user has saved this post
+  isBookmarked: boolean
   // _count.reactions = total reactions (all types combined)
   // _count.comments = total comment count
   _count: PostCount
@@ -219,6 +222,23 @@ export interface AdminFlag {
 export interface AdminFlagsResponse {
   flags: AdminFlag[]
   nextCursor: string | null
+}
+
+export interface DirectMessage {
+  id: string
+  conversationId: string
+  senderId: string
+  content: string
+  isRead: boolean
+  createdAt: string
+}
+
+export interface Conversation {
+  id: string
+  otherUser: PostUser
+  lastMessage: DirectMessage | null
+  unreadCount: number
+  updatedAt: string
 }
 
 export interface SiteNotification {

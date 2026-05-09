@@ -49,6 +49,7 @@ export default function AdminFlagsPage() {
       }
       // Deleting the content cascades to the flag in the DB, so no need to call reviewFlag
       queryClient.invalidateQueries({ queryKey: ['admin-flags'] })
+      queryClient.invalidateQueries({ queryKey: ['feed'] })
     } catch (err) {
       toast(getApiError(err), 'error')
     } finally {
