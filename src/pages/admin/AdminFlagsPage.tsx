@@ -170,7 +170,7 @@ export default function AdminFlagsPage() {
                     to={`/posts/${flag.post.id}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[0.625rem] font-semibold text-accent border border-accent px-2.5 py-1 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950 transition flex-shrink-0"
+                    className="text-[0.625rem] font-semibold text-accent-text border border-accent px-2.5 py-1 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950 transition flex-shrink-0"
                   >
                     View ↗
                   </Link>
@@ -186,7 +186,7 @@ export default function AdminFlagsPage() {
                         to={`/posts/${flag.comment.post.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[0.625rem] font-semibold text-accent border border-accent px-2.5 py-1 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950 transition flex-shrink-0"
+                        className="text-[0.625rem] font-semibold text-accent-text border border-accent px-2.5 py-1 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950 transition flex-shrink-0"
                       >
                         View in post ↗
                       </Link>

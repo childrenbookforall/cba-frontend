@@ -386,7 +386,7 @@ export default function AdminGroupsPage() {
                     <button
                       type="submit"
                       disabled={adding || !addUserId.trim()}
-                      className="text-xs font-semibold bg-accent text-white px-3 py-2 rounded-lg disabled:opacity-50 flex-shrink-0"
+                      className="text-xs font-semibold bg-accent text-accent-text-fg px-3 py-2 rounded-lg disabled:opacity-50 flex-shrink-0"
                     >
                       {adding ? <Spinner size="sm" /> : 'Add'}
                     </button>

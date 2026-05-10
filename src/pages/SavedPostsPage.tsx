@@ -74,7 +74,7 @@ export default function SavedPostsPage() {
         {isError && (
           <div className="flex flex-col items-center gap-2 py-16">
             <p className="text-xs text-muted">Could not load saved posts.</p>
-            <button onClick={() => refetch()} className="text-xs font-semibold text-accent">
+            <button onClick={() => refetch()} className="text-xs font-semibold text-accent-text">
               Try again
             </button>
           </div>

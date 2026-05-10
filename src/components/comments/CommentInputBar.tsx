@@ -110,8 +110,8 @@ export default function CommentInputBar({ postId, groupId, replyingTo, onCancelR
       {/* Replying-to banner */}
       {replyingTo && (
         <div className="flex items-center justify-between px-3 py-1.5 bg-surface border-b border-border">
-          <span className="flex items-center gap-1 text-[0.625rem] text-accent font-medium">
-            <CornerDownRight size={14} strokeWidth={2.5} className="text-accent flex-shrink-0" />
+          <span className="flex items-center gap-1 text-[0.625rem] text-accent-text font-medium">
+            <CornerDownRight size={14} strokeWidth={2.5} className="text-accent-text flex-shrink-0" />
             Replying to {replyingTo.name}
           </span>
           <button
@@ -177,7 +177,7 @@ export default function CommentInputBar({ postId, groupId, replyingTo, onCancelR
         <button
           onClick={handleSubmit}
           disabled={mutation.isPending}
-          className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm disabled:opacity-60 flex-shrink-0"
+          className="w-8 h-8 rounded-full bg-accent text-accent-text-fg flex items-center justify-center text-sm disabled:opacity-60 flex-shrink-0"
           aria-label="Send"
         >
           <SendHorizonal size={16} strokeWidth={2} />

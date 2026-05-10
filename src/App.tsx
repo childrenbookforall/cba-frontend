@@ -38,7 +38,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
             <p className="text-xs text-muted">An unexpected error occurred. Reload the app to continue.</p>
           </div>
           <button
-            className="px-5 py-2 bg-accent text-white text-xs font-semibold rounded-full"
+            className="px-5 py-2 bg-accent text-accent-text-fg text-xs font-semibold rounded-full"
             onClick={() => { this.setState({ hasError: false }); window.location.href = '/' }}
           >
             Reload app
@@ -52,10 +52,15 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
 
 // On every page load the token is gone (not persisted to localStorage).
 // If a user session exists, silently exchange the httpOnly refresh cookie for a new token.
+let refreshAttempted = false
+
 function AuthInitializer() {
   const { user, token, setAuth, clearAuth, setInitialized } = useAuthStore()
 
   useEffect(() => {
+    if (refreshAttempted) return
+    refreshAttempted = true
+
     if (user && !token) {
       axios
         .post(`${import.meta.env.VITE_API_URL}/api/auth/refresh`, {}, { withCredentials: true })

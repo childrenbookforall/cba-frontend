@@ -69,7 +69,7 @@ export default function MessagesPage() {
         <div className="flex justify-end px-4 pt-3">
           <button
             onClick={() => setComposing(true)}
-            className="flex items-center gap-1.5 text-xs font-semibold text-accent hover:opacity-80 transition"
+            className="flex items-center gap-1.5 text-xs font-semibold text-accent-text hover:opacity-80 transition"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             New
@@ -84,7 +84,7 @@ export default function MessagesPage() {
         {isError && (
           <div className="flex flex-col items-center gap-2 py-16">
             <p className="text-xs text-muted">Could not load messages.</p>
-            <button onClick={() => refetch()} className="text-xs font-semibold text-accent">
+            <button onClick={() => refetch()} className="text-xs font-semibold text-accent-text">
               Try again
             </button>
           </div>
@@ -129,7 +129,7 @@ export default function MessagesPage() {
                   )}
                 </div>
                 {conv.unreadCount > 0 && (
-                  <span className="flex-shrink-0 min-w-[18px] h-[18px] rounded-full bg-accent text-white text-[0.5rem] font-bold flex items-center justify-center px-1">
+                  <span className="flex-shrink-0 min-w-[18px] h-[18px] rounded-full bg-accent text-accent-text-fg text-[0.5rem] font-bold flex items-center justify-center px-1">
                     {conv.unreadCount > 9 ? '9+' : conv.unreadCount}
                   </span>
                 )}

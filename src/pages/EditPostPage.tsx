@@ -191,7 +191,7 @@ export default function EditPostPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 py-3 bg-accent text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60"
+            className="flex-1 py-3 bg-accent text-accent-text-fg text-sm font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60"
           >
             {isSubmitting && <Spinner size="sm" />}
             Save changes

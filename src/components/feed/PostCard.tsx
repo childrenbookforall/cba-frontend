@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import cbaLogo from '../../assets/logo.png'
 import Avatar from '../ui/Avatar'
@@ -26,11 +27,12 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
   const isAdmin = useAuthStore((s) => s.user?.role === 'admin')
   const showFlagDot = post.isFlagged && (isAdmin || post.flaggedByMe)
   const navigate = useNavigate()
+  const [menuOpen, setMenuOpen] = useState(false)
 
   return (
     <Link
       to={`/posts/${post.id}`}
-      className="animate-fade-up block bg-card rounded-xl shadow-sm shadow-black/5 mx-2 mb-2 hover:shadow-md hover:shadow-accent/10 hover:-translate-y-0.5 transition-all border border-transparent hover:border-border"
+      className={`animate-fade-up block bg-card rounded-xl shadow-sm shadow-black/5 mx-2 mb-2 hover:shadow-md hover:shadow-accent/10 hover:-translate-y-0.5 transition-all border border-transparent hover:border-border${menuOpen ? ' relative z-10' : ''}`}
       style={{ animationDelay: `${Math.min(index * 50, 250)}ms` }}
     >
       {/* Header */}
@@ -74,7 +76,7 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
           </div>
         </div>
         <div onClick={(e) => e.preventDefault()}>
-          <PostMenu post={post} />
+          <PostMenu post={post} onOpenChange={setMenuOpen} />
         </div>
       </div>
 

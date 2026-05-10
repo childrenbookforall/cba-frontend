@@ -96,7 +96,7 @@ export default function CommentItem({ comment, postId, groupId, onReply }: Comme
                 <button
                   onClick={() => updateMutation.mutate()}
                   disabled={updateMutation.isPending || !editContent.trim()}
-                  className="text-[0.625rem] font-semibold text-white bg-accent px-3 py-1.5 rounded-lg disabled:opacity-60"
+                  className="text-[0.625rem] font-semibold text-accent-text-fg bg-accent px-3 py-1.5 rounded-lg disabled:opacity-60"
                 >
                   Save
                 </button>
@@ -118,7 +118,7 @@ export default function CommentItem({ comment, postId, groupId, onReply }: Comme
           {!editing && (
             <button
               onClick={() => onReply(comment.id, authorName)}
-              className="text-[0.625rem] text-muted hover:text-accent mt-1 font-medium transition"
+              className="text-[0.625rem] text-muted hover:text-accent-text mt-1 font-medium transition"
             >
               Reply
             </button>

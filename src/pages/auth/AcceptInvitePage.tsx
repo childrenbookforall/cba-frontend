@@ -58,12 +58,7 @@ export default function AcceptInvitePage() {
     if (!token) return
     try {
       const { token: jwt } = await acceptInvite(token, data.password, data.firstName, data.lastName ?? '')
-      let user
-      try {
-        user = await getMe()
-      } catch (err) {
-        throw err
-      }
+      const user = await getMe()
       setAuth(jwt, user)
       navigate('/feed', { replace: true })
     } catch (err) {
@@ -185,7 +180,7 @@ export default function AcceptInvitePage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-3 bg-accent text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 transition"
+            className="w-full py-3 bg-accent text-accent-text-fg text-sm font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 transition"
           >
             {isSubmitting && <Spinner size="sm" />}
             Join Community

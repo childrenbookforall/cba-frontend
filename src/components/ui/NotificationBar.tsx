@@ -15,7 +15,7 @@ export default function NotificationBar() {
   if (!notification || !notification.isActive || dismissed) return null
 
   return (
-    <div className="bg-accent text-white px-4 py-2 flex items-center justify-center gap-3 text-xs font-medium">
+    <div className="bg-accent text-accent-text-fg px-4 py-2 flex items-center justify-center gap-3 text-xs font-medium">
       <span className="flex-1 text-center leading-snug">
         {notification.message}
         {notification.linkUrl && (

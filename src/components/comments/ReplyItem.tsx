@@ -85,7 +85,7 @@ export default function ReplyItem({ reply, postId, groupId, onReply }: ReplyItem
               <button
                 onClick={() => updateMutation.mutate()}
                 disabled={updateMutation.isPending || !editContent.trim()}
-                className="text-[0.625rem] font-semibold text-white bg-accent px-2.5 py-1 rounded-lg disabled:opacity-60"
+                className="text-[0.625rem] font-semibold text-accent-text-fg bg-accent px-2.5 py-1 rounded-lg disabled:opacity-60"
               >
                 Save
               </button>
@@ -109,7 +109,7 @@ export default function ReplyItem({ reply, postId, groupId, onReply }: ReplyItem
                   : 'Deleted user'
                 onReply(name)
               }}
-              className="text-[0.625rem] text-muted hover:text-accent mt-1 font-medium transition"
+              className="text-[0.625rem] text-muted hover:text-accent-text mt-1 font-medium transition"
             >
               Reply
             </button>

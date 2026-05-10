@@ -276,7 +276,7 @@ export default function CreatePostPage() {
               type="button"
               onClick={() => handleTypeChange(t)}
               className={`flex-1 py-2 rounded-xl text-xs font-semibold capitalize transition ${
-                type === t ? 'bg-accent text-white' : 'bg-gray-100 dark:bg-[#2a2a2a] text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#333]'
+                type === t ? 'bg-accent text-accent-text-fg' : 'bg-gray-100 dark:bg-[#2a2a2a] text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#333]'
               }`}
             >
               {t}
@@ -559,7 +559,7 @@ export default function CreatePostPage() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full py-3 bg-accent text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 transition"
+          className="w-full py-3 bg-accent text-accent-text-fg text-sm font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 transition"
         >
           {isSubmitting && <Spinner size="sm" />}
           Post

@@ -9,7 +9,7 @@ export default function BottomNav() {
 
   function navCls(path: string) {
     return pathname.startsWith(path)
-      ? 'text-accent bg-accent/10 rounded-xl px-3 py-1'
+      ? 'text-accent-text font-semibold bg-accent/20 rounded-xl px-3 py-1'
       : 'text-muted px-3 py-1'
   }
 

@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useImageDropzone } from '../hooks/useImageDropzone'
 import { useMutation } from '@tanstack/react-query'
 import { useAuthStore } from '../stores/authStore'
@@ -132,12 +132,9 @@ export default function ProfilePage() {
             {user.firstName} {user.lastName}
           </h2>
           {user.role === 'admin' && (
-            <Link
-              to="/admin"
-              className="inline-block mt-1 text-[0.625rem] font-semibold uppercase tracking-wide bg-primary text-white dark:text-surface px-2 py-0.5 rounded-full hover:opacity-80 transition"
-            >
+            <span className="inline-block mt-1 text-[0.625rem] font-semibold uppercase tracking-wide bg-primary text-white dark:text-surface px-2 py-0.5 rounded-full">
               Admin
-            </Link>
+            </span>
           )}
           <p className="text-[0.625rem] text-muted mt-1">Member since {memberSince}</p>
         </div>
@@ -156,7 +153,7 @@ export default function ProfilePage() {
           {!editingBio && (
             <button
               onClick={() => { setBioValue(user.bio ?? ''); setEditingBio(true) }}
-              className="text-[0.625rem] text-accent font-medium"
+              className="text-[0.625rem] text-accent-text font-medium"
             >
               Edit
             </button>
@@ -177,7 +174,7 @@ export default function ProfilePage() {
               <button
                 onClick={() => bioMutation.mutate(bioValue)}
                 disabled={bioMutation.isPending}
-                className="text-[0.625rem] font-semibold text-white bg-accent px-4 py-1.5 rounded-lg disabled:opacity-60"
+                className="text-[0.625rem] font-semibold text-accent-text-fg bg-accent px-4 py-1.5 rounded-lg disabled:opacity-60"
               >
                 {bioMutation.isPending ? 'Saving…' : 'Save'}
               </button>
@@ -206,7 +203,7 @@ export default function ProfilePage() {
                 setBirthdayValue(user.birthday ? user.birthday.slice(0, 10) : '')
                 setEditingBirthday(true)
               }}
-              className="text-[0.625rem] text-accent font-medium"
+              className="text-[0.625rem] text-accent-text font-medium"
             >
               Edit
             </button>
@@ -227,7 +224,7 @@ export default function ProfilePage() {
               <button
                 onClick={() => birthdayMutation.mutate(birthdayValue || null)}
                 disabled={birthdayMutation.isPending}
-                className="text-[0.625rem] font-semibold text-white bg-accent px-4 py-1.5 rounded-lg disabled:opacity-60"
+                className="text-[0.625rem] font-semibold text-accent-text-fg bg-accent px-4 py-1.5 rounded-lg disabled:opacity-60"
               >
                 {birthdayMutation.isPending ? 'Saving…' : 'Save'}
               </button>

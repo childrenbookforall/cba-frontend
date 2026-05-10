@@ -53,9 +53,6 @@ export default function PostListItem({ post, index = 0 }: PostListItemProps) {
       <span className="text-[0.625rem] text-muted flex-shrink-0 mt-1 min-w-[1.75rem] text-right select-none">
         {index + 1}.
       </span>
-      {post.isPinned && (
-        <span className="text-[0.625rem] text-muted flex-shrink-0 mt-1">📌</span>
-      )}
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-gray-900 dark:text-gray-100 leading-snug">
           {post.title}

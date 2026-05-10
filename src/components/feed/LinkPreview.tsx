@@ -21,29 +21,35 @@ export default function LinkPreview({ url, previewImage, previewTitle, previewDe
   const displayUrl = url.replace(/^https?:\/\//, '').replace(/\/$/, '')
   const showImage = !!previewImage && !imgError
 
+  const openLink = (e: React.MouseEvent | React.KeyboardEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    window.open(safeUrl!, '_blank', 'noopener,noreferrer')
+  }
+
   if (!showImage && !previewTitle) {
     return (
-      <a
-        href={safeUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={(e) => e.stopPropagation()}
-        className="mt-1.5 flex items-center gap-2 bg-surface rounded-lg px-2.5 py-2 border border-border hover:border-accent transition"
+      <div
+        role="link"
+        tabIndex={0}
+        onClick={openLink}
+        onKeyDown={(e) => { if (e.key === 'Enter') openLink(e) }}
+        className="mt-1.5 flex items-center gap-2 bg-surface rounded-lg px-2.5 py-2 border border-border hover:border-accent transition cursor-pointer"
       >
         <span className="text-base">🔗</span>
-        <span className="text-xs text-accent font-medium truncate">{displayUrl}</span>
-      </a>
+        <span className="text-xs text-accent-text font-medium truncate">{displayUrl}</span>
+      </div>
     )
   }
 
   return (
     <div className="mt-1.5 flex justify-center">
-      <a
-        href={safeUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={(e) => e.stopPropagation()}
-        className="w-56 border border-border rounded-xl hover:border-accent transition bg-surface text-center"
+      <div
+        role="link"
+        tabIndex={0}
+        onClick={openLink}
+        onKeyDown={(e) => { if (e.key === 'Enter') openLink(e) }}
+        className="w-56 border border-border rounded-xl hover:border-accent transition bg-surface text-center cursor-pointer"
       >
         {showImage && (
           <img
@@ -62,7 +68,7 @@ export default function LinkPreview({ url, previewImage, previewTitle, previewDe
           )}
           <p className="text-[0.625rem] text-muted mt-0.5 truncate">🔗 {displayUrl}</p>
         </div>
-      </a>
+      </div>
     </div>
   )
 }

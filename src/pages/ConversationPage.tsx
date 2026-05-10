@@ -49,6 +49,8 @@ export default function ConversationPage() {
     queryFn: ({ pageParam }) => getConversation(userId!, pageParam as string | undefined),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) => lastPage.hasMore ? lastPage.nextCursor ?? undefined : undefined,
+    refetchInterval: 30_000,
+    refetchIntervalInBackground: false,
   })
 
   const messages: DirectMessage[] = (data?.pages ?? [])
@@ -227,12 +229,12 @@ export default function ConversationPage() {
               <div
                 className={`max-w-[75%] px-3 py-2 rounded-2xl text-xs leading-relaxed ${
                   isMine
-                    ? 'bg-teal-600 text-white rounded-br-sm'
+                    ? 'bg-accent text-accent-text-fg rounded-br-sm'
                     : 'bg-card text-gray-800 dark:text-gray-200 rounded-bl-sm border border-border'
                 } ${msg.id.startsWith('optimistic-') ? 'opacity-60' : ''}`}
               >
                 <p className="whitespace-pre-wrap break-words">{msg.content}</p>
-                <p className={`text-[0.5rem] mt-1 ${isMine ? 'text-white/70' : 'text-muted'}`}>
+                <p className={`text-[0.5rem] mt-1 ${isMine ? 'text-accent-text-fg/70' : 'text-muted'}`}>
                   {formatRelativeTime(msg.createdAt)}
                 </p>
               </div>
@@ -257,7 +259,7 @@ export default function ConversationPage() {
         <button
           onClick={handleSend}
           disabled={!content.trim() || sendMutation.isPending}
-          className="flex-shrink-0 w-9 h-9 rounded-full bg-accent flex items-center justify-center text-white disabled:opacity-40 transition"
+          className="flex-shrink-0 w-9 h-9 rounded-full bg-accent flex items-center justify-center text-accent-text-fg disabled:opacity-40 transition"
           aria-label="Send"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

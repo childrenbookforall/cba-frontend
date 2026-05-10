@@ -22,7 +22,7 @@ export default function MentionText({ content, className }: MentionTextProps) {
         key={match.index}
         role="link"
         tabIndex={0}
-        className="text-accent font-medium cursor-pointer hover:underline"
+        className="text-accent-text font-medium cursor-pointer hover:underline"
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/profile/${userId}`) }}
         onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); navigate(`/profile/${userId}`) } }}
       >

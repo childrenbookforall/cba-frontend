@@ -80,16 +80,18 @@ export default function NotificationsPage() {
         </button>
         <h1 className="text-sm font-bold text-gray-900 dark:text-gray-100 flex-1">Notifications</h1>
         <NavLinks />
-        {displayed.length > 0 && (
+      </div>
+      {displayed.length > 0 && (
+        <div className="flex justify-end px-4 py-2 border-b border-border bg-surface">
           <button
             onClick={() => markAllMutation.mutate()}
             disabled={markAllMutation.isPending}
-            className="text-xs text-accent font-medium disabled:opacity-50"
+            className="text-xs text-accent-text font-medium disabled:opacity-50"
           >
             {markAllMutation.isPending ? 'Clearing…' : 'Mark all read'}
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Content */}
       <div className="flex-1 max-w-2xl mx-auto w-full">
@@ -102,7 +104,7 @@ export default function NotificationsPage() {
         {isError && (
           <div className="flex flex-col items-center gap-2 py-16">
             <p className="text-xs text-muted">Could not load notifications.</p>
-            <button onClick={() => refetch()} className="text-xs font-semibold text-accent">
+            <button onClick={() => refetch()} className="text-xs font-semibold text-accent-text">
               Try again
             </button>
           </div>

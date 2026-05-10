@@ -29,7 +29,7 @@ export default function NavLinks() {
 
   function cls(path: string) {
     return `transition ${
-      pathname.startsWith(path) ? 'text-accent' : 'text-muted hover:text-primary'
+      pathname.startsWith(path) ? 'text-accent-text font-semibold' : 'text-muted hover:text-primary'
     }`
   }
 
@@ -130,19 +130,6 @@ export default function NavLinks() {
                   <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                   Profile
                 </Link>
-                {user.role === 'admin' && (
-                  <>
-                    <div className="my-1 border-t border-border" />
-                    <Link
-                      to="/admin"
-                      onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-2.5 px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-surface transition"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                      Admin
-                    </Link>
-                  </>
-                )}
               </div>
             )}
           </div>

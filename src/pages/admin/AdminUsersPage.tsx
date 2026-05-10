@@ -234,7 +234,7 @@ export default function AdminUsersPage() {
                     onClick={() => handleInvite(user.id)}
                     disabled={!!busy}
                     title="Send invite email"
-                    className="text-[0.625rem] font-semibold text-accent border border-accent px-2 py-1 rounded-lg disabled:opacity-40 hover:bg-blue-50 dark:hover:bg-blue-950 transition"
+                    className="text-[0.625rem] font-semibold text-accent-text border border-accent px-2 py-1 rounded-lg disabled:opacity-40 hover:bg-blue-50 dark:hover:bg-blue-950 transition"
                   >
                     {busy === 'invite' ? <Spinner size="sm" /> : 'Invite'}
                   </button>

@@ -123,7 +123,7 @@ export default function AdminMessagesPage() {
             <button
               onClick={() => fetchMoreThread()}
               disabled={fetchingMoreThread}
-              className="text-xs font-semibold text-accent disabled:opacity-50"
+              className="text-xs font-semibold text-accent-text disabled:opacity-50"
             >
               {fetchingMoreThread ? 'Loading…' : 'Load more'}
             </button>
@@ -189,7 +189,7 @@ export default function AdminMessagesPage() {
           <button
             onClick={() => fetchMoreConvs()}
             disabled={fetchingMoreConvs}
-            className="text-xs font-semibold text-accent disabled:opacity-50"
+            className="text-xs font-semibold text-accent-text disabled:opacity-50"
           >
             {fetchingMoreConvs ? 'Loading…' : 'Load more'}
           </button>

@@ -10,9 +10,10 @@ import type { Post, FeedResult } from '../../types/api'
 
 interface PostMenuProps {
   post: Post
+  onOpenChange?: (open: boolean) => void
 }
 
-export default function PostMenu({ post }: PostMenuProps) {
+export default function PostMenu({ post, onOpenChange }: PostMenuProps) {
   const [open, setOpen] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [flagging, setFlagging] = useState(false)
@@ -31,6 +32,7 @@ export default function PostMenu({ post }: PostMenuProps) {
     function handler(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) {
         setOpen(false)
+        onOpenChange?.(false)
         setFlagging(false)
         setConfirmDelete(false)
       }
@@ -97,10 +99,17 @@ export default function PostMenu({ post }: PostMenuProps) {
     onError: (err) => toast(getApiError(err), 'error'),
   })
 
+  function toggle() {
+    setOpen((o) => {
+      onOpenChange?.(!o)
+      return !o
+    })
+  }
+
   return (
     <div ref={ref} className="relative">
       <button
-        onClick={() => setOpen((o) => !o)}
+        onClick={toggle}
         className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition p-1"
         aria-label="Post options"
       >

@@ -34,7 +34,7 @@ export default function FeedPage() {
   function toggleView() {
     setView((v) => {
       const next = v === 'card' ? 'list' : 'card'
-      try { sessionStorage.setItem('feed-view', next) } catch {}
+      try { sessionStorage.setItem('feed-view', next) } catch { /* sessionStorage unavailable */ }
       return next
     })
   }
@@ -140,7 +140,7 @@ export default function FeedPage() {
         {isError && (
           <div className="flex flex-col items-center gap-2 py-12">
             <p className="text-xs text-muted">Could not load posts.</p>
-            <button onClick={() => refetch()} className="text-xs font-semibold text-accent">
+            <button onClick={() => refetch()} className="text-xs font-semibold text-accent-text">
               Try again
             </button>
           </div>
@@ -151,7 +151,7 @@ export default function FeedPage() {
             <div className="text-5xl mb-3">💬</div>
             <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Nothing here yet!</p>
             <p className="text-xs text-muted mb-4">Be the first to share a story with the community.</p>
-            <Link to="/posts/new" className="inline-block px-4 py-2 bg-accent text-white rounded-full text-xs font-semibold hover:opacity-90 transition">
+            <Link to="/posts/new" className="inline-block px-4 py-2 bg-accent text-accent-text-fg rounded-full text-xs font-semibold hover:opacity-90 transition">
               Share something
             </Link>
           </div>
@@ -186,7 +186,7 @@ export default function FeedPage() {
       {/* FAB */}
       <Link
         to="/posts/new"
-        className="fixed bottom-20 right-4 w-12 h-12 bg-gradient-to-br from-[#5c8c7a] to-[#7ab5a0] text-white rounded-full flex items-center justify-center shadow-lg shadow-[#5c8c7a]/40 z-20 hover:scale-110 active:scale-95 transition-transform"
+        className="fixed bottom-20 right-4 w-12 h-12 bg-accent text-accent-text-fg rounded-full flex items-center justify-center shadow-lg shadow-accent/40 z-20 hover:scale-110 active:scale-95 transition-transform"
         aria-label="New post"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

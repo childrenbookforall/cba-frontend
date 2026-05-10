@@ -76,7 +76,7 @@ export default function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3 bg-accent text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 transition"
+              className="w-full py-3 bg-accent text-accent-text-fg text-sm font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 transition"
             >
               {isSubmitting && <Spinner size="sm" />}
               Send Reset Link

@@ -32,7 +32,7 @@ export default function UserProfilePage() {
     return (
       <div className="min-h-svh bg-surface flex flex-col items-center justify-center gap-2">
         <p className="text-sm text-muted">User not found.</p>
-        <button onClick={() => navigate(-1)} className="text-xs text-accent">Go back</button>
+        <button onClick={() => navigate(-1)} className="text-xs text-accent-text">Go back</button>
       </div>
     )
   }
@@ -76,11 +76,7 @@ export default function UserProfilePage() {
             <button
               onClick={() => {
                 if (!currentUser) return
-                if (currentUser.role === 'admin' || currentUser.canInitiateMessages) {
-                  navigate(`/messages/${userId}`)
-                } else {
-                  toast('Create more posts and comments to enable this feature', 'error')
-                }
+                navigate(`/messages/${userId}`)
               }}
               className="mt-3 inline-flex items-center gap-1.5 px-4 py-1.5 border border-border rounded-full text-xs font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition"
             >

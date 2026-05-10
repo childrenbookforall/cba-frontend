@@ -4,6 +4,7 @@
 @theme {
   --color-primary: #222222;
   --color-accent: #5c8c7a;
+  --color-accent-text-fg: #ffffff;
   --color-danger: #e53e3e;
   --color-reaction-wy: #c53030;
   --color-reaction-hm: #276749;
@@ -21,6 +22,7 @@
 html.dark {
   --color-primary: #e8e8e8;
   --color-accent: #7ab5a0;
+  --color-accent-text-fg: #ffffff;
   --color-surface: #111111;
   --color-card: #1e1e1e;
   --color-border: #2e2e2e;

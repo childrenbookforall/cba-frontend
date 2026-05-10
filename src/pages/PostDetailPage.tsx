@@ -71,7 +71,7 @@ export default function PostDetailPage() {
         </div>
         <div className="flex gap-3">
           {postError && (
-            <button onClick={() => refetchPost()} className="px-4 py-2 bg-accent text-white text-xs font-semibold rounded-full">
+            <button onClick={() => refetchPost()} className="px-4 py-2 bg-accent text-accent-text-fg text-xs font-semibold rounded-full">
               Try again
             </button>
           )}
