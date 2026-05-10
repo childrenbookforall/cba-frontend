@@ -23,10 +23,8 @@ function getSessionView(): FeedView {
 }
 
 export default function FeedPage() {
-  const [searchParams] = useSearchParams()
-  const [sort, setSort] = useState<'latest' | 'top'>(
-    searchParams.get('sort') === 'latest' ? 'latest' : 'top'
-  )
+  const [searchParams, setSearchParams] = useSearchParams()
+  const sort: 'latest' | 'top' = searchParams.get('sort') === 'latest' ? 'latest' : 'top'
   const [groupId, setGroupId] = useState<string | null>(null)
   const [membersOpen, setMembersOpen] = useState(false)
   const [view, setView] = useState<FeedView>(getSessionView)
@@ -60,7 +58,7 @@ export default function FeedPage() {
   const posts = data?.pages.flatMap((p) => p.posts) ?? []
 
   function handleSortChange(newSort: 'latest' | 'top') {
-    setSort(newSort)
+    setSearchParams({ sort: newSort })
     window.scrollTo({ top: 0 })
   }
 
