@@ -109,11 +109,11 @@ export default function PostDetailPage() {
           <div className="flex items-center gap-2.5 mb-3">
             <div className="flex items-center gap-2.5 flex-1 min-w-0">
             {post.user ? (
-              <div className="cursor-pointer" onClick={() => navigate(`/profile/${post.user.id}`)}>
+              <div className="cursor-pointer" onClick={() => navigate(`/profile/${post.user!.id}`)}>
                 <Avatar
-                  firstName={post.user.firstName}
-                  lastName={post.user.lastName}
-                  avatarUrl={post.user.avatarUrl}
+                  firstName={post.user!.firstName}
+                  lastName={post.user!.lastName}
+                  avatarUrl={post.user!.avatarUrl}
                   size="md"
                 />
               </div>

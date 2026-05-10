@@ -2,7 +2,6 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { getUserById } from '../api/users'
 import { useAuthStore } from '../stores/authStore'
-import { useToast } from '../stores/toastStore'
 import Avatar from '../components/ui/Avatar'
 import Spinner from '../components/ui/Spinner'
 import BottomNav from '../components/layout/BottomNav'
@@ -12,7 +11,6 @@ export default function UserProfilePage() {
   const { userId } = useParams<{ userId: string }>()
   const navigate = useNavigate()
   const currentUser = useAuthStore((s) => s.user)
-  const toast = useToast()
 
   const { data: user, isLoading, isError } = useQuery({
     queryKey: ['user', userId],

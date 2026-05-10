@@ -32,7 +32,7 @@ export default function LoginPage() {
     try {
       const { token } = await login(data.email, data.password)
       // Store token first so getMe() request is authenticated
-      useAuthStore.getState().setAuth(token, { id: '', email: '', firstName: '', lastName: '', role: 'member', createdAt: '' })
+      useAuthStore.getState().setAuth(token, { id: '', email: '', firstName: '', lastName: '', role: 'member', createdAt: '', canInitiateMessages: false })
       let user
       try {
         user = await getMe()
