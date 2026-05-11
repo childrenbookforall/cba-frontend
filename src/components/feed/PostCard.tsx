@@ -34,8 +34,8 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
   return (
     <Link
       to={`/posts/${post.id}`}
-      className={`animate-fade-up block bg-card rounded-xl shadow-sm shadow-black/5 mx-2 mb-2 hover:shadow-md hover:shadow-accent/10 hover:-translate-y-0.5 transition-all border border-transparent hover:border-border${menuOpen ? ' relative z-10' : ''}${seen ? ' opacity-60' : ''}`}
-      style={{ animationDelay: `${Math.min(index * 50, 250)}ms` }}
+      className={`block bg-card rounded-xl shadow-sm shadow-black/5 mx-2 mb-2 hover:shadow-md hover:shadow-accent/10 hover:-translate-y-0.5 transition-all border border-transparent hover:border-border${menuOpen ? ' relative z-10' : ''}${seen ? ' opacity-60' : ' animate-fade-up'}`}
+      style={seen ? undefined : { animationDelay: `${Math.min(index * 50, 250)}ms` }}
     >
       {/* Header */}
       <div className="flex items-center gap-2.5 px-3 pt-3 pb-2">

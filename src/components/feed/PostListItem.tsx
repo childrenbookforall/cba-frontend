@@ -49,8 +49,8 @@ export default function PostListItem({ post, index = 0 }: PostListItemProps) {
   return (
     <Link
       to={`/posts/${post.id}`}
-      className={`animate-fade-up flex items-start gap-2 px-4 py-2.5 border-b border-border hover:bg-card transition-colors${seen ? ' opacity-60' : ''}`}
-      style={{ animationDelay: `${Math.min(index * 30, 150)}ms` }}
+      className={`flex items-start gap-2 px-4 py-2.5 border-b border-border hover:bg-card transition-colors${seen ? ' opacity-60' : ' animate-fade-up'}`}
+      style={seen ? undefined : { animationDelay: `${Math.min(index * 30, 150)}ms` }}
     >
       <span className="text-[0.625rem] text-muted flex-shrink-0 mt-1 min-w-[1.75rem] text-right select-none">
         {index + 1}.
