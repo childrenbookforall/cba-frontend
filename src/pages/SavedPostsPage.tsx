@@ -87,7 +87,7 @@ export default function SavedPostsPage() {
         )}
 
         {posts.map((post, i) => (
-          <PostCard key={post.id} post={post} index={i} />
+          <PostCard key={post.id} post={post} index={i} dimSeen={false} />
         ))}
 
         <div ref={sentinelRef} className="h-4" />

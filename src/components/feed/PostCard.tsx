@@ -21,15 +21,16 @@ function textAlign(content: string) {
 interface PostCardProps {
   post: Post
   index?: number
+  dimSeen?: boolean
 }
 
-export default function PostCard({ post, index = 0 }: PostCardProps) {
+export default function PostCard({ post, index = 0, dimSeen = true }: PostCardProps) {
   const author = post.user
   const isAdmin = useAuthStore((s) => s.user?.role === 'admin')
   const showFlagDot = post.isFlagged && (isAdmin || post.flaggedByMe)
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
-  const seen = isPostSeen(post.id)
+  const seen = dimSeen && isPostSeen(post.id)
 
   return (
     <Link
