@@ -12,6 +12,7 @@ import { formatRelativeTime } from '../../lib/utils'
 import { useAuthStore } from '../../stores/authStore'
 import MentionText from '../ui/MentionText'
 import type { Post } from '../../types/api'
+import { isPostSeen } from '../../lib/seenPosts'
 
 function textAlign(content: string) {
   return content.trim().split(/\s+/).length > 15 ? 'text-left' : 'text-center'
@@ -28,11 +29,12 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
   const showFlagDot = post.isFlagged && (isAdmin || post.flaggedByMe)
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
+  const seen = isPostSeen(post.id)
 
   return (
     <Link
       to={`/posts/${post.id}`}
-      className={`animate-fade-up block bg-card rounded-xl shadow-sm shadow-black/5 mx-2 mb-2 hover:shadow-md hover:shadow-accent/10 hover:-translate-y-0.5 transition-all border border-transparent hover:border-border${menuOpen ? ' relative z-10' : ''}`}
+      className={`animate-fade-up block bg-card rounded-xl shadow-sm shadow-black/5 mx-2 mb-2 hover:shadow-md hover:shadow-accent/10 hover:-translate-y-0.5 transition-all border border-transparent hover:border-border${menuOpen ? ' relative z-10' : ''}${seen ? ' opacity-60' : ''}`}
       style={{ animationDelay: `${Math.min(index * 50, 250)}ms` }}
     >
       {/* Header */}
