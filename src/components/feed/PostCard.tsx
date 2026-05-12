@@ -12,8 +12,6 @@ import { formatRelativeTime } from '../../lib/utils'
 import { useAuthStore } from '../../stores/authStore'
 import MentionText from '../ui/MentionText'
 import type { Post } from '../../types/api'
-import { isPostSeen } from '../../lib/seenPosts'
-
 function textAlign(content: string) {
   return content.trim().split(/\s+/).length > 15 ? 'text-left' : 'text-center'
 }
@@ -21,22 +19,20 @@ function textAlign(content: string) {
 interface PostCardProps {
   post: Post
   index?: number
-  dimSeen?: boolean
 }
 
-export default function PostCard({ post, index = 0, dimSeen = true }: PostCardProps) {
+export default function PostCard({ post, index = 0 }: PostCardProps) {
   const author = post.user
   const isAdmin = useAuthStore((s) => s.user?.role === 'admin')
   const showFlagDot = post.isFlagged && (isAdmin || post.flaggedByMe)
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
-  const seen = dimSeen && isPostSeen(post.id)
 
   return (
     <Link
       to={`/posts/${post.id}`}
-      className={`block bg-card rounded-xl shadow-sm shadow-black/5 mx-2 mb-2 hover:shadow-md hover:shadow-accent/10 hover:-translate-y-0.5 transition-all border border-transparent hover:border-border${menuOpen ? ' relative z-10' : ''}${seen ? ' opacity-60' : ' animate-fade-up'}`}
-      style={seen ? undefined : { animationDelay: `${Math.min(index * 50, 250)}ms` }}
+      className={`block bg-card rounded-xl shadow-sm shadow-black/5 mx-2 mb-2 hover:shadow-md hover:shadow-accent/10 hover:-translate-y-0.5 transition-all border border-transparent hover:border-border animate-fade-up${menuOpen ? ' relative z-10' : ''}`}
+      style={{ animationDelay: `${Math.min(index * 50, 250)}ms` }}
     >
       {/* Header */}
       <div className="flex items-center gap-2.5 px-3 pt-3 pb-2">

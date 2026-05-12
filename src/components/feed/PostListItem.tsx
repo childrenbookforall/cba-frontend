@@ -6,8 +6,6 @@ import { useAuthStore } from '../../stores/authStore'
 import { formatRelativeTime, getApiError } from '../../lib/utils'
 import { useToast } from '../../stores/toastStore'
 import type { Post, FeedResult } from '../../types/api'
-import { isPostSeen } from '../../lib/seenPosts'
-
 interface PostListItemProps {
   post: Post
   index?: number
@@ -24,8 +22,6 @@ export default function PostListItem({ post, index = 0 }: PostListItemProps) {
   const authorName = author
     ? `${author.firstName}${author.lastName ? ` ${author.lastName}` : ''}`
     : "Children's Book for All"
-  const seen = isPostSeen(post.id)
-
   const toast = useToast()
 
   const bookmarkMutation = useMutation({
@@ -79,8 +75,8 @@ export default function PostListItem({ post, index = 0 }: PostListItemProps) {
   return (
     <Link
       to={`/posts/${post.id}`}
-      className={`flex items-start gap-2 px-4 py-2.5 border-b border-border hover:bg-card transition-colors${seen ? ' opacity-60' : ' animate-fade-up'}`}
-      style={seen ? undefined : { animationDelay: `${Math.min(index * 30, 150)}ms` }}
+      className="flex items-start gap-2 px-4 py-2.5 border-b border-border hover:bg-card transition-colors animate-fade-up"
+      style={{ animationDelay: `${Math.min(index * 30, 150)}ms` }}
     >
       <span className="text-[0.625rem] text-muted flex-shrink-0 mt-1 min-w-[1.75rem] text-right select-none">
         {index + 1}.
