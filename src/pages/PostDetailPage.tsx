@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import cbaLogo from '../assets/logo.png'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
@@ -19,8 +19,6 @@ import { formatRelativeTime } from '../lib/utils'
 import { useAuthStore } from '../stores/authStore'
 import NavLinks from '../components/layout/NavLinks'
 import MentionText from '../components/ui/MentionText'
-import { markPostSeen } from '../lib/seenPosts'
-
 function textAlign(content: string) {
   return content.trim().split(/\s+/).length > 15 ? 'text-left' : 'text-center'
 }
@@ -35,9 +33,6 @@ export default function PostDetailPage() {
   const navigate = useNavigate()
   const [replyingTo, setReplyingTo] = useState<ReplyingTo | null>(null)
 
-  useEffect(() => {
-    if (postId) markPostSeen(postId)
-  }, [postId])
   const isAdmin = useAuthStore((s) => s.user?.role === 'admin')
 
   const { data: post, isLoading: postLoading, isError: postError, refetch: refetchPost } = useQuery({

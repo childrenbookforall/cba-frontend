@@ -58,6 +58,7 @@ export default function AcceptInvitePage() {
     if (!token) return
     try {
       const { token: jwt } = await acceptInvite(token, data.password, data.firstName, data.lastName ?? '')
+      useAuthStore.setState({ token: jwt })
       const user = await getMe()
       setAuth(jwt, user)
       navigate('/feed', { replace: true })

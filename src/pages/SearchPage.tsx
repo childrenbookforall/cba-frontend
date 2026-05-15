@@ -1,75 +1,61 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { searchPosts } from '../api/posts'
-import { getApiError } from '../lib/utils'
 import PostCard from '../components/feed/PostCard'
 import PostCardSkeleton from '../components/feed/PostCardSkeleton'
 import NavLinks from '../components/layout/NavLinks'
 import BottomNav from '../components/layout/BottomNav'
-import type { Post } from '../types/api'
 
 export default function SearchPage() {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const initialQ = searchParams.get('q') ?? ''
   const [query, setQuery] = useState(initialQ)
-  const [results, setResults] = useState<Post[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [searched, setSearched] = useState(false)
+  const [committedQuery, setCommittedQuery] = useState(initialQ)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const abortRef = useRef<AbortController | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  // Capture initialQ at mount so the effect below doesn't need it as a dep
-  const initialQRef = useRef(initialQ)
 
-  const runSearch = useCallback(async (q: string) => {
-    abortRef.current?.abort()
-    const controller = new AbortController()
-    abortRef.current = controller
-    setIsLoading(true)
-    setSearched(true)
-    setError(null)
-    try {
-      const posts = await searchPosts(q, controller.signal)
-      setResults(posts)
-    } catch (err) {
-      if (controller.signal.aborted) return
-      setError(getApiError(err))
-    } finally {
-      if (!controller.signal.aborted) setIsLoading(false)
-    }
-  }, [])
+  const {
+    data,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ['search', committedQuery],
+    queryFn: ({ pageParam, signal }) => searchPosts(committedQuery, pageParam as string | undefined, signal),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    enabled: committedQuery.trim().length > 0,
+    staleTime: 30_000,
+  })
 
-  // Run search on initial load if q param is present.
-  // runSearch is stable (useCallback []) so this effect truly runs once.
   useEffect(() => {
-    if (initialQRef.current) runSearch(initialQRef.current)
-    else inputRef.current?.focus()
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current)
-      abortRef.current?.abort()
-    }
-  }, [runSearch])
+    if (!initialQ) inputRef.current?.focus()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
+  }, [])
 
   const handleChange = useCallback((q: string) => {
     setQuery(q)
-    setError(null)
-
     if (debounceRef.current) clearTimeout(debounceRef.current)
-
     if (!q.trim()) {
-      setResults([])
-      setSearched(false)
+      setCommittedQuery('')
       setSearchParams({})
       return
     }
-
     debounceRef.current = setTimeout(() => {
+      setCommittedQuery(q.trim())
       setSearchParams({ q: q.trim() })
-      runSearch(q.trim())
     }, 350)
-  }, [runSearch, setSearchParams])
+  }, [setSearchParams])
+
+  const posts = data?.pages.flatMap((p) => p.posts) ?? []
+  const searched = committedQuery.trim().length > 0
 
   return (
     <div className="min-h-svh bg-surface pb-20 sm:pb-0">
@@ -90,7 +76,7 @@ export default function SearchPage() {
           type="search"
           value={query}
           onChange={(e) => handleChange(e.target.value)}
-          placeholder="Search posts…"
+          placeholder="Search posts… or @name for author"
           className="flex-1 text-sm bg-surface border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition"
         />
 
@@ -107,32 +93,43 @@ export default function SearchPage() {
           </>
         )}
 
-        {error && (
+        {isError && (
           <p className="text-center text-xs text-muted py-8">
-            {error}
+            Something went wrong. Please try again.
           </p>
         )}
 
-        {!isLoading && !error && searched && results.length === 0 && (
+        {!isLoading && !isError && searched && posts.length === 0 && (
           <p className="text-center text-xs text-muted py-12">
-            No posts found for "<span className="font-medium">{query}</span>"
+            No posts found for "<span className="font-medium">{committedQuery}</span>"
           </p>
         )}
 
-        {!isLoading && !error && !searched && (
+        {!searched && (
           <p className="text-center text-xs text-muted py-12">
             Start typing to search posts
           </p>
         )}
 
-        {!isLoading && results.length > 0 && (
+        {posts.length > 0 && (
           <>
             <p className="text-[0.625rem] text-muted px-4 pb-2">
-              {results.length} result{results.length !== 1 ? 's' : ''}
+              {posts.length} result{posts.length !== 1 ? 's' : ''}
             </p>
-            {results.map((post) => (
+            {posts.map((post) => (
               <PostCard key={post.id} post={post} />
             ))}
+            {hasNextPage && (
+              <div className="flex justify-center py-4">
+                <button
+                  onClick={() => fetchNextPage()}
+                  disabled={isFetchingNextPage}
+                  className="px-6 py-2 rounded-full bg-surface border border-border text-xs font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition disabled:opacity-60"
+                >
+                  {isFetchingNextPage ? 'Loading…' : 'Load more'}
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>
