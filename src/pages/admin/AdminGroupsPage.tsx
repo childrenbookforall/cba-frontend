@@ -99,6 +99,10 @@ export default function AdminGroupsPage() {
 
   useEffect(() => { loadGroups(); loadAllUsers() }, [])
 
+  useEffect(() => {
+    return () => { if (memberSearchTimer.current) clearTimeout(memberSearchTimer.current) }
+  }, [])
+
   // Close suggestions on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {

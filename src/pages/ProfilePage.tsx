@@ -15,7 +15,7 @@ import NavLinks from '../components/layout/NavLinks'
 
 export default function ProfilePage() {
   const navigate = useNavigate()
-  const { user, token, setAuth, clearAuth } = useAuthStore()
+  const { user, setAuth, clearAuth } = useAuthStore()
   const toast = useToast()
   const [confirmSignOut, setConfirmSignOut] = useState(false)
   const [pushPermission, setPushPermission] = useState<NotificationPermission | null>(
