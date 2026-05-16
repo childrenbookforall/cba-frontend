@@ -31,13 +31,12 @@ export default function LoginPage() {
   async function onSubmit(data: Fields) {
     try {
       const { token } = await login(data.email, data.password)
-      // Store token first so getMe() request is authenticated
-      useAuthStore.getState().setAuth(token, { id: '', email: '', firstName: '', lastName: '', role: 'member', createdAt: '', canInitiateMessages: false })
+      // Set token only (not persisted) so getMe() can authenticate without writing a stub user to storage
+      useAuthStore.setState({ token })
       let user
       try {
         user = await getMe()
       } catch (err) {
-        // getMe() failed — clear the stub so we don't persist a bad auth state
         useAuthStore.getState().clearAuth()
         throw err
       }

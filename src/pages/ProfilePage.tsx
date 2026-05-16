@@ -7,6 +7,7 @@ import { updateMe, uploadAvatar } from '../api/users'
 import { logoutApi } from '../api/auth'
 import { getApiError } from '../lib/utils'
 import { useToast } from '../stores/toastStore'
+import { requestPushPermission } from '../hooks/usePushSubscription'
 import Avatar from '../components/ui/Avatar'
 import Spinner from '../components/ui/Spinner'
 import BottomNav from '../components/layout/BottomNav'
@@ -17,6 +18,9 @@ export default function ProfilePage() {
   const { user, token, setAuth, clearAuth } = useAuthStore()
   const toast = useToast()
   const [confirmSignOut, setConfirmSignOut] = useState(false)
+  const [pushPermission, setPushPermission] = useState<NotificationPermission | null>(
+    'Notification' in window ? Notification.permission : null
+  )
   const [editingBio, setEditingBio] = useState(false)
   const [bioValue, setBioValue] = useState(user?.bio ?? '')
   const [editingBirthday, setEditingBirthday] = useState(false)
@@ -25,7 +29,8 @@ export default function ProfilePage() {
   const bioMutation = useMutation({
     mutationFn: (bio: string) => updateMe({ bio }),
     onSuccess: (updatedUser) => {
-      setAuth(token!, { ...user!, ...updatedUser })
+      const { token: t, user: u } = useAuthStore.getState()
+      if (t && u) setAuth(t, { ...u, ...updatedUser })
       toast('Profile updated')
     },
     onSettled: () => setEditingBio(false),
@@ -35,7 +40,8 @@ export default function ProfilePage() {
   const birthdayMutation = useMutation({
     mutationFn: (birthday: string | null) => updateMe({ birthday }),
     onSuccess: (updatedUser) => {
-      setAuth(token!, { ...user!, ...updatedUser })
+      const { token: t, user: u } = useAuthStore.getState()
+      if (t && u) setAuth(t, { ...u, ...updatedUser })
       toast('Profile updated')
     },
     onSettled: () => setEditingBirthday(false),
@@ -45,7 +51,8 @@ export default function ProfilePage() {
   const avatarMutation = useMutation({
     mutationFn: (file: File) => uploadAvatar(file),
     onSuccess: (updatedUser) => {
-      setAuth(token!, { ...user!, ...updatedUser })
+      const { token: t, user: u } = useAuthStore.getState()
+      if (t && u) setAuth(t, { ...u, ...updatedUser })
       toast('Photo updated')
     },
     onError: (err) => toast(getApiError(err), 'error'),
@@ -82,7 +89,7 @@ export default function ProfilePage() {
       {/* Header */}
       <div className="bg-card border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => window.history.state?.idx > 0 ? navigate(-1) : navigate('/feed')}
           className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-200 transition"
           aria-label="Go back"
         >
@@ -254,6 +261,30 @@ export default function ProfilePage() {
           </p>
         )}
       </div>
+
+      {/* Push notifications opt-in */}
+      {pushPermission !== null && pushPermission !== 'denied' && 'PushManager' in window && (
+        <div className="bg-card mt-2 px-4 py-4">
+          <div className="flex items-center justify-between">
+            <p className="text-[0.625rem] font-semibold text-muted uppercase tracking-wide">Push notifications</p>
+            {pushPermission === 'granted' ? (
+              <span className="text-[0.625rem] text-green-600 dark:text-green-400 font-medium">Enabled</span>
+            ) : (
+              <button
+                onClick={async () => {
+                  const granted = await requestPushPermission()
+                  setPushPermission(Notification.permission)
+                  if (!granted) toast('Could not enable notifications', 'error')
+                  else toast('Notifications enabled')
+                }}
+                className="text-[0.625rem] text-accent-text font-medium"
+              >
+                Enable
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Sign out */}
       <div className="px-4 py-4 flex justify-center">

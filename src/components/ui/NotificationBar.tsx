@@ -2,8 +2,12 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getSiteNotification } from '../../api/siteNotification'
 
+const DISMISS_KEY = 'cba:dismissed-notification'
+
 export default function NotificationBar() {
-  const [dismissed, setDismissed] = useState(false)
+  const [dismissedId, setDismissedId] = useState<string | null>(
+    () => sessionStorage.getItem(DISMISS_KEY)
+  )
 
   const { data: notification } = useQuery({
     queryKey: ['site-notification'],
@@ -12,7 +16,13 @@ export default function NotificationBar() {
     refetchInterval: 60 * 1000,
   })
 
-  if (!notification || !notification.isActive || dismissed) return null
+  function handleDismiss() {
+    if (!notification) return
+    sessionStorage.setItem(DISMISS_KEY, notification.id)
+    setDismissedId(notification.id)
+  }
+
+  if (!notification || !notification.isActive || dismissedId === notification.id) return null
 
   return (
     <div className="bg-accent text-accent-text-fg px-4 py-2 flex items-center justify-center gap-3 text-xs font-medium">
@@ -33,7 +43,7 @@ export default function NotificationBar() {
         )}
       </span>
       <button
-        onClick={() => setDismissed(true)}
+        onClick={handleDismiss}
         aria-label="Dismiss notification"
         className="flex-shrink-0 opacity-75 hover:opacity-100 transition-opacity"
       >

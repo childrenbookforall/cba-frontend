@@ -64,7 +64,7 @@ export default function AcceptInvitePage() {
         setAuth(jwt, user)
         navigate('/feed', { replace: true })
       } catch {
-        useAuthStore.setState({ token: null })
+        useAuthStore.getState().clearAuth()
         setError('root', { message: 'Account created! Please log in to continue.' })
       }
     } catch (err) {

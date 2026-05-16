@@ -67,7 +67,9 @@ function AuthInitializer() {
         .then((res) => { setAuth(res.data.token, user); setInitialized() })
         .catch((err) => {
           const status = err?.response?.status
-          if (status === 401 || status === 403) clearAuth()
+          const { token: currentToken } = useAuthStore.getState()
+          // Don't clear auth if another tab already refreshed the token while we were trying
+          if ((status === 401 || status === 403) && !currentToken) clearAuth()
           setInitialized()
         })
     } else {

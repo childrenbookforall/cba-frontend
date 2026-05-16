@@ -144,7 +144,7 @@ export default function FeedPage() {
           </div>
         )}
 
-        {!isLoading && posts.length === 0 && (
+        {!isLoading && !isError && posts.length === 0 && pinnedPosts.length === 0 && (
           <div className="text-center py-16 px-6">
             <div className="text-5xl mb-3">💬</div>
             <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Nothing here yet!</p>

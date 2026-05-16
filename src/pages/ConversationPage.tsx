@@ -165,7 +165,7 @@ export default function ConversationPage() {
       {/* Header */}
       <div className="bg-card border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => window.history.state?.idx > 0 ? navigate(-1) : navigate('/messages')}
           className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition"
           aria-label="Go back"
         >

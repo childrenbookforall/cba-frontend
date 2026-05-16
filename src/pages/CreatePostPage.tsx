@@ -65,8 +65,7 @@ export default function CreatePostPage() {
   const { data: groups, isLoading: groupsLoading, isError: groupsError } = useGroups()
   const theme = useThemeStore((s) => s.theme)
   const [type, setType] = useState<PostType>('text')
-  const [photoFiles, setPhotoFiles] = useState<File[]>([])
-  const [photoPreviews, setPhotoPreviews] = useState<string[]>([])
+  const [photos, setPhotos] = useState<{ file: File; preview: string }[]>([])
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   const [draftBanner, setDraftBanner] = useState(false)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -74,7 +73,7 @@ export default function CreatePostPage() {
   const mentionRef = useRef<MentionTextareaHandle>(null)
   const emojiPickerRef = useRef<HTMLDivElement>(null)
   const draftTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const photoPreviewsRef = useRef(photoPreviews)
+  const photosRef = useRef(photos)
 
   const {
     register,
@@ -177,36 +176,34 @@ export default function CreatePostPage() {
     setShowEmojiPicker(false)
   }
 
-  // Keep ref in sync so the unmount cleanup always sees the latest previews
-  useEffect(() => { photoPreviewsRef.current = photoPreviews }, [photoPreviews])
+  // Keep ref in sync so the unmount cleanup always sees the latest photos
+  useEffect(() => { photosRef.current = photos }, [photos])
 
   // Revoke object URLs on unmount
   useEffect(() => {
-    return () => { photoPreviewsRef.current.forEach((url) => URL.revokeObjectURL(url)) }
+    return () => { photosRef.current.forEach(({ preview }) => URL.revokeObjectURL(preview)) }
   }, [])
 
   const onDrop = useCallback((accepted: File[]) => {
     if (!accepted.length) return
-    setPhotoFiles((prev) => {
-      const remaining = 10 - prev.length
-      return [...prev, ...accepted.slice(0, remaining)]
-    })
-    setPhotoPreviews((prev) => {
-      const remaining = 10 - prev.length
-      return [...prev, ...accepted.slice(0, remaining).map((f) => URL.createObjectURL(f))]
+    setPhotos((prev) => {
+      const slots = 10 - prev.length
+      return [
+        ...prev,
+        ...accepted.slice(0, slots).map((file) => ({ file, preview: URL.createObjectURL(file) })),
+      ]
     })
   }, [])
 
   function removePhoto(index: number) {
-    URL.revokeObjectURL(photoPreviews[index])
-    setPhotoFiles((prev) => prev.filter((_, i) => i !== index))
-    setPhotoPreviews((prev) => prev.filter((_, i) => i !== index))
+    URL.revokeObjectURL(photos[index].preview)
+    setPhotos((prev) => prev.filter((_, i) => i !== index))
   }
 
   const { getRootProps, getInputProps, isDragActive } = useImageDropzone({
     onDrop,
     maxSize: 10 * 1024 * 1024,
-    disabled: photoFiles.length >= 10,
+    disabled: photos.length >= 10,
   })
 
   function handleTypeChange(newType: PostType) {
@@ -217,13 +214,12 @@ export default function CreatePostPage() {
       content: contentValue,
       linkUrl: newType === 'link' ? linkUrlValue : undefined,
     })
-    photoPreviews.forEach((url) => URL.revokeObjectURL(url))
-    setPhotoFiles([])
-    setPhotoPreviews([])
+    photos.forEach(({ preview }) => URL.revokeObjectURL(preview))
+    setPhotos([])
   }
 
   async function onSubmit(data: Fields) {
-    if (type === 'photo' && photoFiles.length === 0) {
+    if (type === 'photo' && photos.length === 0) {
       setError('root', { message: 'Please select at least one photo' })
       return
     }
@@ -234,7 +230,7 @@ export default function CreatePostPage() {
         title: data.title,
         content: data.content,
         linkUrl: data.linkUrl,
-        files: photoFiles.length > 0 ? photoFiles : undefined,
+        files: photos.length > 0 ? photos.map((p) => p.file) : undefined,
       })
       localStorage.removeItem(DRAFT_KEY)
       queryClient.invalidateQueries({ queryKey: ['feed'] })
@@ -250,7 +246,7 @@ export default function CreatePostPage() {
       <title>New Post - CBA</title>
       {/* Header */}
       <div className="bg-card border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
-        <button onClick={() => navigate(-1)} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition" aria-label="Go back">
+        <button onClick={() => window.history.state?.idx > 0 ? navigate(-1) : navigate('/feed')} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition" aria-label="Go back">
           <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
         </button>
         <h1 className="text-sm font-bold text-gray-900 dark:text-gray-100 flex-1">New Post</h1>
@@ -462,11 +458,11 @@ export default function CreatePostPage() {
               <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
                 Photo
               </label>
-              {photoPreviews.length > 0 && (
+              {photos.length > 0 && (
                 <div className="flex gap-2 overflow-x-auto pb-1 mb-2">
-                  {photoPreviews.map((src, i) => (
+                  {photos.map(({ preview }, i) => (
                     <div key={i} className="relative flex-shrink-0">
-                      <img src={src} alt={`Preview ${i + 1}`} className="w-20 h-20 rounded-lg object-cover bg-gray-50 dark:bg-[#1a1a1a]" />
+                      <img src={preview} alt={`Preview ${i + 1}`} className="w-20 h-20 rounded-lg object-cover bg-gray-50 dark:bg-[#1a1a1a]" />
                       <button
                         type="button"
                         onClick={() => removePhoto(i)}
@@ -479,7 +475,7 @@ export default function CreatePostPage() {
                   ))}
                 </div>
               )}
-              {photoFiles.length < 10 && (
+              {photos.length < 10 && (
                 <div
                   {...getRootProps()}
                   className={`border-2 border-dashed rounded-xl h-28 flex flex-col items-center justify-center gap-1.5 text-muted cursor-pointer transition ${
@@ -493,10 +489,10 @@ export default function CreatePostPage() {
                     <>
                       <span className="text-2xl">📷</span>
                       <span className="text-xs font-medium">
-                        {photoPreviews.length === 0 ? 'Tap to select photos' : 'Add more photos'}
+                        {photos.length === 0 ? 'Tap to select photos' : 'Add more photos'}
                       </span>
                       <span className="text-[0.625rem]">
-                        JPEG · PNG · WebP · max 10 MB · {photoPreviews.length} / 10
+                        JPEG · PNG · WebP · max 10 MB · {photos.length} / 10
                       </span>
                     </>
                   )}

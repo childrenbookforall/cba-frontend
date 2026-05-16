@@ -17,10 +17,16 @@ client.interceptors.request.use((config) => {
 
 // Token refresh state (per-tab)
 let isRefreshing = false
-let refreshSubscribers: Array<(token: string) => void> = []
+type RefreshSubscriber = (token: string | null, error?: unknown) => void
+let refreshSubscribers: RefreshSubscriber[] = []
 
 function onTokenRefreshed(token: string) {
   refreshSubscribers.forEach((cb) => cb(token))
+  refreshSubscribers = []
+}
+
+function onRefreshFailed(error: unknown) {
+  refreshSubscribers.forEach((cb) => cb(null, error))
   refreshSubscribers = []
 }
 
@@ -39,8 +45,12 @@ refreshChannel?.addEventListener('message', ({ data }) => {
     onTokenRefreshed(data.token)
     isRefreshing = false
   } else if (data.type === 'failed') {
-    clearAuth()
-    window.location.href = '/login'
+    // Only log out if we don't already have a fresh token from another source
+    const { token: currentToken } = useAuthStore.getState()
+    if (!currentToken) {
+      clearAuth()
+      window.location.href = '/login'
+    }
   }
 })
 
@@ -57,14 +67,19 @@ client.interceptors.response.use(
       const { token, user, setAuth, clearAuth } = useAuthStore.getState()
       if (!token) return Promise.reject(error)
 
+      const tokenAtRefreshStart = token
       originalRequest._retry = true
 
       // This tab is already mid-refresh — queue the request
       if (isRefreshing) {
-        return new Promise((resolve) => {
-          refreshSubscribers.push((newToken) => {
-            originalRequest.headers.Authorization = `Bearer ${newToken}`
-            resolve(client(originalRequest))
+        return new Promise((resolve, reject) => {
+          refreshSubscribers.push((newToken, err) => {
+            if (newToken) {
+              originalRequest.headers.Authorization = `Bearer ${newToken}`
+              resolve(client(originalRequest))
+            } else {
+              reject(err)
+            }
           })
         })
       }
@@ -84,14 +99,22 @@ client.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${newToken}`
         return client(originalRequest)
       } catch (refreshError) {
-        refreshSubscribers = []
-        // Only clear auth if the refresh token is definitively invalid.
-        // Network errors or server errors should not log the user out.
         const status = (refreshError as { response?: { status?: number } })?.response?.status
-        if (status === 401 || status === 403) {
+        const { token: currentToken } = useAuthStore.getState()
+        // If another tab already refreshed (token changed), our failure is just token rotation — not a real logout.
+        const anotherTabRefreshed = !!currentToken && currentToken !== tokenAtRefreshStart
+        if ((status === 401 || status === 403) && !anotherTabRefreshed) {
+          onRefreshFailed(refreshError)
           refreshChannel?.postMessage({ type: 'failed' })
           clearAuth()
           window.location.href = '/login'
+        } else if (anotherTabRefreshed) {
+          // Retry the original request with the token the winning tab obtained
+          onRefreshFailed(refreshError) // no-op — BroadcastChannel already resolved subscribers
+          originalRequest.headers.Authorization = `Bearer ${currentToken}`
+          return client(originalRequest)
+        } else {
+          onRefreshFailed(refreshError)
         }
         return Promise.reject(error)
       } finally {

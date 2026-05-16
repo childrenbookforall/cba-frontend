@@ -39,7 +39,7 @@ export default function PostMenu({ post, onOpenChange }: PostMenuProps) {
     }
     if (open) document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
-  }, [open])
+  }, [open, onOpenChange])
 
   const deleteMutation = useMutation({
     mutationFn: () => deletePost(post.id),

@@ -15,13 +15,10 @@ import CommentSkeleton from '../components/comments/CommentSkeleton'
 import Spinner from '../components/ui/Spinner'
 import MediaCarousel from '../components/feed/MediaCarousel'
 import LinkPreview from '../components/feed/LinkPreview'
-import { formatRelativeTime } from '../lib/utils'
+import { formatRelativeTime, textAlign } from '../lib/utils'
 import { useAuthStore } from '../stores/authStore'
 import NavLinks from '../components/layout/NavLinks'
 import MentionText from '../components/ui/MentionText'
-function textAlign(content: string) {
-  return content.trim().split(/\s+/).length > 15 ? 'text-left' : 'text-center'
-}
 
 interface ReplyingTo {
   id: string
@@ -89,7 +86,7 @@ export default function PostDetailPage() {
       {/* Header */}
       <div className="bg-card border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => window.history.state?.idx > 0 ? navigate(-1) : navigate('/feed')}
           className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200 transition"
           aria-label="Go back"
         >

@@ -48,7 +48,7 @@ export default function ForgotPasswordPage() {
           </div>
         )}
 
-        {isSubmitSuccessful ? (
+        {isSubmitSuccessful && !errors.root ? (
           <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-4">
             <p className="text-xs font-semibold text-reaction-hm mb-1">✓ Link sent!</p>
             <p className="text-xs text-reaction-hm">Check your inbox. The link expires in 1 hour.</p>

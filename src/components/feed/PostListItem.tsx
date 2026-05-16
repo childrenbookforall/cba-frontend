@@ -43,10 +43,11 @@ export default function PostListItem({ post, index = 0 }: PostListItemProps) {
       )
       return { prevFeedEntries }
     },
-    onError: (_err, _vars, context) => {
+    onError: (err, _vars, context) => {
       for (const [queryKey, snapshot] of context?.prevFeedEntries ?? []) {
         queryClient.setQueryData<InfiniteData<FeedResult>>(queryKey, snapshot)
       }
+      toast(getApiError(err), 'error')
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['saved'] })

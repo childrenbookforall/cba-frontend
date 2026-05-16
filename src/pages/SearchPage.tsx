@@ -64,7 +64,7 @@ export default function SearchPage() {
       {/* Header */}
       <div className="bg-card border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => window.history.state?.idx > 0 ? navigate(-1) : navigate('/feed')}
           className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition"
           aria-label="Go back"
         >
@@ -114,7 +114,7 @@ export default function SearchPage() {
         {posts.length > 0 && (
           <>
             <p className="text-[0.625rem] text-muted px-4 pb-2">
-              {posts.length} result{posts.length !== 1 ? 's' : ''}
+              {posts.length}{hasNextPage ? '+' : ''} {posts.length === 1 && !hasNextPage ? 'result' : 'results'}
             </p>
             {posts.map((post) => (
               <PostCard key={post.id} post={post} />

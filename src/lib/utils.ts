@@ -39,6 +39,10 @@ export function formatRelativeTime(dateStr: string): string {
   return `${years}y ago`
 }
 
+export function textAlign(content: string): string {
+  return content.trim().split(/\s+/).length > 15 ? 'text-left' : 'text-center'
+}
+
 export function getApiError(err: unknown): string {
   if (typeof err === 'object' && err !== null) {
     const e = err as { response?: { status?: number; data?: { error?: string } }; request?: unknown }

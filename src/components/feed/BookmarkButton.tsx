@@ -1,5 +1,7 @@
 import { useMutation, useQueryClient, type InfiniteData } from '@tanstack/react-query'
 import { addBookmark, removeBookmark } from '../../api/bookmarks'
+import { useToast } from '../../stores/toastStore'
+import { getApiError } from '../../lib/utils'
 import type { Post, FeedResult } from '../../types/api'
 
 type InfiniteFeed = InfiniteData<FeedResult>
@@ -10,6 +12,7 @@ interface BookmarkButtonProps {
 
 export default function BookmarkButton({ post }: BookmarkButtonProps) {
   const queryClient = useQueryClient()
+  const toast = useToast()
   const isBookmarked = post.isBookmarked
 
   const mutation = useMutation({
@@ -46,13 +49,14 @@ export default function BookmarkButton({ post }: BookmarkButtonProps) {
 
       return { prevPost, prevFeedEntries }
     },
-    onError: (_err, _vars, context) => {
+    onError: (err, _vars, context) => {
       if (context?.prevPost !== undefined) {
         queryClient.setQueryData(['post', post.id], context.prevPost)
       }
       for (const [queryKey, snapshot] of context?.prevFeedEntries ?? []) {
         queryClient.setQueryData<InfiniteFeed>(queryKey, snapshot)
       }
+      toast(getApiError(err), 'error')
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['post', post.id] })
@@ -65,6 +69,7 @@ export default function BookmarkButton({ post }: BookmarkButtonProps) {
       type="button"
       onClick={() => mutation.mutate()}
       disabled={mutation.isPending}
+      aria-label={isBookmarked ? 'Remove bookmark' : 'Save for later'}
       title={isBookmarked ? 'Remove bookmark' : 'Save for later'}
       className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold transition ${
         mutation.isPending ? 'opacity-60' : ''

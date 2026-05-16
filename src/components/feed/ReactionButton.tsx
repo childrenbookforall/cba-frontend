@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react'
 import { useMutation, useQuery, useQueryClient, type InfiniteData } from '@tanstack/react-query'
 import { upsertReaction, removeReaction, getReactors } from '../../api/reactions'
 import { useInstallPromptStore } from '../../stores/installPromptStore'
+import { useToast } from '../../stores/toastStore'
+import { getApiError } from '../../lib/utils'
 import type { Post, ReactionType, FeedResult } from '../../types/api'
 
 type InfiniteFeed = InfiniteData<FeedResult>
@@ -54,6 +56,7 @@ const config = {
 export default function ReactionButton({ post, type }: ReactionButtonProps) {
   const queryClient = useQueryClient()
   const triggerInstall = useInstallPromptStore((s) => s.trigger)
+  const toast = useToast()
   const isActive = post.myReaction === type
   const { emoji, label, activeClass } = config[type]
   const count = type === 'with_you' ? post.withYouCount : type === 'helped_me' ? post.helpedMeCount : post.hugCount
@@ -117,13 +120,14 @@ export default function ReactionButton({ post, type }: ReactionButtonProps) {
 
       return { prevPost, prevFeedEntries }
     },
-    onError: (_err, _vars, context) => {
+    onError: (err, _vars, context) => {
       if (context?.prevPost !== undefined) {
         queryClient.setQueryData(['post', post.id], context.prevPost)
       }
       for (const [queryKey, snapshot] of context?.prevFeedEntries ?? []) {
         queryClient.setQueryData<InfiniteFeed>(queryKey, snapshot)
       }
+      toast(getApiError(err), 'error')
     },
     onSuccess: () => {
       if (!isActive) triggerInstall()

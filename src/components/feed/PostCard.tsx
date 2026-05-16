@@ -8,13 +8,10 @@ import BookmarkButton from './BookmarkButton'
 import PostMenu from './PostMenu'
 import MediaCarousel from './MediaCarousel'
 import LinkPreview from './LinkPreview'
-import { formatRelativeTime } from '../../lib/utils'
+import { formatRelativeTime, textAlign } from '../../lib/utils'
 import { useAuthStore } from '../../stores/authStore'
 import MentionText from '../ui/MentionText'
 import type { Post } from '../../types/api'
-function textAlign(content: string) {
-  return content.trim().split(/\s+/).length > 15 ? 'text-left' : 'text-center'
-}
 
 interface PostCardProps {
   post: Post
