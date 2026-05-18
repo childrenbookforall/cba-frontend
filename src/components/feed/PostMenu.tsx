@@ -1,12 +1,13 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useMutation, useQueryClient, type InfiniteData } from '@tanstack/react-query'
-import { deletePost, flagPost } from '../../api/posts'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { deletePost } from '../../api/posts'
 import { pinPost, downrankPost } from '../../api/admin'
+import { usePostFlagMutation } from '../../hooks/usePostFlagMutation'
 import { useAuthStore } from '../../stores/authStore'
 import { getApiError } from '../../lib/utils'
 import { useToast } from '../../stores/toastStore'
-import type { Post, FeedResult } from '../../types/api'
+import type { Post } from '../../types/api'
 
 interface PostMenuProps {
   post: Post
@@ -22,12 +23,11 @@ export default function PostMenu({ post, onOpenChange }: PostMenuProps) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const user = useAuthStore((s) => s.user)
+  const toast = useToast()
 
   const isOwner = user?.id === post.userId
   const isAdmin = user?.role === 'admin'
-  const toast = useToast()
 
-  // Close on outside click
   useEffect(() => {
     function handler(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) {
@@ -71,33 +71,7 @@ export default function PostMenu({ post, onOpenChange }: PostMenuProps) {
     onError: (err) => toast(getApiError(err), 'error'),
   })
 
-  const flagMutation = useMutation({
-    mutationFn: () => flagPost(post.id, flagReason || undefined),
-    onSuccess: () => {
-      setOpen(false)
-      setFlagging(false)
-      setFlagReason('')
-      toast('Post flagged for review')
-      // Update feed and post caches so the red dot appears immediately
-      const patch = { isFlagged: true, flaggedByMe: true }
-      queryClient.setQueriesData<InfiniteData<FeedResult>>(
-        { queryKey: ['feed'], exact: false },
-        (old) => old ? {
-          ...old,
-          pages: old.pages.map((page) => ({
-            ...page,
-            pinnedPosts: page.pinnedPosts.map((p) => p.id === post.id ? { ...p, ...patch } : p),
-            posts: page.posts.map((p) => p.id === post.id ? { ...p, ...patch } : p),
-          })),
-        } : old
-      )
-      queryClient.setQueryData<Post>(
-        ['post', post.id],
-        (old) => old ? { ...old, ...patch } : old
-      )
-    },
-    onError: (err) => toast(getApiError(err), 'error'),
-  })
+  const flagMutation = usePostFlagMutation(post)
 
   function toggle() {
     setOpen((o) => {
@@ -130,7 +104,14 @@ export default function PostMenu({ post, onOpenChange }: PostMenuProps) {
               />
               <div className="flex gap-1.5">
                 <button
-                  onClick={() => flagMutation.mutate()}
+                  onClick={() => flagMutation.mutate(flagReason || undefined, {
+                    onSuccess: () => {
+                      setOpen(false)
+                      setFlagging(false)
+                      setFlagReason('')
+                      toast('Post flagged for review')
+                    },
+                  })}
                   disabled={flagMutation.isPending}
                   className="flex-1 text-[0.625rem] font-semibold bg-red-50 text-danger rounded-lg py-1.5"
                 >

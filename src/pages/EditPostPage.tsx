@@ -7,6 +7,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { getPost, updatePost } from '../api/posts'
 import { getApiError } from '../lib/utils'
 import Spinner from '../components/ui/Spinner'
+import BackButton from '../components/ui/BackButton'
 import MentionTextarea from '../components/ui/MentionTextarea'
 import { useAuthStore } from '../stores/authStore'
 
@@ -76,9 +77,7 @@ export default function EditPostPage() {
     <div className="min-h-svh bg-surface">
       <title>Edit Post - CBA</title>
       <div className="bg-card border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
-        <button onClick={() => window.history.state?.idx > 0 ? navigate(-1) : navigate(`/posts/${postId}`)} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition" aria-label="Go back">
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
-        </button>
+        <BackButton fallback={`/posts/${postId}`} />
         <h1 className="text-sm font-bold text-gray-900 dark:text-gray-100">Edit Post</h1>
       </div>
 

@@ -1,11 +1,10 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { useMutation, useQueryClient, type InfiniteData } from '@tanstack/react-query'
-import { flagPost } from '../../api/posts'
-import { addBookmark, removeBookmark } from '../../api/bookmarks'
 import { useAuthStore } from '../../stores/authStore'
-import { formatRelativeTime, getApiError } from '../../lib/utils'
-import { useToast } from '../../stores/toastStore'
-import type { Post, FeedResult } from '../../types/api'
+import { formatRelativeTime, formatName } from '../../lib/utils'
+import { useBookmarkMutation } from '../../hooks/useBookmarkMutation'
+import { usePostFlagMutation } from '../../hooks/usePostFlagMutation'
+import type { Post } from '../../types/api'
+
 interface PostListItemProps {
   post: Post
   index?: number
@@ -14,64 +13,14 @@ interface PostListItemProps {
 export default function PostListItem({ post, index = 0 }: PostListItemProps) {
   const navigate = useNavigate()
   const user = useAuthStore((s) => s.user)
-  const queryClient = useQueryClient()
 
   const author = post.user
   const isOwner = user?.id === post.userId
   const reactionCount = post.withYouCount + post.helpedMeCount + post.hugCount
-  const authorName = author
-    ? `${author.firstName}${author.lastName ? ` ${author.lastName}` : ''}`
-    : "Children's Book for All"
-  const toast = useToast()
+  const authorName = author ? formatName(author.firstName, author.lastName) : "Children's Book for All"
 
-  const bookmarkMutation = useMutation({
-    mutationFn: () => post.isBookmarked ? removeBookmark(post.id) : addBookmark(post.id),
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ['feed'] })
-      const prevFeedEntries = queryClient.getQueriesData<InfiniteData<FeedResult>>({ queryKey: ['feed'], exact: false })
-      const applyToPost = (p: Post) => p.id !== post.id ? p : { ...p, isBookmarked: !post.isBookmarked }
-      queryClient.setQueriesData<InfiniteData<FeedResult>>(
-        { queryKey: ['feed'], exact: false },
-        (old) => old ? {
-          ...old,
-          pages: old.pages.map((page) => ({
-            ...page,
-            pinnedPosts: page.pinnedPosts.map(applyToPost),
-            posts: page.posts.map(applyToPost),
-          })),
-        } : old
-      )
-      return { prevFeedEntries }
-    },
-    onError: (err, _vars, context) => {
-      for (const [queryKey, snapshot] of context?.prevFeedEntries ?? []) {
-        queryClient.setQueryData<InfiniteData<FeedResult>>(queryKey, snapshot)
-      }
-      toast(getApiError(err), 'error')
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['saved'] })
-    },
-  })
-
-  const flagMutation = useMutation({
-    mutationFn: () => flagPost(post.id),
-    onError: (err) => toast(getApiError(err), 'error'),
-    onSuccess: () => {
-      const patch = { isFlagged: true, flaggedByMe: true }
-      queryClient.setQueriesData<InfiniteData<FeedResult>>(
-        { queryKey: ['feed'], exact: false },
-        (old) => old ? {
-          ...old,
-          pages: old.pages.map((page) => ({
-            ...page,
-            pinnedPosts: page.pinnedPosts.map((p) => p.id === post.id ? { ...p, ...patch } : p),
-            posts: page.posts.map((p) => p.id === post.id ? { ...p, ...patch } : p),
-          })),
-        } : old
-      )
-    },
-  })
+  const bookmarkMutation = useBookmarkMutation(post)
+  const flagMutation = usePostFlagMutation(post)
 
   return (
     <Link
@@ -119,7 +68,7 @@ export default function PostListItem({ post, index = 0 }: PostListItemProps) {
                   type="button"
                   onClick={(e) => {
                     e.preventDefault()
-                    if (!flagMutation.isPending) flagMutation.mutate()
+                    if (!flagMutation.isPending) flagMutation.mutate(undefined)
                   }}
                   disabled={flagMutation.isPending}
                   className="hover:text-danger transition-colors disabled:opacity-50"

@@ -2,14 +2,16 @@ import { useRef, useEffect, useState, lazy, Suspense } from 'react'
 import { CornerDownRight, SendHorizonal } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createComment } from '../../api/comments'
-
-const Picker = lazy(() => import('@emoji-mart/react'))
 import { getApiError } from '../../lib/utils'
 import { useToast } from '../../stores/toastStore'
 import { useInstallPromptStore } from '../../stores/installPromptStore'
 import { useThemeStore } from '../../stores/themeStore'
+import { useEmojiPicker } from '../../hooks/useEmojiPicker'
 import MentionTextarea, { type MentionTextareaHandle } from '../ui/MentionTextarea'
+import EmojiPickerErrorBoundary from '../ui/EmojiPickerErrorBoundary'
 import type { Comment } from '../../types/api'
+
+const Picker = lazy(() => import('@emoji-mart/react'))
 
 interface ReplyingTo {
   id: string
@@ -31,40 +33,15 @@ export default function CommentInputBar({ postId, groupId, replyingTo, onCancelR
   const triggerInstall = useInstallPromptStore((s) => s.trigger)
   const theme = useThemeStore((s) => s.theme)
   const [focused, setFocused] = useState(false)
-  const [showPicker, setShowPicker] = useState(false)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [emojiData, setEmojiData] = useState<any>(null)
-  const pickerRef = useRef<HTMLDivElement>(null)
   const [commentText, setCommentText] = useState('')
 
-  // Focus input when reply target changes
+  const { showPicker, setShowPicker, pickerRef, emojiData, handleEmojiSelect } = useEmojiPicker(
+    (text) => mentionRef.current?.insertText(text)
+  )
+
   useEffect(() => {
     if (replyingTo) inputRef.current?.focus()
   }, [replyingTo])
-
-  // Load emoji data on first open
-  useEffect(() => {
-    if (showPicker && !emojiData) {
-      import('@emoji-mart/data').then((m) => setEmojiData(m.default))
-    }
-  }, [showPicker, emojiData])
-
-  // Close picker on outside click
-  useEffect(() => {
-    if (!showPicker) return
-    function handleClick(e: MouseEvent) {
-      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
-        setShowPicker(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [showPicker])
-
-  function handleEmojiSelect(emoji: { native: string }) {
-    mentionRef.current?.insertText(emoji.native)
-    setShowPicker(false)
-  }
 
   const mutation = useMutation({
     mutationFn: (content: string) =>
@@ -107,7 +84,6 @@ export default function CommentInputBar({ postId, groupId, replyingTo, onCancelR
 
   return (
     <div className="border-t border-border bg-card pb-[env(safe-area-inset-bottom)]">
-      {/* Replying-to banner */}
       {replyingTo && (
         <div className="flex items-center justify-between px-3 py-1.5 bg-surface border-b border-border">
           <span className="flex items-center gap-1 text-[0.625rem] text-accent-text font-medium">
@@ -124,19 +100,20 @@ export default function CommentInputBar({ postId, groupId, replyingTo, onCancelR
       )}
 
       <div className="relative flex items-end gap-2 px-3 py-2.5">
-        {/* Emoji picker popover */}
         {showPicker && emojiData && (
           <div ref={pickerRef} className="absolute bottom-full left-3 mb-1 z-50">
-            <Suspense fallback={null}>
-              <Picker
-                data={emojiData}
-                onEmojiSelect={handleEmojiSelect}
-                theme={theme}
-                previewPosition="none"
-                skinTonePosition="none"
-                maxFrequentRows={1}
-              />
-            </Suspense>
+            <EmojiPickerErrorBoundary>
+              <Suspense fallback={null}>
+                <Picker
+                  data={emojiData}
+                  onEmojiSelect={handleEmojiSelect}
+                  theme={theme}
+                  previewPosition="none"
+                  skinTonePosition="none"
+                  maxFrequentRows={1}
+                />
+              </Suspense>
+            </EmojiPickerErrorBoundary>
           </div>
         )}
 

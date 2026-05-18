@@ -6,11 +6,9 @@ import GroupChip from './GroupChip'
 import ReactionButton from './ReactionButton'
 import BookmarkButton from './BookmarkButton'
 import PostMenu from './PostMenu'
-import MediaCarousel from './MediaCarousel'
-import LinkPreview from './LinkPreview'
-import { formatRelativeTime, textAlign } from '../../lib/utils'
+import PostBody from './PostBody'
+import { formatRelativeTime, formatName } from '../../lib/utils'
 import { useAuthStore } from '../../stores/authStore'
-import MentionText from '../ui/MentionText'
 import type { Post } from '../../types/api'
 
 interface PostCardProps {
@@ -55,7 +53,7 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
               onClick={(e) => { e.preventDefault(); if (author) navigate(`/profile/${author.id}`) }}
               className={`text-xs font-semibold text-gray-900 dark:text-gray-100 truncate${author ? ' cursor-pointer hover:underline' : ''}`}
             >
-              {author ? `${author.firstName}${author.lastName ? ` ${author.lastName}` : ''}` : "Children's Book for All"}
+              {author ? formatName(author.firstName, author.lastName) : "Children's Book for All"}
             </span>
             {post.group && <GroupChip id={post.group.id} name={post.group.name} />}
           </div>
@@ -81,45 +79,7 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
         <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 leading-snug">
           {post.title}
         </h3>
-
-        {post.type === 'text' && post.content && (
-          <p className="text-xs text-gray-500 dark:text-gray-300 mt-1 leading-relaxed line-clamp-3 whitespace-pre-wrap">
-            <MentionText content={post.content} />
-          </p>
-        )}
-
-        {post.type === 'link' && post.linkUrl && (
-          <LinkPreview
-            url={post.linkUrl}
-            previewImage={post.linkPreviewImage}
-            previewTitle={post.linkPreviewTitle}
-            previewDescription={post.linkPreviewDescription}
-          />
-        )}
-
-        {post.type === 'link' && post.content && (
-          <p className={`text-xs text-gray-500 dark:text-gray-300 mt-1.5 leading-relaxed line-clamp-3 whitespace-pre-wrap ${textAlign(post.content)}`}>
-            <MentionText content={post.content} />
-          </p>
-        )}
-
-        {post.type === 'photo' && (post.mediaUrls?.length || post.mediaUrl) && (
-          <>
-            <div onClick={(e) => e.preventDefault()}>
-              <MediaCarousel
-                urls={post.mediaUrls?.length ? post.mediaUrls : [post.mediaUrl!]}
-                alt={post.title}
-                compact
-                postUrl={`/posts/${post.id}`}
-              />
-            </div>
-            {post.content && (
-              <p className={`text-xs text-gray-500 dark:text-gray-300 mt-1 leading-relaxed line-clamp-3 whitespace-pre-wrap ${textAlign(post.content)}`}>
-                <MentionText content={post.content} />
-              </p>
-            )}
-          </>
-        )}
+        <PostBody post={post} compact />
       </div>
 
       {/* Actions */}

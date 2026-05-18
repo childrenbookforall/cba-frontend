@@ -22,6 +22,10 @@ export function getInitials(firstName: string, lastName?: string | null) {
   return `${firstName[0]}${lastName ? lastName[0] : ''}`.toUpperCase()
 }
 
+export function formatName(firstName: string, lastName?: string | null): string {
+  return lastName ? `${firstName} ${lastName}` : firstName
+}
+
 export function formatRelativeTime(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime()
   const mins = Math.floor(diff / 60_000)

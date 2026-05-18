@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef, lazy, Suspense, Component, type ReactNode } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -9,21 +9,10 @@ import { createPost } from '../api/posts'
 import { useGroups } from '../hooks/useGroups'
 import { getApiError } from '../lib/utils'
 import { useToast } from '../stores/toastStore'
-import { useThemeStore } from '../stores/themeStore'
 import Spinner from '../components/ui/Spinner'
-import MentionTextarea, { type MentionTextareaHandle } from '../components/ui/MentionTextarea'
-
-const Picker = lazy(() => import('@emoji-mart/react'))
+import ContentField from '../components/ui/ContentField'
+import BackButton from '../components/ui/BackButton'
 import NavLinks from '../components/layout/NavLinks'
-
-class EmojiPickerErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
-  state = { failed: false }
-  static getDerivedStateFromError() { return { failed: true } }
-  render() {
-    if (this.state.failed) return <span className="text-xs text-muted p-2">Emoji picker unavailable</span>
-    return this.props.children
-  }
-}
 
 type PostType = 'text' | 'link' | 'photo'
 
@@ -63,15 +52,9 @@ export default function CreatePostPage() {
   const queryClient = useQueryClient()
   const toast = useToast()
   const { data: groups, isLoading: groupsLoading, isError: groupsError } = useGroups()
-  const theme = useThemeStore((s) => s.theme)
   const [type, setType] = useState<PostType>('text')
   const [photos, setPhotos] = useState<{ file: File; preview: string }[]>([])
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   const [draftBanner, setDraftBanner] = useState(false)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [emojiData, setEmojiData] = useState<any>(null)
-  const mentionRef = useRef<MentionTextareaHandle>(null)
-  const emojiPickerRef = useRef<HTMLDivElement>(null)
   const draftTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const photosRef = useRef(photos)
 
@@ -92,19 +75,16 @@ export default function CreatePostPage() {
   const linkUrlValue = watch('linkUrl') ?? ''
   const groupIdValue = watch('groupId') ?? ''
 
-  // Pre-fill group when there's only one option
   useEffect(() => {
     if (groups?.length === 1) {
       setValue('groupId', groups[0].id)
     }
   }, [groups, setValue])
 
-  // Scroll to top on mount so the banner and form top are always visible
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
 
-  // Show restore banner if a meaningful draft exists
   useEffect(() => {
     try {
       const raw = localStorage.getItem(DRAFT_KEY)
@@ -118,7 +98,6 @@ export default function CreatePostPage() {
     }
   }, [])
 
-  // Auto-save draft to localStorage (debounced)
   useEffect(() => {
     if (draftTimerRef.current) clearTimeout(draftTimerRef.current)
     draftTimerRef.current = setTimeout(() => {
@@ -153,33 +132,8 @@ export default function CreatePostPage() {
     setDraftBanner(false)
   }
 
-  // Load emoji data on first open
-  useEffect(() => {
-    if (showEmojiPicker && !emojiData) {
-      import('@emoji-mart/data').then((m) => setEmojiData(m.default))
-    }
-  }, [showEmojiPicker, emojiData])
-
-  useEffect(() => {
-    if (!showEmojiPicker) return
-    function handleClick(e: MouseEvent) {
-      if (emojiPickerRef.current && !emojiPickerRef.current.contains(e.target as Node)) {
-        setShowEmojiPicker(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [showEmojiPicker])
-
-  function handleEmojiSelect(emoji: { native: string }) {
-    mentionRef.current?.insertText(emoji.native)
-    setShowEmojiPicker(false)
-  }
-
-  // Keep ref in sync so the unmount cleanup always sees the latest photos
   useEffect(() => { photosRef.current = photos }, [photos])
 
-  // Revoke object URLs on unmount
   useEffect(() => {
     return () => { photosRef.current.forEach(({ preview }) => URL.revokeObjectURL(preview)) }
   }, [])
@@ -246,9 +200,7 @@ export default function CreatePostPage() {
       <title>New Post - CBA</title>
       {/* Header */}
       <div className="bg-card border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
-        <button onClick={() => window.history.state?.idx > 0 ? navigate(-1) : navigate('/feed')} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition" aria-label="Go back">
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
-        </button>
+        <BackButton fallback="/feed" />
         <h1 className="text-sm font-bold text-gray-900 dark:text-gray-100 flex-1">New Post</h1>
         <NavLinks />
       </div>
@@ -352,40 +304,19 @@ export default function CreatePostPage() {
                 </span>
               )}
             </div>
-            <div className="relative">
-              {showEmojiPicker && emojiData && (
-                <div ref={emojiPickerRef} className="absolute top-full right-0 mt-1 z-50">
-                  <EmojiPickerErrorBoundary>
-                    <Suspense fallback={null}>
-                      <Picker data={emojiData} onEmojiSelect={handleEmojiSelect} theme={theme} previewPosition="none" skinTonePosition="none" maxFrequentRows={1} />
-                    </Suspense>
-                  </EmojiPickerErrorBoundary>
-                </div>
+            <Controller
+              name="content"
+              control={control}
+              render={({ field }) => (
+                <ContentField
+                  value={field.value ?? ''}
+                  onChange={field.onChange}
+                  groupId={groupIdValue || undefined}
+                  rows={5}
+                  placeholder="Share more details…"
+                />
               )}
-              <Controller
-                name="content"
-                control={control}
-                render={({ field }) => (
-                  <MentionTextarea
-                    value={field.value ?? ''}
-                    onChange={field.onChange}
-                    groupId={groupIdValue || undefined}
-                    ref={mentionRef}
-                    rows={5}
-                    placeholder="Share more details…"
-                    className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
-                  />
-                )}
-              />
-              <button
-                type="button"
-                onClick={() => setShowEmojiPicker((v) => !v)}
-                aria-label="Insert emoji"
-                className="absolute bottom-2 right-2.5 text-lg leading-none text-muted hover:text-primary transition"
-              >
-                🙂
-              </button>
-            </div>
+            />
           </div>
         )}
 
@@ -416,38 +347,19 @@ export default function CreatePostPage() {
                   </span>
                 )}
               </div>
-              <div className="relative">
-                {showEmojiPicker && emojiData && (
-                  <div ref={emojiPickerRef} className="absolute top-full right-0 mt-1 z-50">
-                    <Suspense fallback={null}>
-                      <Picker data={emojiData} onEmojiSelect={handleEmojiSelect} theme={theme} previewPosition="none" skinTonePosition="none" maxFrequentRows={1} />
-                    </Suspense>
-                  </div>
+              <Controller
+                name="content"
+                control={control}
+                render={({ field }) => (
+                  <ContentField
+                    value={field.value ?? ''}
+                    onChange={field.onChange}
+                    groupId={groupIdValue || undefined}
+                    rows={3}
+                    placeholder="Add a description…"
+                  />
                 )}
-                <Controller
-                  name="content"
-                  control={control}
-                  render={({ field }) => (
-                    <MentionTextarea
-                      value={field.value ?? ''}
-                      onChange={field.onChange}
-                      groupId={groupIdValue || undefined}
-                      ref={mentionRef}
-                      rows={3}
-                      placeholder="Add a description…"
-                      className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
-                    />
-                  )}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowEmojiPicker((v) => !v)}
-                  aria-label="Insert emoji"
-                  className="absolute bottom-2 right-2.5 text-lg leading-none text-muted hover:text-primary transition"
-                >
-                  🙂
-                </button>
-              </div>
+              />
             </div>
           </div>
         )}
@@ -510,38 +422,19 @@ export default function CreatePostPage() {
                   </span>
                 )}
               </div>
-              <div className="relative">
-                {showEmojiPicker && emojiData && (
-                  <div ref={emojiPickerRef} className="absolute top-full right-0 mt-1 z-50">
-                    <Suspense fallback={null}>
-                      <Picker data={emojiData} onEmojiSelect={handleEmojiSelect} theme={theme} previewPosition="none" skinTonePosition="none" maxFrequentRows={1} />
-                    </Suspense>
-                  </div>
+              <Controller
+                name="content"
+                control={control}
+                render={({ field }) => (
+                  <ContentField
+                    value={field.value ?? ''}
+                    onChange={field.onChange}
+                    groupId={groupIdValue || undefined}
+                    rows={3}
+                    placeholder="Add a caption…"
+                  />
                 )}
-                <Controller
-                  name="content"
-                  control={control}
-                  render={({ field }) => (
-                    <MentionTextarea
-                      value={field.value ?? ''}
-                      onChange={field.onChange}
-                      groupId={groupIdValue || undefined}
-                      ref={mentionRef}
-                      rows={3}
-                      placeholder="Add a caption…"
-                      className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
-                    />
-                  )}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowEmojiPicker((v) => !v)}
-                  aria-label="Insert emoji"
-                  className="absolute bottom-2 right-2.5 text-lg leading-none text-muted hover:text-primary transition"
-                >
-                  🙂
-                </button>
-              </div>
+              />
             </div>
           </div>
         )}

@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNotifications } from '../hooks/useNotifications'
 import { markOneRead, markAllRead } from '../api/notifications'
 import Avatar from '../components/ui/Avatar'
 import Spinner from '../components/ui/Spinner'
+import BackButton from '../components/ui/BackButton'
 import BottomNav from '../components/layout/BottomNav'
 import NavLinks from '../components/layout/NavLinks'
 import { formatRelativeTime } from '../lib/utils'
@@ -27,7 +28,6 @@ function notificationText(n: Notification): string {
 }
 
 export default function NotificationsPage() {
-  const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { data: notifications, isLoading, isError, refetch } = useNotifications()
 
@@ -71,13 +71,7 @@ export default function NotificationsPage() {
       <title>Notifications - CBA</title>
       {/* Header */}
       <div className="bg-card border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
-        <button
-          onClick={() => window.history.state?.idx > 0 ? navigate(-1) : navigate('/feed')}
-          className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition"
-          aria-label="Go back"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
-        </button>
+        <BackButton fallback="/feed" />
         <h1 className="text-sm font-bold text-gray-900 dark:text-gray-100 flex-1">Notifications</h1>
         <NavLinks />
       </div>

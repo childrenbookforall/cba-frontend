@@ -9,13 +9,13 @@ import GroupChip from '../components/feed/GroupChip'
 import ReactionButton from '../components/feed/ReactionButton'
 import BookmarkButton from '../components/feed/BookmarkButton'
 import PostMenu from '../components/feed/PostMenu'
+import PostBody from '../components/feed/PostBody'
 import CommentThread from '../components/comments/CommentThread'
 import CommentInputBar from '../components/comments/CommentInputBar'
 import CommentSkeleton from '../components/comments/CommentSkeleton'
 import Spinner from '../components/ui/Spinner'
-import MediaCarousel from '../components/feed/MediaCarousel'
-import LinkPreview from '../components/feed/LinkPreview'
-import { formatRelativeTime, textAlign } from '../lib/utils'
+import BackButton from '../components/ui/BackButton'
+import { formatRelativeTime, formatName } from '../lib/utils'
 import { useAuthStore } from '../stores/authStore'
 import NavLinks from '../components/layout/NavLinks'
 import MentionText from '../components/ui/MentionText'
@@ -85,13 +85,7 @@ export default function PostDetailPage() {
       <title>Post - CBA</title>
       {/* Header */}
       <div className="bg-card border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
-        <button
-          onClick={() => window.history.state?.idx > 0 ? navigate(-1) : navigate('/feed')}
-          className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200 transition"
-          aria-label="Go back"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
-        </button>
+        <BackButton fallback="/feed" className="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200 transition" />
         <div className="flex-1" />
         <NavLinks />
       </div>
@@ -123,9 +117,7 @@ export default function PostDetailPage() {
                   className={`text-xs font-semibold text-gray-900 dark:text-gray-100${post.user ? ' cursor-pointer hover:underline' : ''}`}
                   onClick={() => { if (post.user) navigate(`/profile/${post.user.id}`) }}
                 >
-                  {post.user
-                    ? `${post.user.firstName}${post.user.lastName ? ` ${post.user.lastName}` : ''}`
-                    : "Children's Book for All"}
+                  {post.user ? formatName(post.user.firstName, post.user.lastName) : "Children's Book for All"}
                 </span>
                 {post.group && <GroupChip id={post.group.id} name={post.group.name} />}
               </div>
@@ -150,41 +142,7 @@ export default function PostDetailPage() {
             <MentionText content={post.title} />
           </h2>
 
-          {/* Content by type */}
-          {post.type === 'text' && post.content && (
-            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
-              <MentionText content={post.content} />
-            </p>
-          )}
-
-          {post.type === 'link' && post.linkUrl && (
-            <LinkPreview
-              url={post.linkUrl}
-              previewImage={post.linkPreviewImage}
-              previewTitle={post.linkPreviewTitle}
-              previewDescription={post.linkPreviewDescription}
-            />
-          )}
-
-          {post.type === 'link' && post.content && (
-            <p className={`text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap mt-2 ${textAlign(post.content)}`}>
-              <MentionText content={post.content} />
-            </p>
-          )}
-
-          {post.type === 'photo' && (post.mediaUrls?.length || post.mediaUrl) && (
-            <>
-              <MediaCarousel
-                urls={post.mediaUrls?.length ? post.mediaUrls : [post.mediaUrl!]}
-                alt={post.title}
-              />
-              {post.content && (
-                <p className={`text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap ${textAlign(post.content)}`}>
-                  <MentionText content={post.content} />
-                </p>
-              )}
-            </>
-          )}
+          <PostBody post={post} />
 
           {/* Reactions */}
           <div className="flex items-center gap-3 mt-3 pt-3 border-t border-border">

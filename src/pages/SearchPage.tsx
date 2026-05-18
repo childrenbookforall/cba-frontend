@@ -1,14 +1,14 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { searchPosts } from '../api/posts'
 import PostCard from '../components/feed/PostCard'
 import PostCardSkeleton from '../components/feed/PostCardSkeleton'
+import BackButton from '../components/ui/BackButton'
 import NavLinks from '../components/layout/NavLinks'
 import BottomNav from '../components/layout/BottomNav'
 
 export default function SearchPage() {
-  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const initialQ = searchParams.get('q') ?? ''
   const [query, setQuery] = useState(initialQ)
@@ -63,13 +63,7 @@ export default function SearchPage() {
 
       {/* Header */}
       <div className="bg-card border-b border-border px-4 py-3 flex items-center gap-3 sticky top-0 z-10">
-        <button
-          onClick={() => window.history.state?.idx > 0 ? navigate(-1) : navigate('/feed')}
-          className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition"
-          aria-label="Go back"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
-        </button>
+        <BackButton fallback="/feed" />
 
         <input
           ref={inputRef}
