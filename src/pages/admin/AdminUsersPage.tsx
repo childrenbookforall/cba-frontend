@@ -15,6 +15,7 @@ export default function AdminUsersPage() {
   const toast = useToast()
   const queryClient = useQueryClient()
   const [search, setSearch] = useState('')
+  const [committedSearch, setCommittedSearch] = useState('')
 
   // Create form
   const [showCreate, setShowCreate] = useState(false)
@@ -26,8 +27,8 @@ export default function AdminUsersPage() {
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
-    queryKey: ['admin-users'],
-    queryFn: ({ pageParam }) => listAdminUsers(pageParam),
+    queryKey: ['admin-users', committedSearch],
+    queryFn: ({ pageParam }) => listAdminUsers(pageParam, committedSearch || undefined),
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
     initialPageParam: undefined as string | undefined,
   })
@@ -86,16 +87,7 @@ export default function AdminUsersPage() {
     }
   }
 
-  const filtered = search.trim()
-    ? users.filter((u) => {
-        const q = search.toLowerCase()
-        return (
-          u.firstName.toLowerCase().includes(q) ||
-          u.lastName?.toLowerCase().includes(q) ||
-          u.email.toLowerCase().includes(q)
-        )
-      })
-    : users
+  const filtered = users
 
   if (isLoading) {
     return (
@@ -115,6 +107,7 @@ export default function AdminUsersPage() {
           placeholder="Search by name or email…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter') setCommittedSearch(search.trim()) }}
           className="flex-1 text-xs border border-border rounded-full px-4 py-2 bg-card focus:outline-none focus:border-accent"
         />
         <button
@@ -173,7 +166,7 @@ export default function AdminUsersPage() {
       {/* Count */}
       <p className="text-[0.625rem] text-muted mb-2">
         {filtered.length} member{filtered.length !== 1 ? 's' : ''} shown
-        {search && ' (filtered)'}
+        {committedSearch && ' (filtered)'}
       </p>
 
       {/* User list */}
@@ -280,7 +273,7 @@ export default function AdminUsersPage() {
       </div>
 
       {/* More */}
-      {hasNextPage && !search && (
+      {hasNextPage && (
         <div className="flex justify-center mt-4">
           <button
             onClick={() => fetchNextPage()}

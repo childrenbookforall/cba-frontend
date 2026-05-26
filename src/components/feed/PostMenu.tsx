@@ -45,6 +45,7 @@ export default function PostMenu({ post, onOpenChange }: PostMenuProps) {
     mutationFn: () => deletePost(post.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['feed'] })
+      queryClient.invalidateQueries({ queryKey: ['post', post.id] })
       toast('Post deleted')
       setOpen(false)
     },

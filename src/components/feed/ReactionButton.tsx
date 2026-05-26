@@ -118,7 +118,7 @@ export default function ReactionButton({ post, type }: ReactionButtonProps) {
         old ? applyReactionToPost(old, type) : old
       )
 
-      return { prevPost, prevFeedEntries }
+      return { prevPost, prevFeedEntries, wasActive: isActive }
     },
     onError: (err, _vars, context) => {
       if (context?.prevPost !== undefined) {
@@ -129,8 +129,8 @@ export default function ReactionButton({ post, type }: ReactionButtonProps) {
       }
       toast(getApiError(err), 'error')
     },
-    onSuccess: () => {
-      if (!isActive) triggerInstall()
+    onSuccess: (_data, _vars, context) => {
+      if (!context?.wasActive) triggerInstall()
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['post', post.id] })

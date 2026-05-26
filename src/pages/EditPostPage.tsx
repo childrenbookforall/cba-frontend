@@ -17,7 +17,7 @@ const schema = z.object({
     (v) => v.replace(/@\[([^\]]+)\]\([^)]+\)/g, '@$1').length <= 10000,
     'Max 10,000 characters'
   ).optional(),
-  linkUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
+  linkUrl: z.string().url('Must be a valid URL').optional(),
 })
 
 type Fields = z.infer<typeof schema>
@@ -45,7 +45,7 @@ export default function EditPostPage() {
 
   useEffect(() => {
     if (post) {
-      reset({ title: post.title, content: post.content ?? '', linkUrl: post.linkUrl ?? '' })
+      reset({ title: post.title, content: post.content ?? '', linkUrl: post.linkUrl ?? undefined })
     }
   }, [post, reset])
 

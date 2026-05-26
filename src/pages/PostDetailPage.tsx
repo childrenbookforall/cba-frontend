@@ -32,11 +32,13 @@ export default function PostDetailPage() {
 
   const isAdmin = useAuthStore((s) => s.user?.role === 'admin')
 
-  const { data: post, isLoading: postLoading, isError: postError, refetch: refetchPost } = useQuery({
+  const { data: post, isLoading: postLoading, isError: postError, error: postErrorObj, refetch: refetchPost } = useQuery({
     queryKey: ['post', postId],
     queryFn: () => getPost(postId!),
     enabled: !!postId,
   })
+
+  const isNotFound = !post || (postError && (postErrorObj as { response?: { status?: number } } | null)?.response?.status === 404)
 
   const { data: comments, isLoading: commentsLoading } = useComments(postId)
 
@@ -60,14 +62,14 @@ export default function PostDetailPage() {
         </div>
         <div>
           <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1">
-            {postError ? 'Could not load post' : 'Post not found'}
+            {isNotFound ? 'Post not found' : 'Could not load post'}
           </p>
           <p className="text-xs text-muted">
-            {postError ? 'Check your connection and try again.' : 'This post may have been deleted.'}
+            {isNotFound ? 'This post may have been deleted.' : 'Check your connection and try again.'}
           </p>
         </div>
         <div className="flex gap-3">
-          {postError && (
+          {postError && !isNotFound && (
             <button onClick={() => refetchPost()} className="px-4 py-2 bg-accent text-accent-text-fg text-xs font-semibold rounded-full">
               Try again
             </button>

@@ -11,9 +11,9 @@ import type {
 
 // ── Users ─────────────────────────────────────────────────────────────────────
 
-export async function listAdminUsers(cursor?: string): Promise<AdminUsersResponse> {
+export async function listAdminUsers(cursor?: string, search?: string): Promise<AdminUsersResponse> {
   const res = await client.get<AdminUsersResponse>('/api/admin/users', {
-    params: cursor ? { cursor } : {},
+    params: { ...(cursor && { cursor }), ...(search && { search }) },
   })
   return res.data
 }

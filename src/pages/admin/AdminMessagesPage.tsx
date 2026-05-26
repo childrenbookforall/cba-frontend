@@ -60,7 +60,7 @@ export default function AdminMessagesPage() {
     enabled: !!selectedConv,
   })
 
-  const threadMessages = threadData?.pages.flatMap((p) => p.messages) ?? []
+  const threadMessages = (threadData?.pages.flatMap((p) => p.messages) ?? []).reverse()
 
   if (selectedConv) {
     return (
