@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo, useRef, useLayoutEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import logo from '../assets/logo.png'
 import { useFeed } from '../hooks/useFeed'
@@ -11,6 +11,7 @@ import SortPills from '../components/feed/SortPills'
 import BottomNav from '../components/layout/BottomNav'
 import NavLinks from '../components/layout/NavLinks'
 import GroupMembersSheet from '../components/ui/GroupMembersSheet'
+import { useWindowVirtualizer } from '@tanstack/react-virtual'
 
 type FeedView = 'card' | 'list'
 
@@ -54,8 +55,27 @@ export default function FeedPage() {
     isFetchingNextPage,
   } = useFeed({ sort, groupId })
 
-  const pinnedPosts = sort === 'top' ? (data?.pages[0]?.pinnedPosts ?? []) : []
-  const posts = data?.pages.flatMap((p) => p.posts) ?? []
+  const pinnedPosts = useMemo(
+    () => sort === 'top' ? (data?.pages[0]?.pinnedPosts ?? []) : [],
+    [sort, data]
+  )
+  const posts = useMemo(() => data?.pages.flatMap((p) => p.posts) ?? [], [data])
+  const allPosts = useMemo(() => [...pinnedPosts, ...posts], [pinnedPosts, posts])
+
+  const listRef = useRef<HTMLDivElement>(null)
+  const [scrollMargin, setScrollMargin] = useState(0)
+
+  useLayoutEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setScrollMargin(listRef.current?.offsetTop ?? 0)
+  }, [groups])
+
+  const virtualizer = useWindowVirtualizer({
+    count: allPosts.length,
+    estimateSize: () => view === 'list' ? 60 : 200,
+    overscan: 5,
+    scrollMargin,
+  })
 
   function handleSortChange(newSort: 'latest' | 'top') {
     setSearchParams({ sort: newSort })
@@ -144,7 +164,7 @@ export default function FeedPage() {
           </div>
         )}
 
-        {!isLoading && !isError && posts.length === 0 && pinnedPosts.length === 0 && (
+        {!isLoading && !isError && allPosts.length === 0 && (
           <div className="text-center py-16 px-6">
             <div className="text-5xl mb-3">💬</div>
             <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Nothing here yet!</p>
@@ -155,17 +175,32 @@ export default function FeedPage() {
           </div>
         )}
 
-        {pinnedPosts.map((post, i) =>
-          view === 'list'
-            ? <PostListItem key={post.id} post={post} index={i} />
-            : <PostCard key={post.id} post={post} index={i} />
-        )}
-
-        {posts.map((post, i) =>
-          view === 'list'
-            ? <PostListItem key={post.id} post={post} index={pinnedPosts.length + i} />
-            : <PostCard key={post.id} post={post} index={pinnedPosts.length + i} />
-        )}
+        <div ref={listRef}>
+          <div style={{ height: `${virtualizer.getTotalSize()}px`, position: 'relative' }}>
+            {virtualizer.getVirtualItems().map((virtualItem) => {
+              const post = allPosts[virtualItem.index]
+              return (
+                <div
+                  key={virtualItem.key}
+                  data-index={virtualItem.index}
+                  ref={virtualizer.measureElement}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    transform: `translateY(${virtualItem.start - virtualizer.options.scrollMargin}px)`,
+                  }}
+                >
+                  {view === 'list'
+                    ? <PostListItem post={post} index={virtualItem.index} />
+                    : <PostCard post={post} index={virtualItem.index} />
+                  }
+                </div>
+              )
+            })}
+          </div>
+        </div>
 
         {/* Load more */}
         {hasNextPage && (

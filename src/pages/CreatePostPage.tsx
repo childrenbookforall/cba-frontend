@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -57,6 +57,14 @@ export default function CreatePostPage() {
   const [draftBanner, setDraftBanner] = useState(false)
   const draftTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const photosRef = useRef(photos)
+  const typeRef = useRef(type)
+  typeRef.current = type
+
+  const resolver = useMemo(
+    () => (...args: Parameters<ReturnType<typeof zodResolver>>) => zodResolver(buildSchema(typeRef.current))(...args),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  )
 
   const {
     register,
@@ -67,7 +75,7 @@ export default function CreatePostPage() {
     watch,
     control,
     formState: { errors, isSubmitting },
-  } = useForm<Fields>({ resolver: zodResolver(buildSchema(type)) })
+  } = useForm<Fields>({ resolver })
 
   const titleValue = watch('title') ?? ''
   const contentValue = watch('content') ?? ''

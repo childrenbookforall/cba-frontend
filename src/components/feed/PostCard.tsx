@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import cbaLogo from '../../assets/logo.png'
 import Avatar from '../ui/Avatar'
@@ -16,7 +16,7 @@ interface PostCardProps {
   index?: number
 }
 
-export default function PostCard({ post, index = 0 }: PostCardProps) {
+const PostCard = memo(function PostCard({ post, index = 0 }: PostCardProps) {
   const author = post.user
   const isAdmin = useAuthStore((s) => s.user?.role === 'admin')
   const showFlagDot = post.isFlagged && (isAdmin || post.flaggedByMe)
@@ -106,4 +106,6 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
       </div>
     </Link>
   )
-}
+})
+
+export default PostCard

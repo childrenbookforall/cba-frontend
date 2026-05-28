@@ -31,15 +31,7 @@ export default function LoginPage() {
   async function onSubmit(data: Fields) {
     try {
       const { token } = await login(data.email, data.password)
-      // Set token only (not persisted) so getMe() can authenticate without writing a stub user to storage
-      useAuthStore.setState({ token })
-      let user
-      try {
-        user = await getMe()
-      } catch (err) {
-        useAuthStore.getState().clearAuth()
-        throw err
-      }
+      const user = await getMe(token)
       setAuth(token, user)
       navigate('/feed', { replace: true })
     } catch (err) {

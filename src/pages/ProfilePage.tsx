@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useImageDropzone } from '../hooks/useImageDropzone'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '../stores/authStore'
 import { updateMe, uploadAvatar } from '../api/users'
 import { logoutApi } from '../api/auth'
@@ -17,6 +17,7 @@ import NavLinks from '../components/layout/NavLinks'
 export default function ProfilePage() {
   const navigate = useNavigate()
   const { user, setAuth, clearAuth } = useAuthStore()
+  const queryClient = useQueryClient()
   const toast = useToast()
   const [confirmSignOut, setConfirmSignOut] = useState(false)
   const [pushPermission, setPushPermission] = useState<NotificationPermission | null>(
@@ -287,7 +288,7 @@ export default function ProfilePage() {
           <div className="flex items-center gap-3">
             <span className="text-xs text-gray-600 dark:text-gray-400">Sign out?</span>
             <button
-              onClick={async () => { try { await logoutApi() } finally { clearAuth(); navigate('/login', { replace: true }) } }}
+              onClick={async () => { try { await logoutApi() } finally { clearAuth(); queryClient.clear(); navigate('/login', { replace: true }) } }}
               className="text-xs font-semibold text-danger hover:underline"
             >
               Yes

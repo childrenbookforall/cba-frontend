@@ -128,9 +128,12 @@ export default function ConversationPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['conversation', userId] })
       queryClient.invalidateQueries({ queryKey: ['messages'] })
-      const { user, token, setAuth } = useAuthStore.getState()
+      const { user, setAuth } = useAuthStore.getState()
       if (!user?.canInitiateMessages) {
-        getMe().then((updated) => { if (token) setAuth(token, updated) }).catch(() => {})
+        getMe().then((updated) => {
+          const { token: currentToken } = useAuthStore.getState()
+          if (currentToken) setAuth(currentToken, updated)
+        }).catch(() => {})
       }
     },
   })

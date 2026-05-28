@@ -58,15 +58,9 @@ export default function AcceptInvitePage() {
     if (!token) return
     try {
       const { token: jwt } = await acceptInvite(token, data.password, data.firstName, data.lastName ?? '')
-      useAuthStore.setState({ token: jwt })
-      try {
-        const user = await getMe()
-        setAuth(jwt, user)
-        navigate('/feed', { replace: true })
-      } catch {
-        useAuthStore.getState().clearAuth()
-        setError('root', { message: 'Account created! Please log in to continue.' })
-      }
+      const user = await getMe(jwt)
+      setAuth(jwt, user)
+      navigate('/feed', { replace: true })
     } catch (err) {
       setError('root', { message: getApiError(err) })
     }

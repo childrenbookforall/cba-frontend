@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import cbaLogo from '../assets/logo.png'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient, type InfiniteData } from '@tanstack/react-query'
 import { getPost } from '../api/posts'
+import type { FeedResult } from '../types/api'
 import { useComments } from '../hooks/useComments'
 import Avatar from '../components/ui/Avatar'
 import GroupChip from '../components/feed/GroupChip'
@@ -31,14 +32,26 @@ export default function PostDetailPage() {
   const [replyingTo, setReplyingTo] = useState<ReplyingTo | null>(null)
 
   const isAdmin = useAuthStore((s) => s.user?.role === 'admin')
+  const queryClient = useQueryClient()
 
   const { data: post, isLoading: postLoading, isError: postError, error: postErrorObj, refetch: refetchPost } = useQuery({
     queryKey: ['post', postId],
     queryFn: () => getPost(postId!),
     enabled: !!postId,
+    staleTime: 30_000,
+    placeholderData: () => {
+      const feeds = queryClient.getQueriesData<InfiniteData<FeedResult>>({ queryKey: ['feed'] })
+      for (const [, feedData] of feeds) {
+        if (!feedData) continue
+        for (const page of feedData.pages) {
+          const found = [...(page.pinnedPosts ?? []), ...page.posts].find((p) => p.id === postId)
+          if (found) return found
+        }
+      }
+    },
   })
 
-  const isNotFound = !post || (postError && (postErrorObj as { response?: { status?: number } } | null)?.response?.status === 404)
+  const isNotFound = postError && (postErrorObj as { response?: { status?: number } } | null)?.response?.status === 404
 
   const { data: comments, isLoading: commentsLoading } = useComments(postId)
 

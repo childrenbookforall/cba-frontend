@@ -1,8 +1,8 @@
 import client from './client'
 import type { User, PublicProfile, PostUser } from '../types/api'
 
-export async function getMe(): Promise<User> {
-  const res = await client.get<User>('/api/users/me')
+export async function getMe(token?: string): Promise<User> {
+  const res = await client.get<User>('/api/users/me', token ? { headers: { Authorization: `Bearer ${token}` } } : undefined)
   return res.data
 }
 

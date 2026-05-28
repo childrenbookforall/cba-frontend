@@ -121,6 +121,7 @@ export default function AdminGroupsPage() {
       setMembersNextCursor(null)
       setMemberSearch('')
     } else {
+      memberSearchGen.current++
       setSelectedGroupId(groupId)
       setAddUserId('')
       setAddUserName('')
