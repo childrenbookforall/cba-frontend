@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller, type Resolver } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useImageDropzone } from '../hooks/useImageDropzone'
@@ -61,7 +61,7 @@ export default function CreatePostPage() {
   typeRef.current = type
 
   const resolver = useMemo(
-    () => (...args: Parameters<ReturnType<typeof zodResolver>>) => zodResolver(buildSchema(typeRef.current))(...args),
+    () => (...args: Parameters<Resolver<Fields>>) => (zodResolver(buildSchema(typeRef.current)) as unknown as Resolver<Fields>)(...args),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   )
