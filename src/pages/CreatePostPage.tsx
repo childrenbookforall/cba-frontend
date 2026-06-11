@@ -55,10 +55,11 @@ export default function CreatePostPage() {
   const toast = useToast()
   const { data: groups, isLoading: groupsLoading, isError: groupsError } = useGroups()
   const isAdmin = useAuthStore((s) => s.user?.role === 'admin')
+  const flatGroups = useMemo(() => flattenGroups(groups), [groups])
   // Groups the user can post in — view-only groups accept posts from admins only
   const postableGroups = useMemo(
-    () => flattenGroups(groups).filter((g) => isAdmin || !g.isViewOnly),
-    [groups, isAdmin]
+    () => flatGroups.filter((g) => isAdmin || !g.isViewOnly),
+    [flatGroups, isAdmin]
   )
   const [searchParams] = useSearchParams()
   const preselectGroupId = searchParams.get('groupId')
@@ -81,6 +82,7 @@ export default function CreatePostPage() {
     setError,
     reset,
     setValue,
+    getValues,
     watch,
     control,
     formState: { errors, isSubmitting },
@@ -96,12 +98,14 @@ export default function CreatePostPage() {
   const groupIdValue = watch('groupId') ?? ''
 
   useEffect(() => {
+    // Never clobber a selection already made (e.g. a restored draft's group)
+    if (getValues('groupId')) return
     if (preselectGroupId && postableGroups.some((g) => g.id === preselectGroupId)) {
       setValue('groupId', preselectGroupId)
     } else if (postableGroups.length === 1) {
       setValue('groupId', postableGroups[0].id)
     }
-  }, [postableGroups, preselectGroupId, setValue])
+  }, [postableGroups, preselectGroupId, setValue, getValues])
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -277,7 +281,9 @@ export default function CreatePostPage() {
                   : groupsError
                   ? 'Could not load groups'
                   : postableGroups.length === 0
-                  ? 'You are not in any groups yet'
+                  ? flatGroups.length > 0
+                    ? 'No groups available'
+                    : 'You are not in any groups yet'
                   : 'Select a group…'}
               </option>
               {postableGroups.map((g) => (
@@ -285,9 +291,11 @@ export default function CreatePostPage() {
               ))}
             </select>
           )}
-          {postableGroups.length === 0 && !groupsLoading && (
+          {postableGroups.length === 0 && !groupsLoading && !groupsError && (
             <p className="text-[0.625rem] text-muted mt-1">
-              An admin needs to add you to a group before you can post.
+              {flatGroups.length > 0
+                ? 'Only admins can post in your groups.'
+                : 'An admin needs to add you to a group before you can post.'}
             </p>
           )}
           {errors.groupId && <p className="text-[0.625rem] text-danger mt-1">{errors.groupId.message}</p>}

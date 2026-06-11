@@ -144,10 +144,11 @@ export default function AdminGroupsPage() {
     setCreateForm((f) => ({ ...f, name, slug }))
   }
 
-  // Default a new child's flags to match its siblings under the selected parent
+  // Default a new child's flags to match its siblings under the selected parent.
+  // Only when creating — editing keeps the group's own flags
   function handleParentChange(parentId: string) {
     setCreateForm((f) => {
-      const sibling = parentId ? groups.find((g) => g.parentId === parentId && g.id !== editingId) : null
+      const sibling = parentId && !editingId ? groups.find((g) => g.parentId === parentId) : null
       return {
         ...f,
         parentId,
@@ -182,7 +183,7 @@ export default function AdminGroupsPage() {
       const payload = {
         name: createForm.name,
         slug: createForm.slug,
-        description: createForm.description || undefined,
+        description: createForm.description || null,
         parentId: createForm.parentId || null,
         isPublic: createForm.isPublic,
         isViewOnly: createForm.isViewOnly,
@@ -261,8 +262,11 @@ export default function AdminGroupsPage() {
   const parentIdSet = new Set(groups.filter((g) => g.parentId).map((g) => g.parentId))
   const isParent = (id: string) => parentIdSet.has(id)
   const editingIsParent = editingId !== null && isParent(editingId)
-  // Candidate parents: top-level groups (excluding the group being edited)
-  const parentOptions = groups.filter((g) => !g.parentId && g.id !== editingId)
+  // Candidate parents: top-level groups that are already parents or still empty —
+  // a group with members (or posts; server-enforced) cannot become display-only
+  const parentOptions = groups.filter(
+    (g) => !g.parentId && g.id !== editingId && (isParent(g.id) || g._count.members === 0)
+  )
   // Display order: each top-level group followed by its children
   const orderedGroups = groups
     .filter((g) => !g.parentId)

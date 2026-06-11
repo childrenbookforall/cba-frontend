@@ -54,7 +54,7 @@ export async function listAdminGroups(): Promise<AdminGroup[]> {
 export interface AdminGroupInput {
   name: string
   slug: string
-  description?: string
+  description?: string | null
   parentId?: string | null
   isPublic?: boolean
   isViewOnly?: boolean
