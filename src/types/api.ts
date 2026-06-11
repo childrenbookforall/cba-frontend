@@ -46,6 +46,11 @@ export interface Group {
   name: string
   slug: string
   description?: string | null
+  parentId?: string | null
+  isPublic?: boolean
+  isViewOnly?: boolean
+  // only present on parent groups
+  children?: Group[]
   _count?: { members: number }
 }
 
@@ -190,6 +195,9 @@ export interface AdminGroup {
   name: string
   slug: string
   description?: string | null
+  parentId?: string | null
+  isPublic?: boolean
+  isViewOnly?: boolean
   _count: { members: number }
   suspendedCount: number
 }

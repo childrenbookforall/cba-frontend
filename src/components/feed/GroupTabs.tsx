@@ -8,7 +8,7 @@ interface GroupTabsProps {
 
 export default function GroupTabs({ groups, activeGroupId, onChange }: GroupTabsProps) {
   return (
-    <div className="flex gap-1.5 px-4 py-2.5 overflow-x-auto bg-card border-b border-border scrollbar-none">
+    <div className="md:hidden flex gap-1.5 px-4 py-2.5 overflow-x-auto bg-card border-b border-border scrollbar-none">
       <button
         onClick={() => onChange(null)}
         className={`whitespace-nowrap px-3 py-1 rounded-full text-xs font-semibold transition ${

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import {
   listAdminGroups,
   createAdminGroup,
+  updateAdminGroup,
   listGroupMembers,
   addGroupMember,
   removeGroupMember,
@@ -17,10 +18,12 @@ export default function AdminGroupsPage() {
   const [groups, setGroups] = useState<AdminGroup[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Create group form
+  // Create/edit group form
+  const emptyForm = { name: '', slug: '', description: '', parentId: '', isPublic: false, isViewOnly: false }
   const [showCreate, setShowCreate] = useState(false)
   const [creating, setCreating] = useState(false)
-  const [createForm, setCreateForm] = useState({ name: '', slug: '', description: '' })
+  const [createForm, setCreateForm] = useState(emptyForm)
+  const [editingId, setEditingId] = useState<string | null>(null)
 
   // Selected group for member management
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null)
@@ -97,6 +100,9 @@ export default function AdminGroupsPage() {
     }
   }
 
+  // Fetch once on mount — these functions are recreated every render, so listing
+  // them as deps would refetch on each render
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadGroups(); loadAllUsers() }, [])
 
   useEffect(() => {
@@ -138,18 +144,57 @@ export default function AdminGroupsPage() {
     setCreateForm((f) => ({ ...f, name, slug }))
   }
 
-  async function handleCreate(e: React.FormEvent) {
+  // Default a new child's flags to match its siblings under the selected parent
+  function handleParentChange(parentId: string) {
+    setCreateForm((f) => {
+      const sibling = parentId ? groups.find((g) => g.parentId === parentId && g.id !== editingId) : null
+      return {
+        ...f,
+        parentId,
+        ...(sibling ? { isPublic: sibling.isPublic ?? false, isViewOnly: sibling.isViewOnly ?? false } : {}),
+      }
+    })
+  }
+
+  function startEdit(group: AdminGroup) {
+    setEditingId(group.id)
+    setCreateForm({
+      name: group.name,
+      slug: group.slug,
+      description: group.description ?? '',
+      parentId: group.parentId ?? '',
+      isPublic: group.isPublic ?? false,
+      isViewOnly: group.isViewOnly ?? false,
+    })
+    setShowCreate(true)
+  }
+
+  function closeForm() {
+    setShowCreate(false)
+    setEditingId(null)
+    setCreateForm(emptyForm)
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setCreating(true)
     try {
-      const group = await createAdminGroup({
+      const payload = {
         name: createForm.name,
         slug: createForm.slug,
         description: createForm.description || undefined,
-      })
-      setGroups((prev) => [...prev, { ...group, _count: { members: 0 }, suspendedCount: 0 }])
-      setCreateForm({ name: '', slug: '', description: '' })
-      setShowCreate(false)
+        parentId: createForm.parentId || null,
+        isPublic: createForm.isPublic,
+        isViewOnly: createForm.isViewOnly,
+      }
+      if (editingId) {
+        const updated = await updateAdminGroup(editingId, payload)
+        setGroups((prev) => prev.map((g) => (g.id === editingId ? { ...g, ...updated } : g)))
+      } else {
+        const group = await createAdminGroup(payload)
+        setGroups((prev) => [...prev, { ...group, _count: { members: 0 }, suspendedCount: 0 }])
+      }
+      closeForm()
     } catch (err) {
       toast(getApiError(err), 'error')
     } finally {
@@ -212,6 +257,17 @@ export default function AdminGroupsPage() {
 
   const selectedGroup = groups.find((g) => g.id === selectedGroupId)
 
+  // A group is a parent if any other group points to it
+  const parentIdSet = new Set(groups.filter((g) => g.parentId).map((g) => g.parentId))
+  const isParent = (id: string) => parentIdSet.has(id)
+  const editingIsParent = editingId !== null && isParent(editingId)
+  // Candidate parents: top-level groups (excluding the group being edited)
+  const parentOptions = groups.filter((g) => !g.parentId && g.id !== editingId)
+  // Display order: each top-level group followed by its children
+  const orderedGroups = groups
+    .filter((g) => !g.parentId)
+    .flatMap((g) => [g, ...groups.filter((c) => c.parentId === g.id)])
+
   return (
     <div className="p-4 max-w-4xl mx-auto">
       <title>Groups - Admin · CBA</title>
@@ -219,7 +275,7 @@ export default function AdminGroupsPage() {
       <div className="flex items-center justify-between mb-4">
         <p className="text-xs text-muted">{groups.length} group{groups.length !== 1 ? 's' : ''}</p>
         <button
-          onClick={() => setShowCreate((v) => !v)}
+          onClick={() => (showCreate ? closeForm() : setShowCreate(true))}
           className="text-xs font-semibold bg-primary text-white dark:text-surface px-4 py-2 rounded-full"
         >
           {showCreate ? 'Cancel' : '+ New group'}
@@ -229,10 +285,12 @@ export default function AdminGroupsPage() {
       {/* Create form */}
       {showCreate && (
         <form
-          onSubmit={handleCreate}
+          onSubmit={handleSubmit}
           className="bg-card border border-border rounded-xl p-4 mb-4 flex flex-col gap-3"
         >
-          <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">Create new group</p>
+          <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+            {editingId ? `Edit ${groups.find((g) => g.id === editingId)?.name ?? 'group'}` : 'Create new group'}
+          </p>
           <input
             required
             placeholder="Group name"
@@ -258,59 +316,128 @@ export default function AdminGroupsPage() {
             rows={2}
             className="text-xs border border-border rounded-lg px-3 py-2 resize-none focus:outline-none focus:border-accent"
           />
+          {/* Hierarchy/permission fields don't apply to parent groups */}
+          {!editingIsParent && (
+            <>
+              <div>
+                <label className="text-[0.625rem] font-semibold text-muted uppercase tracking-wide block mb-1">
+                  Parent group
+                </label>
+                <select
+                  value={createForm.parentId}
+                  onChange={(e) => handleParentChange(e.target.value)}
+                  className="w-full text-xs border border-border rounded-lg px-3 py-2 bg-card focus:outline-none focus:border-accent"
+                >
+                  <option value="">None (top-level group)</option>
+                  {parentOptions.map((g) => (
+                    <option key={g.id} value={g.id}>{g.name}</option>
+                  ))}
+                </select>
+              </div>
+              <label className="flex items-center gap-2 text-xs text-gray-700 dark:text-gray-300">
+                <input
+                  type="checkbox"
+                  checked={createForm.isPublic}
+                  onChange={(e) => setCreateForm((f) => ({ ...f, isPublic: e.target.checked }))}
+                />
+                Public — visible to all users, no membership needed
+              </label>
+              <label className="flex items-center gap-2 text-xs text-gray-700 dark:text-gray-300">
+                <input
+                  type="checkbox"
+                  checked={createForm.isViewOnly}
+                  onChange={(e) => setCreateForm((f) => ({ ...f, isViewOnly: e.target.checked }))}
+                />
+                View-only — only admins can create posts
+              </label>
+            </>
+          )}
           <button
             type="submit"
             disabled={creating}
             className="self-start text-xs font-semibold bg-primary text-white dark:text-surface px-4 py-2 rounded-lg disabled:opacity-60"
           >
-            {creating ? 'Creating…' : 'Create group'}
+            {creating ? 'Saving…' : editingId ? 'Save changes' : 'Create group'}
           </button>
         </form>
       )}
 
       {/* Groups list */}
-      <div className="bg-card rounded-xl border border-border">
+      <div className="bg-card rounded-xl border border-border overflow-hidden">
         {groups.length === 0 ? (
           <p className="text-center text-xs text-muted py-10">No groups yet.</p>
         ) : (
-          groups.map((group, i) => (
+          orderedGroups.map((group, i) => {
+            const parent = isParent(group.id)
+            return (
             <div key={group.id}>
-              {/* Group row */}
-              <button
-                onClick={() => handleSelectGroup(group.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 text-left transition hover:bg-surface ${
-                  i < groups.length - 1 && selectedGroupId !== group.id
-                    ? 'border-b border-border'
-                    : ''
-                } ${selectedGroupId === group.id ? 'bg-blue-50 dark:bg-blue-900/20' : ''} ${
-                  i === 0 ? 'rounded-t-xl' : ''
-                } ${i === groups.length - 1 && selectedGroupId !== group.id ? 'rounded-b-xl' : ''}`}
+              {/* Group row — parents are section labels with no member management */}
+              <div
+                className={`w-full flex items-center gap-3 px-4 py-3 ${group.parentId ? 'pl-9' : ''} ${
+                  i < orderedGroups.length - 1 || selectedGroupId === group.id ? 'border-b border-border' : ''
+                } ${selectedGroupId === group.id ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
               >
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-gray-900 dark:text-gray-100">{group.name}</p>
-                  {group.description && (
-                    <p className="text-[0.625rem] text-muted truncate">{group.description}</p>
-                  )}
-                  <p className="text-[0.625rem] text-muted">/{group.slug}</p>
-                </div>
+                {parent ? (
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[0.625rem] font-bold text-muted uppercase tracking-wide">{group.name}</p>
+                    {group.description && (
+                      <p className="text-[0.625rem] text-muted truncate">{group.description}</p>
+                    )}
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleSelectGroup(group.id)}
+                    className="flex-1 min-w-0 text-left transition hover:opacity-80"
+                  >
+                    <p className="text-xs font-semibold text-gray-900 dark:text-gray-100">{group.name}</p>
+                    {group.description && (
+                      <p className="text-[0.625rem] text-muted truncate">{group.description}</p>
+                    )}
+                    <p className="text-[0.625rem] text-muted">/{group.slug}</p>
+                  </button>
+                )}
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <span className="text-xs text-muted">
-                    {group._count.members} member{group._count.members !== 1 ? 's' : ''}
-                  </span>
+                  {!parent && group.isPublic && (
+                    <span className="text-[0.5625rem] font-bold bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full">
+                      Public
+                    </span>
+                  )}
+                  {!parent && group.isViewOnly && (
+                    <span className="text-[0.5625rem] font-bold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">
+                      View-only
+                    </span>
+                  )}
+                  {!parent && (
+                    <span className="text-xs text-muted">
+                      {group._count.members} member{group._count.members !== 1 ? 's' : ''}
+                    </span>
+                  )}
                   {group.suspendedCount > 0 && (
                     <span className="text-[0.5625rem] font-bold bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full">
                       {group.suspendedCount} suspended
                     </span>
                   )}
+                  <button
+                    onClick={() => startEdit(group)}
+                    className="text-[0.625rem] font-semibold text-primary border border-border px-2 py-1 rounded-lg hover:bg-surface transition"
+                  >
+                    Edit
+                  </button>
+                  {!parent && (
+                    <button
+                      onClick={() => handleSelectGroup(group.id)}
+                      aria-label="Toggle member panel"
+                      className="text-xs text-gray-400 dark:text-gray-500 flex-shrink-0"
+                    >
+                      {selectedGroupId === group.id ? '▲' : '▼'}
+                    </button>
+                  )}
                 </div>
-                <span className="text-xs text-gray-400 dark:text-gray-500 flex-shrink-0">
-                  {selectedGroupId === group.id ? '▲' : '▼'}
-                </span>
-              </button>
+              </div>
 
               {/* Members panel */}
               {selectedGroupId === group.id && (
-                <div className={`bg-surface border-t border-border px-4 py-4 ${i === groups.length - 1 ? 'rounded-b-xl' : ''}`}>
+                <div className="bg-surface px-4 py-4 border-b border-border">
                   <p className="text-[0.625rem] font-semibold text-muted uppercase tracking-wide mb-3">
                     Members of {selectedGroup?.name}
                   </p>
@@ -489,7 +616,8 @@ export default function AdminGroupsPage() {
                 </div>
               )}
             </div>
-          ))
+            )
+          })
         )}
       </div>
     </div>

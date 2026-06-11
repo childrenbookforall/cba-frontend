@@ -51,12 +51,25 @@ export async function listAdminGroups(): Promise<AdminGroup[]> {
   return res.data
 }
 
-export async function createAdminGroup(data: {
+export interface AdminGroupInput {
   name: string
   slug: string
   description?: string
-}): Promise<AdminGroup> {
+  parentId?: string | null
+  isPublic?: boolean
+  isViewOnly?: boolean
+}
+
+export async function createAdminGroup(data: AdminGroupInput): Promise<AdminGroup> {
   const res = await client.post<AdminGroup>('/api/admin/groups', data)
+  return res.data
+}
+
+export async function updateAdminGroup(
+  groupId: string,
+  data: Partial<AdminGroupInput>
+): Promise<AdminGroup> {
+  const res = await client.patch<AdminGroup>(`/api/admin/groups/${groupId}`, data)
   return res.data
 }
 

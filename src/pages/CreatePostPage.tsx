@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useForm, Controller, type Resolver } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -7,6 +7,8 @@ import { useImageDropzone } from '../hooks/useImageDropzone'
 import { useQueryClient } from '@tanstack/react-query'
 import { createPost } from '../api/posts'
 import { useGroups } from '../hooks/useGroups'
+import { flattenGroups } from '../lib/groups'
+import { useAuthStore } from '../stores/authStore'
 import { getApiError } from '../lib/utils'
 import { useToast } from '../stores/toastStore'
 import Spinner from '../components/ui/Spinner'
@@ -52,6 +54,14 @@ export default function CreatePostPage() {
   const queryClient = useQueryClient()
   const toast = useToast()
   const { data: groups, isLoading: groupsLoading, isError: groupsError } = useGroups()
+  const isAdmin = useAuthStore((s) => s.user?.role === 'admin')
+  // Groups the user can post in — view-only groups accept posts from admins only
+  const postableGroups = useMemo(
+    () => flattenGroups(groups).filter((g) => isAdmin || !g.isViewOnly),
+    [groups, isAdmin]
+  )
+  const [searchParams] = useSearchParams()
+  const preselectGroupId = searchParams.get('groupId')
   const [type, setType] = useState<PostType>('text')
   const [photos, setPhotos] = useState<{ file: File; preview: string }[]>([])
   const [draftBanner, setDraftBanner] = useState(false)
@@ -62,7 +72,6 @@ export default function CreatePostPage() {
 
   const resolver = useMemo(
     () => (...args: Parameters<Resolver<Fields>>) => (zodResolver(buildSchema(typeRef.current)) as unknown as Resolver<Fields>)(...args),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   )
 
@@ -77,6 +86,9 @@ export default function CreatePostPage() {
     formState: { errors, isSubmitting },
   } = useForm<Fields>({ resolver })
 
+  // react-hook-form's watch() can't be memoized by React Compiler — the
+  // compiler skips this component either way, so the warning is just noise
+  // eslint-disable-next-line react-hooks/incompatible-library
   const titleValue = watch('title') ?? ''
   const contentValue = watch('content') ?? ''
   const contentDisplayLength = contentValue.replace(/@\[([^\]]+)\]\([^)]+\)/g, '@$1').length
@@ -84,10 +96,12 @@ export default function CreatePostPage() {
   const groupIdValue = watch('groupId') ?? ''
 
   useEffect(() => {
-    if (groups?.length === 1) {
-      setValue('groupId', groups[0].id)
+    if (preselectGroupId && postableGroups.some((g) => g.id === preselectGroupId)) {
+      setValue('groupId', preselectGroupId)
+    } else if (postableGroups.length === 1) {
+      setValue('groupId', postableGroups[0].id)
     }
-  }, [groups, setValue])
+  }, [postableGroups, preselectGroupId, setValue])
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -171,7 +185,7 @@ export default function CreatePostPage() {
   function handleTypeChange(newType: PostType) {
     setType(newType)
     reset({
-      groupId: groupIdValue || (groups?.length === 1 ? groups[0].id : undefined),
+      groupId: groupIdValue || (postableGroups.length === 1 ? postableGroups[0].id : undefined),
       title: titleValue,
       content: contentValue,
       linkUrl: newType === 'link' ? linkUrlValue : undefined,
@@ -245,14 +259,14 @@ export default function CreatePostPage() {
           <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
             Group
           </label>
-          {groups?.length === 1 ? (
+          {postableGroups.length === 1 ? (
             <div className="w-full px-3 py-2.5 rounded-xl border border-border text-sm bg-surface text-gray-900 dark:text-gray-100">
-              {groups[0].name}
+              {postableGroups[0].name}
             </div>
           ) : (
             <select
               {...register('groupId')}
-              disabled={groupsLoading || groupsError || groups?.length === 0}
+              disabled={groupsLoading || groupsError || postableGroups.length === 0}
               className={`w-full px-3 py-2.5 rounded-xl border text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-accent/20 disabled:opacity-60 ${
                 errors.groupId ? 'border-danger' : 'border-border'
               }`}
@@ -262,16 +276,16 @@ export default function CreatePostPage() {
                   ? 'Loading groups…'
                   : groupsError
                   ? 'Could not load groups'
-                  : groups?.length === 0
+                  : postableGroups.length === 0
                   ? 'You are not in any groups yet'
                   : 'Select a group…'}
               </option>
-              {groups?.map((g) => (
+              {postableGroups.map((g) => (
                 <option key={g.id} value={g.id}>{g.name}</option>
               ))}
             </select>
           )}
-          {groups?.length === 0 && !groupsLoading && (
+          {postableGroups.length === 0 && !groupsLoading && (
             <p className="text-[0.625rem] text-muted mt-1">
               An admin needs to add you to a group before you can post.
             </p>

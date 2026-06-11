@@ -10,7 +10,10 @@ import GroupTabs from '../components/feed/GroupTabs'
 import SortPills from '../components/feed/SortPills'
 import BottomNav from '../components/layout/BottomNav'
 import NavLinks from '../components/layout/NavLinks'
+import GroupsSidebar from '../components/layout/GroupsSidebar'
+import GroupsSheet from '../components/ui/GroupsSheet'
 import GroupMembersSheet from '../components/ui/GroupMembersSheet'
+import { flattenGroups } from '../lib/groups'
 import { useWindowVirtualizer } from '@tanstack/react-virtual'
 
 type FeedView = 'card' | 'list'
@@ -28,6 +31,7 @@ export default function FeedPage() {
   const sort: 'latest' | 'top' = searchParams.get('sort') === 'latest' ? 'latest' : 'top'
   const [groupId, setGroupId] = useState<string | null>(null)
   const [membersOpen, setMembersOpen] = useState(false)
+  const [groupsSheetOpen, setGroupsSheetOpen] = useState(false)
   const [view, setView] = useState<FeedView>(getSessionView)
 
   function toggleView() {
@@ -39,11 +43,15 @@ export default function FeedPage() {
   }
 
   const { data: groups } = useGroups()
+  const flatGroups = useMemo(() => flattenGroups(groups), [groups])
 
   const activeGroup = groupId
-    ? groups?.find((g) => g.id === groupId)
-    : groups?.length === 1 ? groups[0] : null
-  const displayCount = activeGroup?._count?.members ?? null
+    ? flatGroups.find((g) => g.id === groupId)
+    : flatGroups.length === 1 ? flatGroups[0] : null
+  // Public groups have no meaningful member list — everyone has access
+  const displayCount = activeGroup && !activeGroup.isPublic
+    ? activeGroup._count?.members ?? null
+    : null
 
   const {
     data,
@@ -96,10 +104,21 @@ export default function FeedPage() {
         <NavLinks />
       </div>
 
-      {/* Group tabs */}
-      {groups && groups.length > 1 && (
+      <div className="md:flex md:max-w-5xl md:mx-auto">
+      {/* Groups sidebar (desktop) */}
+      {flatGroups.length > 1 && (
+        <GroupsSidebar
+          groups={groups ?? []}
+          activeGroupId={groupId}
+          onChange={handleGroupChange}
+        />
+      )}
+
+      <div className="flex-1 min-w-0">
+      {/* Group tabs (mobile) */}
+      {flatGroups.length > 1 && (
         <GroupTabs
-          groups={groups}
+          groups={flatGroups}
           activeGroupId={groupId}
           onChange={handleGroupChange}
         />
@@ -108,6 +127,18 @@ export default function FeedPage() {
       {/* Sort bar */}
       <div className="flex items-center justify-between px-4 py-2 bg-surface border-b border-border">
         <div className="flex items-center gap-2">
+          {flatGroups.length > 1 && (
+            <button
+              type="button"
+              onClick={() => setGroupsSheetOpen(true)}
+              className="md:hidden flex items-center gap-1 text-xs font-semibold text-gray-700 dark:text-gray-300"
+            >
+              {activeGroup?.name ?? 'All Groups'}
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+          )}
           <button
             type="button"
             onClick={toggleView}
@@ -215,10 +246,12 @@ export default function FeedPage() {
           </div>
         )}
       </div>
+      </div>
+      </div>
 
       {/* FAB */}
       <Link
-        to="/posts/new"
+        to={groupId ? `/posts/new?groupId=${groupId}` : '/posts/new'}
         className="fixed bottom-20 right-4 w-12 h-12 bg-accent text-accent-text-fg rounded-full flex items-center justify-center shadow-lg shadow-accent/40 z-20 hover:scale-110 active:scale-95 transition-transform"
         aria-label="New post"
       >
@@ -235,6 +268,14 @@ export default function FeedPage() {
         onClose={() => setMembersOpen(false)}
         groupId={activeGroup?.id ?? null}
         groupName={activeGroup?.name}
+      />
+
+      <GroupsSheet
+        open={groupsSheetOpen}
+        onClose={() => setGroupsSheetOpen(false)}
+        groups={groups ?? []}
+        activeGroupId={groupId}
+        onChange={handleGroupChange}
       />
     </div>
   )
