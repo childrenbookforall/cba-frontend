@@ -28,9 +28,9 @@ function getSessionView(): FeedView {
 
 function getSidebarPref(): boolean {
   try {
-    return localStorage.getItem('feed-sidebar') !== 'closed'
+    return localStorage.getItem('feed-sidebar') === 'open'
   } catch {
-    return true
+    return false
   }
 }
 
