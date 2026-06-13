@@ -157,12 +157,15 @@ export default function FeedPage() {
             else setGroupsSheetOpen(true)
           }}
           aria-label="Choose group"
-          className={`w-full flex items-center gap-1.5 px-4 py-2.5 bg-card border-b border-border text-sm font-semibold text-gray-900 dark:text-gray-100 ${sidebarOpen ? 'md:hidden' : ''}`}
+          className={`w-full flex items-center justify-between gap-2 px-4 py-2.5 min-h-[44px] bg-card border-b border-border text-sm font-semibold text-gray-900 dark:text-gray-100 hover:bg-surface active:bg-surface transition-colors ${sidebarOpen ? 'md:hidden' : ''}`}
         >
-          {activeGroup?.name ?? 'All Groups'}
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
+          <span className="truncate">{activeGroup?.name ?? 'All Groups'}</span>
+          <span className="flex-shrink-0 grid place-items-center w-6 h-6 rounded-md border border-border text-muted">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="7 15 12 20 17 15" />
+              <polyline points="7 9 12 4 17 9" />
+            </svg>
+          </span>
         </button>
       )}
 
