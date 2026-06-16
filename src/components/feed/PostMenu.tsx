@@ -1,13 +1,15 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient, type InfiniteData } from '@tanstack/react-query'
 import { deletePost } from '../../api/posts'
 import { pinPost, downrankPost } from '../../api/admin'
 import { usePostFlagMutation } from '../../hooks/usePostFlagMutation'
 import { useAuthStore } from '../../stores/authStore'
 import { getApiError } from '../../lib/utils'
 import { useToast } from '../../stores/toastStore'
-import type { Post } from '../../types/api'
+import type { Post, FeedResult } from '../../types/api'
+
+type InfiniteFeed = InfiniteData<FeedResult>
 
 interface PostMenuProps {
   post: Post
@@ -43,13 +45,46 @@ export default function PostMenu({ post, onOpenChange }: PostMenuProps) {
 
   const deleteMutation = useMutation({
     mutationFn: () => deletePost(post.id),
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['feed'] })
+      await queryClient.cancelQueries({ queryKey: ['saved'] })
+
+      const prevFeedEntries = queryClient.getQueriesData<InfiniteFeed>({ queryKey: ['feed'], exact: false })
+      const prevSavedEntries = queryClient.getQueriesData<InfiniteFeed>({ queryKey: ['saved'], exact: false })
+
+      const removePost = (old: InfiniteFeed | undefined) => {
+        if (!old) return old
+        return {
+          ...old,
+          pages: old.pages.map((page) => ({
+            ...page,
+            pinnedPosts: page.pinnedPosts.filter((p) => p.id !== post.id),
+            posts: page.posts.filter((p) => p.id !== post.id),
+          })),
+        }
+      }
+
+      queryClient.setQueriesData<InfiniteFeed>({ queryKey: ['feed'], exact: false }, removePost)
+      queryClient.setQueriesData<InfiniteFeed>({ queryKey: ['saved'], exact: false }, removePost)
+
+      return { prevFeedEntries, prevSavedEntries }
+    },
+    onError: (err, _vars, context) => {
+      for (const [queryKey, snapshot] of context?.prevFeedEntries ?? []) {
+        queryClient.setQueryData<InfiniteFeed>(queryKey, snapshot)
+      }
+      for (const [queryKey, snapshot] of context?.prevSavedEntries ?? []) {
+        queryClient.setQueryData<InfiniteFeed>(queryKey, snapshot)
+      }
+      toast(getApiError(err), 'error')
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['feed'] })
       queryClient.invalidateQueries({ queryKey: ['post', post.id] })
+      queryClient.invalidateQueries({ queryKey: ['saved'] })
       toast('Post deleted')
       setOpen(false)
     },
-    onError: (err) => toast(getApiError(err), 'error'),
   })
 
   const pinMutation = useMutation({

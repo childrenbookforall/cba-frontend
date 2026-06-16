@@ -28,8 +28,15 @@ export default function CommentItem({ comment, postId, groupId, onReply, isReply
   const showFlagDot = comment.isFlagged && (isAdmin || comment.flaggedByMe)
 
   const updateMutation = useMutation({
-    mutationFn: () => updateComment(comment.id, editContent),
-    onSuccess: () => {
+    mutationFn: (content: string) => updateComment(comment.id, content),
+    onSuccess: (_data, content) => {
+      queryClient.setQueryData<Comment[]>(['comments', postId], (old) => {
+        if (!old) return old
+        return old.map((c) => {
+          if (c.id === comment.id) return { ...c, content }
+          return { ...c, replies: c.replies?.map((r) => r.id === comment.id ? { ...r, content } : r) }
+        })
+      })
       queryClient.invalidateQueries({ queryKey: ['comments', postId] })
       setEditing(false)
     },
@@ -93,7 +100,7 @@ export default function CommentItem({ comment, postId, groupId, onReply, isReply
               />
               <div className="flex gap-1.5 mt-1">
                 <button
-                  onClick={() => updateMutation.mutate()}
+                  onClick={() => updateMutation.mutate(editContent)}
                   disabled={updateMutation.isPending || !editContent.trim()}
                   className="text-[0.625rem] font-semibold text-accent-text-fg bg-accent px-2.5 py-1 rounded-lg disabled:opacity-60"
                 >
@@ -176,7 +183,7 @@ export default function CommentItem({ comment, postId, groupId, onReply, isReply
               />
               <div className="flex gap-1.5 mt-1.5">
                 <button
-                  onClick={() => updateMutation.mutate()}
+                  onClick={() => updateMutation.mutate(editContent)}
                   disabled={updateMutation.isPending || !editContent.trim()}
                   className="text-[0.625rem] font-semibold text-accent-text-fg bg-accent px-3 py-1.5 rounded-lg disabled:opacity-60"
                 >
