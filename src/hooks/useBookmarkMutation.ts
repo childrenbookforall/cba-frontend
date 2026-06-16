@@ -19,6 +19,7 @@ export function useBookmarkMutation(post: Post) {
 
       const prevPost = queryClient.getQueryData<Post>(['post', post.id])
       const prevFeedEntries = queryClient.getQueriesData<InfiniteFeed>({ queryKey: ['feed'], exact: false })
+      const prevSavedEntries = queryClient.getQueriesData<InfiniteFeed>({ queryKey: ['saved'], exact: false })
 
       const applyToPost = (p: Post) => p.id !== post.id ? p : { ...p, isBookmarked: !post.isBookmarked }
 
@@ -41,13 +42,34 @@ export function useBookmarkMutation(post: Post) {
         old ? { ...old, isBookmarked: !post.isBookmarked } : old
       )
 
-      return { prevPost, prevFeedEntries }
+      // Optimistically remove the post from all saved-posts pages when unbookmarking.
+      // Adding is not handled here — the onSettled invalidation covers that case.
+      if (post.isBookmarked) {
+        queryClient.setQueriesData<InfiniteFeed>(
+          { queryKey: ['saved'], exact: false },
+          (old) => {
+            if (!old) return old
+            return {
+              ...old,
+              pages: old.pages.map((page) => ({
+                ...page,
+                posts: page.posts.filter((p) => p.id !== post.id),
+              })),
+            }
+          }
+        )
+      }
+
+      return { prevPost, prevFeedEntries, prevSavedEntries }
     },
     onError: (err, _vars, context) => {
       if (context?.prevPost !== undefined) {
         queryClient.setQueryData(['post', post.id], context.prevPost)
       }
       for (const [queryKey, snapshot] of context?.prevFeedEntries ?? []) {
+        queryClient.setQueryData<InfiniteFeed>(queryKey, snapshot)
+      }
+      for (const [queryKey, snapshot] of context?.prevSavedEntries ?? []) {
         queryClient.setQueryData<InfiniteFeed>(queryKey, snapshot)
       }
       toast(getApiError(err), 'error')
