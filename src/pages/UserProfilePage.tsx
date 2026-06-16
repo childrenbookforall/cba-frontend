@@ -17,6 +17,7 @@ export default function UserProfilePage() {
     queryKey: ['user', userId],
     queryFn: () => getUserById(userId!),
     enabled: !!userId,
+    staleTime: 5 * 60 * 1000,
   })
 
   if (isLoading) {

@@ -6,6 +6,6 @@ export function useComments(postId: string | undefined) {
     queryKey: ['comments', postId],
     queryFn: () => getComments(postId!),
     enabled: !!postId,
-    staleTime: 30_000,
+    staleTime: 5 * 60 * 1000,
   })
 }
