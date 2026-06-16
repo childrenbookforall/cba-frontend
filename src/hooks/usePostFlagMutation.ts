@@ -14,17 +14,16 @@ export function usePostFlagMutation(post: Post) {
     mutationFn: (reason?: string) => flagPost(post.id, reason),
     onSuccess: () => {
       const patch = { isFlagged: true, flaggedByMe: true }
-      queryClient.setQueriesData<InfiniteFeed>(
-        { queryKey: ['feed'], exact: false },
-        (old) => old ? {
-          ...old,
-          pages: old.pages.map((page) => ({
-            ...page,
-            pinnedPosts: page.pinnedPosts.map((p) => p.id === post.id ? { ...p, ...patch } : p),
-            posts: page.posts.map((p) => p.id === post.id ? { ...p, ...patch } : p),
-          })),
-        } : old
-      )
+      const applyPatch = (old: InfiniteFeed | undefined) => old ? {
+        ...old,
+        pages: old.pages.map((page) => ({
+          ...page,
+          pinnedPosts: page.pinnedPosts.map((p) => p.id === post.id ? { ...p, ...patch } : p),
+          posts: page.posts.map((p) => p.id === post.id ? { ...p, ...patch } : p),
+        })),
+      } : old
+      queryClient.setQueriesData<InfiniteFeed>({ queryKey: ['feed'], exact: false }, applyPatch)
+      queryClient.setQueriesData<InfiniteFeed>({ queryKey: ['saved'], exact: false }, applyPatch)
       queryClient.setQueryData<Post>(
         ['post', post.id],
         (old) => old ? { ...old, ...patch } : old

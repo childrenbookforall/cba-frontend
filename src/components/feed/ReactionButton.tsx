@@ -90,41 +90,46 @@ export default function ReactionButton({ post, type }: ReactionButtonProps) {
     },
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['feed'] })
+      await queryClient.cancelQueries({ queryKey: ['saved'] })
       await queryClient.cancelQueries({ queryKey: ['post', post.id] })
 
       const prevPost = queryClient.getQueryData<Post>(['post', post.id])
       const prevFeedEntries = queryClient.getQueriesData<InfiniteFeed>({ queryKey: ['feed'], exact: false })
+      const prevSavedEntries = queryClient.getQueriesData<InfiniteFeed>({ queryKey: ['saved'], exact: false })
 
-      queryClient.setQueriesData<InfiniteFeed>(
-        { queryKey: ['feed'], exact: false },
-        (old) => {
-          if (!old) return old
-          return {
-            ...old,
-            pages: old.pages.map((page) => ({
-              ...page,
-              pinnedPosts: page.pinnedPosts.map((p) =>
-                p.id !== post.id ? p : applyReactionToPost(p, type)
-              ),
-              posts: page.posts.map((p) =>
-                p.id !== post.id ? p : applyReactionToPost(p, type)
-              ),
-            })),
-          }
+      const applyToPages = (old: InfiniteFeed | undefined) => {
+        if (!old) return old
+        return {
+          ...old,
+          pages: old.pages.map((page) => ({
+            ...page,
+            pinnedPosts: page.pinnedPosts.map((p) =>
+              p.id !== post.id ? p : applyReactionToPost(p, type)
+            ),
+            posts: page.posts.map((p) =>
+              p.id !== post.id ? p : applyReactionToPost(p, type)
+            ),
+          })),
         }
-      )
+      }
+
+      queryClient.setQueriesData<InfiniteFeed>({ queryKey: ['feed'], exact: false }, applyToPages)
+      queryClient.setQueriesData<InfiniteFeed>({ queryKey: ['saved'], exact: false }, applyToPages)
 
       queryClient.setQueryData<Post>(['post', post.id], (old) =>
         old ? applyReactionToPost(old, type) : old
       )
 
-      return { prevPost, prevFeedEntries, wasActive: isActive }
+      return { prevPost, prevFeedEntries, prevSavedEntries, wasActive: isActive }
     },
     onError: (err, _vars, context) => {
       if (context?.prevPost !== undefined) {
         queryClient.setQueryData(['post', post.id], context.prevPost)
       }
       for (const [queryKey, snapshot] of context?.prevFeedEntries ?? []) {
+        queryClient.setQueryData<InfiniteFeed>(queryKey, snapshot)
+      }
+      for (const [queryKey, snapshot] of context?.prevSavedEntries ?? []) {
         queryClient.setQueryData<InfiniteFeed>(queryKey, snapshot)
       }
       toast(getApiError(err), 'error')
@@ -134,6 +139,7 @@ export default function ReactionButton({ post, type }: ReactionButtonProps) {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['post', post.id] })
+      queryClient.invalidateQueries({ queryKey: ['saved'] })
       queryClient.removeQueries({ queryKey: ['reactions', post.id] })
     },
   })
