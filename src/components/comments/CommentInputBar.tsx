@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, lazy, Suspense } from 'react'
+import { useRef, useEffect, useState, useCallback, lazy, Suspense } from 'react'
 import { CornerDownRight, SendHorizonal } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createComment } from '../../api/comments'
@@ -26,7 +26,8 @@ interface CommentInputBarProps {
 }
 
 export default function CommentInputBar({ postId, groupId, replyingTo, onCancelReply }: CommentInputBarProps) {
-  const inputRef = useRef<HTMLTextAreaElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement | null>(null)
+  const setInputRef = useCallback((el: HTMLTextAreaElement | null) => { inputRef.current = el }, [])
   const mentionRef = useRef<MentionTextareaHandle>(null)
   const queryClient = useQueryClient()
   const toast = useToast()
@@ -92,7 +93,8 @@ export default function CommentInputBar({ postId, groupId, replyingTo, onCancelR
           </span>
           <button
             onClick={onCancelReply}
-            className="text-[0.625rem] text-muted hover:text-primary"
+            aria-label="Cancel reply"
+            className="text-[0.625rem] text-muted hover:text-primary min-h-[44px] px-2"
           >
             ✕ Cancel
           </button>
@@ -135,7 +137,7 @@ export default function CommentInputBar({ postId, groupId, replyingTo, onCancelR
           rows={1}
           wrapperClassName="flex-1"
           className="w-full text-xs border border-border rounded-xl px-4 py-2 bg-surface focus:outline-none focus:border-accent transition resize-none overflow-hidden leading-relaxed"
-          textareaRef={inputRef}
+          textareaRef={setInputRef}
           onKeyDown={handleKeyDown}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
@@ -153,7 +155,7 @@ export default function CommentInputBar({ postId, groupId, replyingTo, onCancelR
         )}
         <button
           onClick={handleSubmit}
-          disabled={mutation.isPending}
+          disabled={mutation.isPending || !commentText.trim()}
           className="w-8 h-8 rounded-full bg-accent text-accent-text-fg flex items-center justify-center text-sm disabled:opacity-60 flex-shrink-0"
           aria-label="Send"
         >

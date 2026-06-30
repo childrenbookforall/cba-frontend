@@ -170,9 +170,15 @@ export default function ProfilePage() {
               value={bioValue}
               onChange={(e) => setBioValue(e.target.value)}
               rows={4}
+              maxLength={500}
               placeholder="Tell the community a little about yourself…"
               className="w-full text-xs border border-border rounded-xl px-3 py-2 resize-none focus:outline-none focus:border-accent bg-surface"
             />
+            <div className="flex justify-end mt-1">
+              <span className={`text-[0.625rem] tabular-nums ${bioValue.length > 450 ? 'text-danger font-semibold' : 'text-muted'}`}>
+                {bioValue.length} / 500
+              </span>
+            </div>
             <div className="flex gap-1.5 mt-2">
               <button
                 onClick={() => bioMutation.mutate(bioValue)}

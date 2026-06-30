@@ -295,31 +295,37 @@ export default function AdminGroupsPage() {
           <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">
             {editingId ? `Edit ${groups.find((g) => g.id === editingId)?.name ?? 'group'}` : 'Create new group'}
           </p>
-          <input
-            required
-            placeholder="Group name"
-            value={createForm.name}
-            onChange={(e) => handleNameChange(e.target.value)}
-            className="text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-accent"
-          />
-          <div>
+          <label className="flex flex-col gap-1">
+            <span className="text-[0.625rem] font-semibold text-muted uppercase tracking-wide">Group name</span>
             <input
               required
-              placeholder="Slug (e.g. grief-circle)"
-              value={createForm.slug}
-              onChange={(e) => setCreateForm((f) => ({ ...f, slug: e.target.value }))}
-              pattern="[a-z0-9-]+"
-              className="w-full text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-accent"
+              value={createForm.name}
+              onChange={(e) => handleNameChange(e.target.value)}
+              className="text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-accent"
             />
+          </label>
+          <div>
+            <label className="flex flex-col gap-1">
+              <span className="text-[0.625rem] font-semibold text-muted uppercase tracking-wide">Slug</span>
+              <input
+                required
+                value={createForm.slug}
+                onChange={(e) => setCreateForm((f) => ({ ...f, slug: e.target.value }))}
+                pattern="[a-z0-9-]+"
+                className="w-full text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:border-accent"
+              />
+            </label>
             <p className="text-[0.625rem] text-muted mt-1">Lowercase letters, numbers, and hyphens only</p>
           </div>
-          <textarea
-            placeholder="Description (optional)"
-            value={createForm.description}
-            onChange={(e) => setCreateForm((f) => ({ ...f, description: e.target.value }))}
-            rows={2}
-            className="text-xs border border-border rounded-lg px-3 py-2 resize-none focus:outline-none focus:border-accent"
-          />
+          <label className="flex flex-col gap-1">
+            <span className="text-[0.625rem] font-semibold text-muted uppercase tracking-wide">Description (optional)</span>
+            <textarea
+              value={createForm.description}
+              onChange={(e) => setCreateForm((f) => ({ ...f, description: e.target.value }))}
+              rows={2}
+              className="text-xs border border-border rounded-lg px-3 py-2 resize-none focus:outline-none focus:border-accent"
+            />
+          </label>
           {/* Hierarchy/permission fields don't apply to parent groups */}
           {!editingIsParent && (
             <>

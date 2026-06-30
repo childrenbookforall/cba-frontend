@@ -13,15 +13,18 @@ const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), selec
 
 export default function BottomSheet({ open, onClose, title, titleId, children }: BottomSheetProps) {
   const [visible, setVisible] = useState(false)
+  const [prevOpen, setPrevOpen] = useState(open)
   const panelRef = useRef<HTMLDivElement>(null)
 
+  if (prevOpen !== open) {
+    setPrevOpen(open)
+    if (!open) setVisible(false)
+  }
+
   useEffect(() => {
-    if (open) {
-      const id = requestAnimationFrame(() => setVisible(true))
-      return () => cancelAnimationFrame(id)
-    } else {
-      setVisible(false)
-    }
+    if (!open) return
+    const id = requestAnimationFrame(() => setVisible(true))
+    return () => cancelAnimationFrame(id)
   }, [open])
 
   useEffect(() => {
@@ -45,11 +48,13 @@ export default function BottomSheet({ open, onClose, title, titleId, children }:
     const panel = panelRef.current
     if (!panel) return
 
-    const focusable = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE))
-    focusable[0]?.focus()
+    const trigger = document.activeElement as HTMLElement | null
+    panel.querySelectorAll<HTMLElement>(FOCUSABLE)[0]?.focus()
 
     function handleTab(e: KeyboardEvent) {
-      if (e.key !== 'Tab' || focusable.length === 0) return
+      if (e.key !== 'Tab' || !panel) return
+      const focusable = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE))
+      if (focusable.length === 0) return
       const first = focusable[0]
       const last = focusable[focusable.length - 1]
       if (e.shiftKey) {
@@ -60,7 +65,10 @@ export default function BottomSheet({ open, onClose, title, titleId, children }:
     }
 
     window.addEventListener('keydown', handleTab)
-    return () => window.removeEventListener('keydown', handleTab)
+    return () => {
+      window.removeEventListener('keydown', handleTab)
+      trigger?.focus()
+    }
   }, [open])
 
   if (!open) return null
@@ -86,7 +94,7 @@ export default function BottomSheet({ open, onClose, title, titleId, children }:
               type="button"
               onClick={onClose}
               aria-label="Close"
-              className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-surface transition text-muted hover:text-primary"
+              className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-surface transition text-muted hover:text-primary"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />

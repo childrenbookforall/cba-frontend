@@ -61,7 +61,7 @@ interface MentionTextareaProps {
   onFocus?: () => void
   onBlur?: () => void
   onInput?: (e: React.FormEvent<HTMLTextAreaElement>) => void
-  textareaRef?: React.RefObject<HTMLTextAreaElement | null>
+  textareaRef?: React.RefCallback<HTMLTextAreaElement | null>
   autoFocus?: boolean
   disabled?: boolean
 }
@@ -87,23 +87,22 @@ const MentionTextarea = forwardRef<MentionTextareaHandle, MentionTextareaProps>(
   const setRef = useCallback(
     (node: HTMLTextAreaElement | null) => {
       (internalRef as React.MutableRefObject<HTMLTextAreaElement | null>).current = node
-      if (externalRef) {
-        (externalRef as React.MutableRefObject<HTMLTextAreaElement | null>).current = node
-      }
+      externalRef?.(node)
     },
     [externalRef],
   )
 
   const [displayValue, setDisplayValue] = useState(() => toDisplay(value))
+  const [prevValue, setPrevValue] = useState(value)
   const mentionedUsersRef = useRef<Record<string, string>>(extractMentions(value))
-  const lastStorageRef = useRef(value)
+
+  if (value !== prevValue) {
+    setPrevValue(value)
+    setDisplayValue(toDisplay(value))
+  }
 
   useEffect(() => {
-    if (value !== lastStorageRef.current) {
-      lastStorageRef.current = value
-      setDisplayValue(toDisplay(value))
-      mentionedUsersRef.current = extractMentions(value)
-    }
+    mentionedUsersRef.current = extractMentions(value)
   }, [value])
 
   useImperativeHandle(ref, () => ({
@@ -115,7 +114,6 @@ const MentionTextarea = forwardRef<MentionTextareaHandle, MentionTextareaProps>(
       const newDisplay = displayValue.slice(0, start) + text + displayValue.slice(end)
       setDisplayValue(newDisplay)
       const newStorage = toStorage(newDisplay, mentionedUsersRef.current)
-      lastStorageRef.current = newStorage
       onChange(newStorage)
       const newCursor = start + text.length
       requestAnimationFrame(() => {
@@ -167,7 +165,6 @@ const MentionTextarea = forwardRef<MentionTextareaHandle, MentionTextareaProps>(
     const newDisplay = e.target.value
     setDisplayValue(newDisplay)
     const newStorage = toStorage(newDisplay, mentionedUsersRef.current)
-    lastStorageRef.current = newStorage
     onChange(newStorage)
 
     const cursor = e.target.selectionStart ?? newDisplay.length
@@ -202,7 +199,6 @@ const MentionTextarea = forwardRef<MentionTextareaHandle, MentionTextareaProps>(
     mentionedUsersRef.current[displayName] = user.id
     setDisplayValue(newDisplay)
     const newStorage = toStorage(newDisplay, mentionedUsersRef.current)
-    lastStorageRef.current = newStorage
     onChange(newStorage)
     closeMention()
     const newCursor = mention.start + mentionText.length + 1

@@ -31,7 +31,7 @@ export default function PostMenu({ post, onOpenChange }: PostMenuProps) {
   const isAdmin = user?.role === 'admin'
 
   useEffect(() => {
-    function handler(e: MouseEvent) {
+    function handleMouse(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) {
         setOpen(false)
         onOpenChange?.(false)
@@ -39,8 +39,22 @@ export default function PostMenu({ post, onOpenChange }: PostMenuProps) {
         setConfirmDelete(false)
       }
     }
-    if (open) document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setOpen(false)
+        onOpenChange?.(false)
+        setFlagging(false)
+        setConfirmDelete(false)
+      }
+    }
+    if (open) {
+      document.addEventListener('mousedown', handleMouse)
+      document.addEventListener('keydown', handleKey)
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleMouse)
+      document.removeEventListener('keydown', handleKey)
+    }
   }, [open, onOpenChange])
 
   const deleteMutation = useMutation({
@@ -122,12 +136,14 @@ export default function PostMenu({ post, onOpenChange }: PostMenuProps) {
         onClick={toggle}
         className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition p-1"
         aria-label="Post options"
+        aria-expanded={open}
+        aria-haspopup="menu"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
       </button>
 
       {open && (
-        <div className="absolute right-0 top-6 z-20 bg-card border border-border rounded-xl shadow-lg py-1 w-40">
+        <div role="menu" className="absolute right-0 top-6 z-20 bg-card border border-border rounded-xl shadow-lg py-1 w-40">
           {flagging ? (
             <div className="px-3 py-2">
               <p className="text-[0.625rem] text-muted mb-1.5">Reason (optional)</p>
@@ -165,6 +181,7 @@ export default function PostMenu({ post, onOpenChange }: PostMenuProps) {
             <>
               {isOwner && (
                 <button
+                  role="menuitem"
                   onClick={() => { navigate(`/posts/${post.id}/edit`); setOpen(false) }}
                   className="flex items-center gap-2 w-full px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-surface text-left"
                 >
@@ -174,6 +191,7 @@ export default function PostMenu({ post, onOpenChange }: PostMenuProps) {
               {isAdmin && (
                 <>
                   <button
+                    role="menuitem"
                     onClick={() => pinMutation.mutate()}
                     disabled={pinMutation.isPending}
                     className="flex items-center gap-2 w-full px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-surface text-left disabled:opacity-50"
@@ -181,6 +199,7 @@ export default function PostMenu({ post, onOpenChange }: PostMenuProps) {
                     📌 {post.isPinned ? 'Unpin post' : 'Pin post'}
                   </button>
                   <button
+                    role="menuitem"
                     onClick={() => downrankMutation.mutate()}
                     disabled={downrankMutation.isPending}
                     className="flex items-center gap-2 w-full px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-surface text-left disabled:opacity-50"
@@ -211,6 +230,7 @@ export default function PostMenu({ post, onOpenChange }: PostMenuProps) {
                   </div>
                 ) : (
                   <button
+                    role="menuitem"
                     onClick={() => setConfirmDelete(true)}
                     className="flex items-center gap-2 w-full px-3 py-2 text-xs text-danger hover:bg-surface text-left"
                   >
@@ -220,6 +240,7 @@ export default function PostMenu({ post, onOpenChange }: PostMenuProps) {
               )}
               {!isOwner && (
                 <button
+                  role="menuitem"
                   onClick={() => !post.flaggedByMe && setFlagging(true)}
                   disabled={post.flaggedByMe}
                   className="flex items-center gap-2 w-full px-3 py-2 text-xs text-left disabled:opacity-50 disabled:cursor-default text-danger hover:bg-surface disabled:hover:bg-transparent"

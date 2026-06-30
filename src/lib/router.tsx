@@ -1,8 +1,6 @@
 import { lazy, Suspense } from 'react'
-import { createBrowserRouter, Navigate, Outlet, ScrollRestoration } from 'react-router-dom'
-import { useAuthStore } from '../stores/authStore'
-import Spinner from '../components/ui/Spinner'
-import NotificationBar from '../components/ui/NotificationBar'
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
+import { PageLoader, ProtectedRoute, AdminRoute, PublicOnlyRoute, RootLayout } from './routeComponents'
 
 function lazyWithReload<T extends React.ComponentType<unknown>>(
   factory: () => Promise<{ default: T }>
@@ -41,62 +39,6 @@ const AdminGroupsPage = lazyWithReload(() => import('../pages/admin/AdminGroupsP
 const AdminFlagsPage = lazyWithReload(() => import('../pages/admin/AdminFlagsPage'))
 const AdminNotificationPage = lazyWithReload(() => import('../pages/admin/AdminNotificationPage'))
 const AdminMessagesPage = lazyWithReload(() => import('../pages/admin/AdminMessagesPage'))
-
-function PageLoader() {
-  return (
-    <div className="min-h-svh bg-surface flex items-center justify-center">
-      <Spinner />
-    </div>
-  )
-}
-
-function SuspenseOutlet() {
-  return (
-    <Suspense fallback={<PageLoader />}>
-      <Outlet />
-    </Suspense>
-  )
-}
-
-function ProtectedRoute() {
-  const token = useAuthStore((s) => s.token)
-  const isInitialized = useAuthStore((s) => s.isInitialized)
-  if (!isInitialized) return <PageLoader />
-  if (!token) return <Navigate to="/login" replace />
-  return (
-    <>
-      <NotificationBar />
-      <SuspenseOutlet />
-    </>
-  )
-}
-
-function AdminRoute() {
-  const token = useAuthStore((s) => s.token)
-  const user = useAuthStore((s) => s.user)
-  const isInitialized = useAuthStore((s) => s.isInitialized)
-  if (!isInitialized) return <PageLoader />
-  if (!token || !user) return <Navigate to="/login" replace />
-  if (user.role !== 'admin') return <Navigate to="/feed" replace />
-  return <SuspenseOutlet />
-}
-
-function PublicOnlyRoute() {
-  const token = useAuthStore((s) => s.token)
-  const isInitialized = useAuthStore((s) => s.isInitialized)
-  if (!isInitialized) return <PageLoader />
-  if (token) return <Navigate to="/feed" replace />
-  return <SuspenseOutlet />
-}
-
-function RootLayout() {
-  return (
-    <>
-      <ScrollRestoration />
-      <Outlet />
-    </>
-  )
-}
 
 export const router = createBrowserRouter([
   {

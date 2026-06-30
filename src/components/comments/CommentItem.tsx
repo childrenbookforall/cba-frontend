@@ -121,6 +121,7 @@ export default function CommentItem({ comment, postId, groupId, onReply, isReply
               </p>
               <button
                 onClick={handleReply}
+                aria-label={`Reply to ${authorName}`}
                 className="text-[0.625rem] text-muted hover:text-accent-text mt-1 font-medium transition"
               >
                 Reply
@@ -206,6 +207,7 @@ export default function CommentItem({ comment, postId, groupId, onReply, isReply
           {!editing && (
             <button
               onClick={handleReply}
+              aria-label={`Reply to ${authorName}`}
               className="text-[0.625rem] text-muted hover:text-accent-text mt-1 font-medium transition"
             >
               Reply

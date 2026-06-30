@@ -25,8 +25,9 @@ export default function AdminUsersPage() {
   // Per-row action loading
   const [actionLoading, setActionLoading] = useState<Record<string, string>>({})
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
+  const [confirmSuspendId, setConfirmSuspendId] = useState<string | null>(null)
 
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
+  const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ['admin-users', committedSearch],
     queryFn: ({ pageParam }) => listAdminUsers(pageParam, committedSearch || undefined),
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
@@ -63,6 +64,7 @@ export default function AdminUsersPage() {
   }
 
   async function handleSuspend(userId: string) {
+    setConfirmSuspendId(null)
     setActionLoading((a) => ({ ...a, [userId]: 'suspend' }))
     try {
       await suspendUser(userId)
@@ -93,6 +95,14 @@ export default function AdminUsersPage() {
     return (
       <div className="flex justify-center py-16">
         <Spinner />
+      </div>
+    )
+  }
+
+  if (isError) {
+    return (
+      <div className="flex justify-center py-16 text-sm text-danger">
+        Failed to load users. Please refresh and try again.
       </div>
     )
   }
@@ -231,14 +241,32 @@ export default function AdminUsersPage() {
                   >
                     {busy === 'invite' ? <Spinner size="sm" /> : 'Invite'}
                   </button>
-                  <button
-                    onClick={() => handleSuspend(user.id)}
-                    disabled={!!busy}
-                    title={user.isActive ? 'Suspend member' : 'Reactivate member'}
-                    className="text-[0.625rem] font-semibold text-gray-600 dark:text-gray-400 border border-border px-2 py-1 rounded-lg disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-[#2a2a2a] transition"
-                  >
-                    {busy === 'suspend' ? <Spinner size="sm" /> : user.isActive ? 'Suspend' : 'Reactivate'}
-                  </button>
+                  {confirmSuspendId === user.id ? (
+                    <div className="flex items-center gap-1">
+                      <span className="text-[0.625rem] text-danger font-medium">Sure?</span>
+                      <button
+                        onClick={() => handleSuspend(user.id)}
+                        className="text-[0.625rem] font-semibold text-white bg-danger px-2 py-1 rounded-lg"
+                      >
+                        Yes
+                      </button>
+                      <button
+                        onClick={() => setConfirmSuspendId(null)}
+                        className="text-[0.625rem] font-semibold text-muted border border-border px-2 py-1 rounded-lg"
+                      >
+                        No
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setConfirmSuspendId(user.id)}
+                      disabled={!!busy}
+                      title={user.isActive ? 'Suspend member' : 'Reactivate member'}
+                      className="text-[0.625rem] font-semibold text-gray-600 dark:text-gray-400 border border-border px-2 py-1 rounded-lg disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-[#2a2a2a] transition"
+                    >
+                      {busy === 'suspend' ? <Spinner size="sm" /> : user.isActive ? 'Suspend' : 'Reactivate'}
+                    </button>
+                  )}
                   {confirmDeleteId === user.id ? (
                     <div className="flex items-center gap-1">
                       <span className="text-[0.625rem] text-danger font-medium">Sure?</span>

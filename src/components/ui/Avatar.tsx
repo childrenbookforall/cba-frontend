@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { getInitials, cloudinaryUrl } from '../../lib/utils'
 
 const AVATAR_PALETTES = [
@@ -42,12 +42,14 @@ const avatarTransforms: Record<string, string> = {
 
 export default function Avatar({ firstName, lastName, avatarUrl, size = 'md' }: AvatarProps) {
   const [imgError, setImgError] = useState(false)
+  const [prevAvatarUrl, setPrevAvatarUrl] = useState(avatarUrl)
   const cls = `${sizes[size]} rounded-full flex-shrink-0 flex items-center justify-center font-bold`
 
   // Reset error state when the URL changes so a new upload is always attempted
-  useEffect(() => {
+  if (prevAvatarUrl !== avatarUrl) {
+    setPrevAvatarUrl(avatarUrl)
     setImgError(false)
-  }, [avatarUrl])
+  }
 
   if (avatarUrl && !imgError) {
     return (

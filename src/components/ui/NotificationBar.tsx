@@ -45,7 +45,7 @@ export default function NotificationBar() {
       <button
         onClick={handleDismiss}
         aria-label="Dismiss notification"
-        className="flex-shrink-0 opacity-75 hover:opacity-100 transition-opacity"
+        className="flex-shrink-0 p-3 -m-3 opacity-75 hover:opacity-100 transition-opacity"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"/>

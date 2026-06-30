@@ -23,8 +23,15 @@ export default function NavLinks() {
         setDropdownOpen(false)
       }
     }
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setDropdownOpen(false)
+    }
     document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+    document.addEventListener('keydown', handleKey)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleKey)
+    }
   }, [dropdownOpen])
 
   function cls(path: string) {
@@ -93,6 +100,8 @@ export default function NavLinks() {
             <button
               onClick={() => setDropdownOpen((v) => !v)}
               aria-label="Account menu"
+              aria-expanded={dropdownOpen}
+              aria-haspopup="menu"
               className="flex items-center gap-1 px-1.5 py-1 rounded-full transition hover:bg-gray-100 dark:hover:bg-[#2a2a2a]"
             >
               <Avatar
@@ -105,8 +114,9 @@ export default function NavLinks() {
             </button>
 
             {dropdownOpen && (
-              <div className="absolute right-0 top-full mt-2 w-44 bg-card border border-border rounded-xl shadow-lg py-1 z-50">
+              <div role="menu" className="absolute right-0 top-full mt-2 w-44 bg-card border border-border rounded-xl shadow-lg py-1 z-50">
                 <Link
+                  role="menuitem"
                   to="/search"
                   onClick={() => setDropdownOpen(false)}
                   className="flex items-center gap-2.5 px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-surface transition"
@@ -115,6 +125,7 @@ export default function NavLinks() {
                   Search
                 </Link>
                 <Link
+                  role="menuitem"
                   to="/saved"
                   onClick={() => setDropdownOpen(false)}
                   className="flex items-center gap-2.5 px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-surface transition"
@@ -123,6 +134,7 @@ export default function NavLinks() {
                   Saved
                 </Link>
                 <Link
+                  role="menuitem"
                   to="/profile"
                   onClick={() => setDropdownOpen(false)}
                   className="flex items-center gap-2.5 px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-surface transition"

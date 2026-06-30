@@ -86,7 +86,7 @@ export default function CreatePostPage() {
     watch,
     control,
     formState: { errors, isSubmitting },
-  } = useForm<Fields>({ resolver })
+  } = useForm<Fields>({ resolver, mode: 'onBlur' })
 
   // react-hook-form's watch() can't be memoized by React Compiler — the
   // compiler skips this component either way, so the warning is just noise
@@ -328,11 +328,9 @@ export default function CreatePostPage() {
               <label className="text-[0.625rem] font-bold text-muted uppercase tracking-wide">
                 Content <span className="normal-case font-normal">(optional)</span>
               </label>
-              {contentDisplayLength > 0 && (
-                <span className={`text-[0.625rem] tabular-nums ${contentDisplayLength > 9500 ? 'text-danger font-semibold' : 'text-muted'}`}>
-                  {contentDisplayLength} / 10,000
-                </span>
-              )}
+              <span className={`text-[0.625rem] tabular-nums ${contentDisplayLength > 9500 ? 'text-danger font-semibold' : 'text-muted'}`}>
+                {contentDisplayLength} / 10,000
+              </span>
             </div>
             <Controller
               name="content"
@@ -371,11 +369,9 @@ export default function CreatePostPage() {
                 <label className="text-[0.625rem] font-bold text-muted uppercase tracking-wide">
                   Description <span className="normal-case font-normal">(optional)</span>
                 </label>
-                {contentDisplayLength > 0 && (
-                  <span className={`text-[0.625rem] tabular-nums ${contentDisplayLength > 9500 ? 'text-danger font-semibold' : 'text-muted'}`}>
-                    {contentDisplayLength} / 10,000
-                  </span>
-                )}
+                <span className={`text-[0.625rem] tabular-nums ${contentDisplayLength > 9500 ? 'text-danger font-semibold' : 'text-muted'}`}>
+                  {contentDisplayLength} / 10,000
+                </span>
               </div>
               <Controller
                 name="content"
@@ -446,11 +442,9 @@ export default function CreatePostPage() {
                 <label className="text-[0.625rem] font-bold text-muted uppercase tracking-wide">
                   Caption <span className="normal-case font-normal">(optional)</span>
                 </label>
-                {contentDisplayLength > 0 && (
-                  <span className={`text-[0.625rem] tabular-nums ${contentDisplayLength > 9500 ? 'text-danger font-semibold' : 'text-muted'}`}>
-                    {contentDisplayLength} / 10,000
-                  </span>
-                )}
+                <span className={`text-[0.625rem] tabular-nums ${contentDisplayLength > 9500 ? 'text-danger font-semibold' : 'text-muted'}`}>
+                  {contentDisplayLength} / 10,000
+                </span>
               </div>
               <Controller
                 name="content"

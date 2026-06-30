@@ -6,9 +6,9 @@ export function useMessages() {
   const query = useQuery({
     queryKey: ['messages'],
     queryFn: getConversations,
-    refetchInterval: 30_000,
+    refetchInterval: 120_000,
     refetchIntervalInBackground: false,
-    staleTime: 15_000,
+    staleTime: 60_000,
   })
 
   const totalUnread = useMemo(

@@ -32,12 +32,12 @@ export default function ImageLightbox({ urls, index, alt, onClose, onChangeIndex
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
       if (e.key === 'Escape') onClose()
-      if (e.key === 'ArrowLeft' && hasMultiple) prev()
-      if (e.key === 'ArrowRight' && hasMultiple) next()
+      if (e.key === 'ArrowLeft' && hasMultiple) onChangeIndex((index - 1 + urls.length) % urls.length)
+      if (e.key === 'ArrowRight' && hasMultiple) onChangeIndex((index + 1) % urls.length)
     }
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
-  }, [index, hasMultiple, onClose, onChangeIndex])
+  }, [index, urls.length, hasMultiple, onClose, onChangeIndex])
 
   return createPortal(
     <div

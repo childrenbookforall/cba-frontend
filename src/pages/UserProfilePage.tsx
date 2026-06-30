@@ -13,12 +13,14 @@ export default function UserProfilePage() {
   const navigate = useNavigate()
   const currentUser = useAuthStore((s) => s.user)
 
-  const { data: user, isLoading, isError } = useQuery({
+  const { data: user, isLoading, isError, error } = useQuery({
     queryKey: ['user', userId],
     queryFn: () => getUserById(userId!),
     enabled: !!userId,
     staleTime: 5 * 60 * 1000,
   })
+
+  const isNotFound = isError && (error as { response?: { status?: number } })?.response?.status === 404
 
   if (isLoading) {
     return (
@@ -31,7 +33,7 @@ export default function UserProfilePage() {
   if (isError || !user) {
     return (
       <div className="min-h-svh bg-surface flex flex-col items-center justify-center gap-2">
-        <p className="text-sm text-muted">User not found.</p>
+        <p className="text-sm text-muted">{isNotFound ? 'User not found.' : 'Could not load profile. Check your connection and try again.'}</p>
         <button onClick={() => window.history.state?.idx > 0 ? navigate(-1) : navigate('/feed')} className="text-xs text-accent-text">Go back</button>
       </div>
     )

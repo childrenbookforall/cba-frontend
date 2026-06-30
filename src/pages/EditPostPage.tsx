@@ -40,8 +40,13 @@ export default function EditPostPage() {
     reset,
     setError,
     control,
+    watch,
     formState: { errors, isSubmitting },
-  } = useForm<Fields>({ resolver: zodResolver(schema) })
+  } = useForm<Fields>({ resolver: zodResolver(schema), mode: 'onBlur' })
+
+  const titleValue = watch('title') ?? ''
+  const contentValue = watch('content') ?? ''
+  const contentDisplayLength = contentValue.replace(/@\[([^\]]+)\]\([^)]+\)/g, '@$1').length
 
   useEffect(() => {
     if (post) {
@@ -92,7 +97,12 @@ export default function EditPostPage() {
               errors.title ? 'border-danger bg-red-50' : 'border-border'
             }`}
           />
-          {errors.title && <p className="text-[0.625rem] text-danger mt-1">{errors.title.message}</p>}
+          <div className="flex justify-between mt-1">
+            {errors.title ? <p className="text-[0.625rem] text-danger">{errors.title.message}</p> : <span />}
+            <span className={`text-[0.625rem] tabular-nums ${titleValue.length > 180 ? 'text-danger font-semibold' : 'text-muted'}`}>
+              {titleValue.length} / 200
+            </span>
+          </div>
         </div>
 
         {post?.type === 'text' && (
@@ -113,6 +123,11 @@ export default function EditPostPage() {
                 />
               )}
             />
+            <div className="flex justify-end mt-1">
+              <span className={`text-[0.625rem] tabular-nums ${contentDisplayLength > 9500 ? 'text-danger font-semibold' : 'text-muted'}`}>
+                {contentDisplayLength} / 10,000
+              </span>
+            </div>
           </div>
         )}
 
@@ -134,6 +149,11 @@ export default function EditPostPage() {
                 />
               )}
             />
+            <div className="flex justify-end mt-1">
+              <span className={`text-[0.625rem] tabular-nums ${contentDisplayLength > 9500 ? 'text-danger font-semibold' : 'text-muted'}`}>
+                {contentDisplayLength} / 10,000
+              </span>
+            </div>
           </div>
         )}
 
@@ -169,6 +189,11 @@ export default function EditPostPage() {
                   />
                 )}
               />
+              <div className="flex justify-end mt-1">
+                <span className={`text-[0.625rem] tabular-nums ${contentDisplayLength > 9500 ? 'text-danger font-semibold' : 'text-muted'}`}>
+                  {contentDisplayLength} / 10,000
+                </span>
+              </div>
             </div>
           </>
         )}

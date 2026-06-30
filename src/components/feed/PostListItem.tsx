@@ -54,7 +54,8 @@ export default function PostListItem({ post, index = 0 }: PostListItemProps) {
               if (!bookmarkMutation.isPending) bookmarkMutation.mutate()
             }}
             disabled={bookmarkMutation.isPending}
-            className={`transition-colors disabled:opacity-50${post.isBookmarked ? ' text-yellow-500 dark:text-yellow-400' : ' hover:text-primary'}`}
+            aria-label={post.isBookmarked ? `Remove "${post.title}" from saved` : `Save "${post.title}"`}
+            className={`min-h-[44px] px-1 transition-colors disabled:opacity-50${post.isBookmarked ? ' text-yellow-500 dark:text-yellow-400' : ' hover:text-primary'}`}
           >
             {post.isBookmarked ? 'saved' : 'save'}
           </button>
@@ -62,7 +63,7 @@ export default function PostListItem({ post, index = 0 }: PostListItemProps) {
             <>
               <span className="mx-0.5 select-none">|</span>
               {post.flaggedByMe ? (
-                <span className="text-danger">flagged</span>
+                <span className="text-danger" aria-label={`You flagged "${post.title}"`}>flagged</span>
               ) : (
                 <button
                   type="button"
@@ -71,7 +72,8 @@ export default function PostListItem({ post, index = 0 }: PostListItemProps) {
                     if (!flagMutation.isPending) flagMutation.mutate(undefined)
                   }}
                   disabled={flagMutation.isPending}
-                  className="hover:text-danger transition-colors disabled:opacity-50"
+                  aria-label={`Flag "${post.title}" for review`}
+                  className="min-h-[44px] px-1 hover:text-danger transition-colors disabled:opacity-50"
                 >
                   flag
                 </button>

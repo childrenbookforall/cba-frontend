@@ -31,8 +31,17 @@ export default function GroupMembersSheet({ open, onClose, groupId, groupName }:
   const navigate = useNavigate()
   const [searchRaw, setSearchRaw] = useState('')
   const [search, setSearch] = useState('')
+  const [prevOpen, setPrevOpen] = useState(open)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const sentinelRef = useRef<HTMLDivElement | null>(null)
+
+  if (prevOpen !== open) {
+    setPrevOpen(open)
+    if (!open) {
+      setSearchRaw('')
+      setSearch('')
+    }
+  }
 
   const { data, isLoading, isError, isFetchingNextPage, fetchNextPage, hasNextPage } =
     useGroupMembers(groupId, search)
@@ -40,11 +49,7 @@ export default function GroupMembersSheet({ open, onClose, groupId, groupName }:
   const members = data?.pages.flatMap((p) => p.members) ?? []
 
   useEffect(() => {
-    if (!open) {
-      if (debounceRef.current) clearTimeout(debounceRef.current)
-      setSearchRaw('')
-      setSearch('')
-    }
+    if (!open && debounceRef.current) clearTimeout(debounceRef.current)
   }, [open])
 
   useEffect(() => {

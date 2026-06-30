@@ -78,6 +78,9 @@ export default function AdminNotificationPage() {
           <p className="text-xs text-muted mt-0.5">Shown at the top of the app for all users</p>
         </div>
         <button
+          role="switch"
+          aria-checked={isActive}
+          aria-label="Toggle site notification visibility"
           onClick={handleToggle}
           disabled={toggling || !notification}
           title={!notification ? 'Save a notification first' : undefined}

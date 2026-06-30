@@ -42,6 +42,7 @@ export default function ConversationPage() {
     data,
     isLoading,
     isError,
+    refetch,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
@@ -200,7 +201,12 @@ export default function ConversationPage() {
         )}
 
         {isError && (
-          <p className="text-center text-xs text-muted py-8">Could not load messages.</p>
+          <div className="flex flex-col items-center gap-2 py-8">
+            <p className="text-xs text-muted">Could not load messages.</p>
+            <button onClick={() => refetch()} className="text-xs font-semibold text-accent-text">
+              Try again
+            </button>
+          </div>
         )}
 
         {isFetchingNextPage && (
@@ -243,7 +249,7 @@ export default function ConversationPage() {
       </div>
 
       {/* Composer */}
-      <div className="fixed bottom-0 inset-x-0 z-10 bg-card border-t border-border px-3 py-2 flex items-end gap-2">
+      <div className="fixed bottom-0 inset-x-0 z-10 bg-card border-t border-border px-3 py-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] flex items-end gap-2">
         <textarea
           ref={textareaRef}
           value={content}

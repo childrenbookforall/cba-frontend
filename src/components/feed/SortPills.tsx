@@ -10,6 +10,7 @@ export default function SortPills({ sort, onChange }: SortPillsProps) {
         <button
           key={s}
           onClick={() => onChange(s)}
+          aria-pressed={sort === s}
           className={`px-2.5 py-1 rounded-full text-[0.625rem] font-semibold transition capitalize ${
             sort === s ? 'bg-accent text-accent-text-fg' : 'bg-surface text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#2a2a2a]'
           }`}

@@ -92,7 +92,7 @@ function InstallPromptCapture() {
   useEffect(() => {
     function handler(e: Event) {
       e.preventDefault()
-      setDeferredPrompt(e as any)
+      setDeferredPrompt(e as BeforeInstallPromptEvent)
     }
     window.addEventListener('beforeinstallprompt', handler)
     return () => window.removeEventListener('beforeinstallprompt', handler)
@@ -104,7 +104,7 @@ function InstallPromptCapture() {
 function GoatCounter() {
   useEffect(() => {
     return router.subscribe((state) => {
-      const gc = (window as any).goatcounter
+      const gc = window.goatcounter
       if (typeof gc?.count === 'function') {
         gc.count({ path: state.location.pathname + state.location.search })
       }

@@ -168,6 +168,8 @@ export default function ReactionButton({ post, type }: ReactionButtonProps) {
             <button
               type="button"
               onClick={() => setShowPopover((v) => !v)}
+              aria-label={`${count} ${label} reaction${count === 1 ? '' : 's'} — see who reacted`}
+              aria-expanded={showPopover}
               className="pr-2 pl-1.5 py-1 hover:underline"
             >
               {count}
@@ -177,7 +179,11 @@ export default function ReactionButton({ post, type }: ReactionButtonProps) {
       </div>
 
       {showPopover && (
-        <div className="absolute bottom-full left-0 mb-1.5 z-50 bg-card border border-border rounded-xl shadow-lg p-3 min-w-[150px] max-w-[220px]">
+        <div
+          role="dialog"
+          aria-label={`People who reacted with ${label}`}
+          className="absolute bottom-full left-0 mb-1.5 z-50 bg-card border border-border rounded-xl shadow-lg p-3 min-w-[150px] max-w-[220px]"
+        >
           <p className="text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-2">{emoji} {label}</p>
           {reactorsLoading ? (
             <p className="text-xs text-muted">Loading…</p>

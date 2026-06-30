@@ -18,12 +18,32 @@ export default function MessagesPage() {
   const [searchResults, setSearchResults] = useState<PostUser[]>([])
   const [searching, setSearching] = useState(false)
   const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const composeRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!composing) {
       setSearchQ('')
       setSearchResults([])
+      return
     }
+    const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') { setComposing(false); return }
+      if (e.key !== 'Tab') return
+      const panel = composeRef.current
+      if (!panel) return
+      const focusable = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE))
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus() }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus() }
+      }
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
   }, [composing])
 
   useEffect(() => {
@@ -105,7 +125,9 @@ export default function MessagesPage() {
                     size="md"
                   />
                   {conv.unreadCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-accent border-2 border-card" />
+                    <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-accent border-2 border-card">
+                      <span className="sr-only">{conv.unreadCount} unread message{conv.unreadCount === 1 ? '' : 's'}</span>
+                    </span>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -138,10 +160,17 @@ export default function MessagesPage() {
 
       {/* Compose modal */}
       {composing && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 px-4">
-          <div className="bg-card rounded-2xl w-full max-w-sm shadow-xl overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 px-4" onClick={() => setComposing(false)}>
+          <div
+            ref={composeRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="compose-title"
+            className="bg-card rounded-2xl w-full max-w-sm shadow-xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-              <h2 className="text-sm font-bold text-gray-900 dark:text-gray-100">New message</h2>
+              <h2 id="compose-title" className="text-sm font-bold text-gray-900 dark:text-gray-100">New message</h2>
               <button
                 onClick={() => setComposing(false)}
                 className="text-muted hover:text-primary transition"

@@ -32,7 +32,11 @@ const PostCard = memo(function PostCard({ post, index = 0 }: PostCardProps) {
       {/* Header */}
       <div className="flex items-center gap-2.5 px-3 pt-3 pb-2">
         <div
+          role={author ? 'button' : undefined}
+          tabIndex={author ? 0 : undefined}
+          aria-label={author ? `View ${formatName(author.firstName, author.lastName)}'s profile` : undefined}
           onClick={(e) => { e.preventDefault(); if (author) navigate(`/profile/${author.id}`) }}
+          onKeyDown={(e) => { if (author && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); navigate(`/profile/${author.id}`) } }}
           className={author ? 'cursor-pointer rounded-full hover:ring-2 hover:ring-accent/40 transition' : ''}
         >
           {author ? (
@@ -50,7 +54,10 @@ const PostCard = memo(function PostCard({ post, index = 0 }: PostCardProps) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 flex-wrap">
             <span
+              role={author ? 'button' : undefined}
+              tabIndex={author ? 0 : undefined}
               onClick={(e) => { e.preventDefault(); if (author) navigate(`/profile/${author.id}`) }}
+              onKeyDown={(e) => { if (author && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); navigate(`/profile/${author.id}`) } }}
               className={`text-xs font-semibold text-gray-900 dark:text-gray-100 truncate${author ? ' cursor-pointer hover:underline' : ''}`}
             >
               {author ? formatName(author.firstName, author.lastName) : "Children's Book for All"}

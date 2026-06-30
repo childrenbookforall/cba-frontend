@@ -26,7 +26,7 @@ export default function LoginPage() {
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<Fields>({ resolver: zodResolver(schema) })
+  } = useForm<Fields>({ resolver: zodResolver(schema), mode: 'onBlur' })
 
   async function onSubmit(data: Fields) {
     try {

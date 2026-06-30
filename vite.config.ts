@@ -1,9 +1,20 @@
+/// <reference types="vitest" />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
+    globals: true,
+    coverage: {
+      provider: 'v8',
+      include: ['src/lib/**', 'src/hooks/**'],
+      exclude: ['src/lib/router.tsx', 'src/lib/routeComponents.tsx', 'src/lib/queryClient.ts'],
+    },
+  },
   server: {
     proxy: {
       '/api': {

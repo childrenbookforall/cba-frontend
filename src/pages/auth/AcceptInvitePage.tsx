@@ -42,7 +42,7 @@ export default function AcceptInvitePage() {
     setError,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<Fields>({ resolver: zodResolver(schema) })
+  } = useForm<Fields>({ resolver: zodResolver(schema), mode: 'onBlur' })
 
   useEffect(() => {
     if (!token) return
@@ -117,11 +117,12 @@ export default function AcceptInvitePage() {
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           {/* First Name */}
           <div className="mb-3">
-            <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">First Name</label>
+            <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">First Name <span aria-hidden="true" className="text-danger">*</span></label>
             <input
               type="text"
               autoComplete="given-name"
               className={`w-full px-3 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 ${errors.firstName ? 'border-danger bg-red-50' : 'border-border bg-white dark:bg-card'}`}
+              aria-required="true"
               {...register('firstName')}
             />
             {errors.firstName && (
@@ -142,12 +143,13 @@ export default function AcceptInvitePage() {
           {/* Password */}
           <div className="mb-3">
             <label className="block text-[0.625rem] font-bold text-muted uppercase tracking-wide mb-1">
-              Set Password
+              Set Password <span aria-hidden="true" className="text-danger">*</span>
             </label>
             <PasswordInput
               autoComplete="new-password"
               placeholder="Min 6 characters"
               hasError={!!errors.password}
+              aria-required="true"
               {...register('password')}
             />
             {errors.password && (

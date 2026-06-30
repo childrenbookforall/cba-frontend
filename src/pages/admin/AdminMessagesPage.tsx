@@ -33,6 +33,7 @@ export default function AdminMessagesPage() {
   const {
     data: convData,
     isLoading: convLoading,
+    isError: convError,
     fetchNextPage: fetchMoreConvs,
     hasNextPage: hasMoreConvs,
     isFetchingNextPage: fetchingMoreConvs,
@@ -48,6 +49,7 @@ export default function AdminMessagesPage() {
   const {
     data: threadData,
     isLoading: threadLoading,
+    isError: threadError,
     fetchNextPage: fetchMoreThread,
     hasNextPage: hasMoreThread,
     isFetchingNextPage: fetchingMoreThread,
@@ -86,7 +88,10 @@ export default function AdminMessagesPage() {
           </div>
         )}
 
-        {!threadLoading && threadMessages.length === 0 && (
+        {!threadLoading && threadError && (
+          <p className="text-center text-xs text-danger py-8">Failed to load messages.</p>
+        )}
+        {!threadLoading && !threadError && threadMessages.length === 0 && (
           <p className="text-center text-xs text-muted py-8">No messages.</p>
         )}
 
@@ -151,7 +156,10 @@ export default function AdminMessagesPage() {
         </div>
       )}
 
-      {!convLoading && conversations.length === 0 && (
+      {!convLoading && convError && (
+        <p className="text-center text-xs text-danger py-8">Failed to load conversations.</p>
+      )}
+      {!convLoading && !convError && conversations.length === 0 && (
         <p className="text-center text-xs text-muted py-8">No conversations found.</p>
       )}
 

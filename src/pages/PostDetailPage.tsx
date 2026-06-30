@@ -53,7 +53,7 @@ export default function PostDetailPage() {
 
   const isNotFound = postError && (postErrorObj as { response?: { status?: number } } | null)?.response?.status === 404
 
-  const { data: comments, isLoading: commentsLoading } = useComments(postId)
+  const { data: comments, isLoading: commentsLoading, isError: commentsError } = useComments(postId)
 
   if (postLoading) {
     return (
@@ -115,7 +115,14 @@ export default function PostDetailPage() {
           <div className="flex items-center gap-2.5 mb-3">
             <div className="flex items-center gap-2.5 flex-1 min-w-0">
             {post.user ? (
-              <div className="cursor-pointer" onClick={() => navigate(`/profile/${post.user!.id}`)}>
+              <div
+                role="button"
+                tabIndex={0}
+                aria-label={`View ${formatName(post.user.firstName, post.user.lastName)}'s profile`}
+                className="cursor-pointer"
+                onClick={() => navigate(`/profile/${post.user!.id}`)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/profile/${post.user!.id}`) } }}
+              >
                 <Avatar
                   firstName={post.user!.firstName}
                   lastName={post.user!.lastName}
@@ -129,8 +136,11 @@ export default function PostDetailPage() {
             <div>
               <div className="flex items-center gap-1.5 flex-wrap">
                 <span
+                  role={post.user ? 'button' : undefined}
+                  tabIndex={post.user ? 0 : undefined}
                   className={`text-xs font-semibold text-gray-900 dark:text-gray-100${post.user ? ' cursor-pointer hover:underline' : ''}`}
                   onClick={() => { if (post.user) navigate(`/profile/${post.user.id}`) }}
+                  onKeyDown={(e) => { if (post.user && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); navigate(`/profile/${post.user.id}`) } }}
                 >
                   {post.user ? formatName(post.user.firstName, post.user.lastName) : "Children's Book for All"}
                 </span>
@@ -185,6 +195,8 @@ export default function PostDetailPage() {
               <CommentSkeleton />
               <CommentSkeleton />
             </>
+          ) : commentsError ? (
+            <p className="text-xs text-danger py-4">Failed to load comments. Please refresh and try again.</p>
           ) : (
             <CommentThread
               comments={comments ?? []}

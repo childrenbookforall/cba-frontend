@@ -59,7 +59,7 @@ export default function MediaCarousel({ urls, alt, compact = false, postUrl }: M
     if (touchStartX.current === null) return
     const diff = touchStartX.current - e.changedTouches[0].clientX
     if (Math.abs(diff) > 40) {
-      diff > 0 ? next() : prev()
+      if (diff > 0) { next() } else { prev() }
     }
     touchStartX.current = null
   }
@@ -84,7 +84,7 @@ export default function MediaCarousel({ urls, alt, compact = false, postUrl }: M
         type="button"
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); prev() }}
         aria-label="Previous photo"
-        className="absolute left-1.5 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-7 h-7 flex items-center justify-center transition"
+        className="absolute left-1.5 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center transition"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
       </button>
@@ -94,7 +94,7 @@ export default function MediaCarousel({ urls, alt, compact = false, postUrl }: M
         type="button"
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); next() }}
         aria-label="Next photo"
-        className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-7 h-7 flex items-center justify-center transition"
+        className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center transition"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
       </button>

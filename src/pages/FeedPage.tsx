@@ -297,7 +297,7 @@ export default function FeedPage() {
       {canPostHere && (
       <Link
         to={groupId ? `/posts/new?groupId=${groupId}` : '/posts/new'}
-        className="fixed bottom-20 right-4 w-12 h-12 bg-accent text-accent-text-fg rounded-full flex items-center justify-center shadow-lg shadow-accent/40 z-20 hover:scale-110 active:scale-95 transition-transform"
+        className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-4 w-12 h-12 bg-accent text-accent-text-fg rounded-full flex items-center justify-center shadow-lg shadow-accent/40 z-20 hover:scale-110 active:scale-95 transition-transform"
         aria-label="New post"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
