@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
+import { X, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface ImageLightboxProps {
   urls: string[]
@@ -51,9 +52,7 @@ export default function ImageLightbox({ urls, index, alt, onClose, onChangeIndex
         aria-label="Close image"
         className="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/70 rounded-full w-9 h-9 flex items-center justify-center transition z-10"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-        </svg>
+        <X className="w-5 h-5" strokeWidth={2.5} />
       </button>
 
       {/* View post button */}
@@ -63,11 +62,7 @@ export default function ImageLightbox({ urls, index, alt, onClose, onChangeIndex
           onClick={(e) => { e.stopPropagation(); onClose(); navigate(postUrl) }}
           className="absolute top-4 left-4 flex items-center gap-1.5 text-white text-sm bg-black/50 hover:bg-black/70 rounded-full px-3 h-9 transition z-10"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-            <polyline points="15 3 21 3 21 9" />
-            <line x1="10" y1="14" x2="21" y2="3" />
-          </svg>
+          <ExternalLink className="w-4 h-4" strokeWidth={2.5} />
           View post
         </button>
       )}
@@ -89,9 +84,7 @@ export default function ImageLightbox({ urls, index, alt, onClose, onChangeIndex
           aria-label="Previous photo"
           className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 flex items-center justify-center transition"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
+          <ChevronLeft className="w-5 h-5" strokeWidth={2.5} />
         </button>
       )}
 
@@ -103,9 +96,7 @@ export default function ImageLightbox({ urls, index, alt, onClose, onChangeIndex
           aria-label="Next photo"
           className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 flex items-center justify-center transition"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="9 18 15 12 9 6" />
-          </svg>
+          <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
         </button>
       )}
 

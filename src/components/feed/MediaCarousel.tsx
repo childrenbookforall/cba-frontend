@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { cloudinaryUrl } from '../../lib/utils'
 import ImageLightbox from '../ui/ImageLightbox'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface MediaCarouselProps {
   urls: string[]
@@ -86,7 +87,7 @@ export default function MediaCarousel({ urls, alt, compact = false, postUrl }: M
         aria-label="Previous photo"
         className="absolute left-1.5 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center transition"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+        <ChevronLeft className="w-4 h-4" strokeWidth={2.5} />
       </button>
 
       {/* Next button */}
@@ -96,7 +97,7 @@ export default function MediaCarousel({ urls, alt, compact = false, postUrl }: M
         aria-label="Next photo"
         className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center transition"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+        <ChevronRight className="w-4 h-4" strokeWidth={2.5} />
       </button>
 
       {/* Dot indicators */}

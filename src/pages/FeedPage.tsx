@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useEffect, useLayoutEffect } from 'react'
+import { ChevronsUpDown, Grid2x2, Plus } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 import logo from '../assets/logo.png'
 import { useFeed } from '../hooks/useFeed'
@@ -161,10 +162,7 @@ export default function FeedPage() {
         >
           <span className="truncate">{activeGroup?.name ?? 'All Groups'}</span>
           <span className="flex-shrink-0 grid place-items-center w-6 h-6 rounded-md border border-border text-muted">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="7 15 12 20 17 15" />
-              <polyline points="7 9 12 4 17 9" />
-            </svg>
+            <ChevronsUpDown className="w-4 h-4" strokeWidth={2.5} />
           </span>
         </button>
       )}
@@ -189,12 +187,7 @@ export default function FeedPage() {
                 <circle cx="3" cy="18" r="1" fill="currentColor" stroke="none" />
               </svg>
             ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="3" width="7" height="7" />
-                <rect x="14" y="3" width="7" height="7" />
-                <rect x="3" y="14" width="7" height="7" />
-                <rect x="14" y="14" width="7" height="7" />
-              </svg>
+              <Grid2x2 className="w-4 h-4" strokeWidth={2} />
             )}
           </button>
           {displayCount !== null && (
@@ -300,10 +293,7 @@ export default function FeedPage() {
         className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-4 w-12 h-12 bg-accent text-accent-text-fg rounded-full flex items-center justify-center shadow-lg shadow-accent/40 z-20 hover:scale-110 active:scale-95 transition-transform"
         aria-label="New post"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="12" y1="5" x2="12" y2="19" />
-          <line x1="5" y1="12" x2="19" y2="12" />
-        </svg>
+        <Plus className="w-6 h-6" strokeWidth={2.5} />
       </Link>
       )}
 

@@ -52,6 +52,7 @@ export interface Group {
   // only present on parent groups
   children?: Group[]
   _count?: { members: number }
+  isMuted?: boolean
 }
 
 // _count shape returned by Prisma includes on post queries

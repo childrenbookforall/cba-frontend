@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { Sun, Moon, MessageSquare, Bell, ChevronDown, Search, Bookmark, User } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { useNotifications } from '../../hooks/useNotifications'
 import { useMessages } from '../../hooks/useMessages'
@@ -47,18 +48,16 @@ export default function NavLinks() {
       className="text-muted hover:text-primary transition"
     >
       {theme === 'dark' ? (
-        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <Sun className="w-5 h-5" strokeWidth={2} />
       ) : (
-        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <Moon className="w-5 h-5" strokeWidth={2} />
       )}
     </button>
   )
 
   const messagesLink = (
     <Link to="/messages" aria-label="Messages" className={`relative ${cls('/messages')}`}>
-      <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-      </svg>
+      <MessageSquare className="w-5 h-5" strokeWidth={2} />
       <span
         aria-live="polite"
         aria-atomic="true"
@@ -72,10 +71,7 @@ export default function NavLinks() {
 
   const alertsLink = (
     <Link to="/notifications" aria-label="Alerts" className={`relative ${cls('/notifications')}`}>
-      <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-      </svg>
+      <Bell className="w-5 h-5" strokeWidth={2} />
       <span
         aria-live="polite"
         aria-atomic="true"
@@ -110,7 +106,7 @@ export default function NavLinks() {
                 avatarUrl={user.avatarUrl}
                 size="sm"
               />
-              <svg xmlns="http://www.w3.org/2000/svg" className={`w-3 h-3 text-muted transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              <ChevronDown className={`w-3 h-3 text-muted transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} strokeWidth={2.5} />
             </button>
 
             {dropdownOpen && (
@@ -121,7 +117,7 @@ export default function NavLinks() {
                   onClick={() => setDropdownOpen(false)}
                   className="flex items-center gap-2.5 px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-surface transition"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <Search className="w-4 h-4 text-muted" strokeWidth={2} />
                   Search
                 </Link>
                 <Link
@@ -130,7 +126,7 @@ export default function NavLinks() {
                   onClick={() => setDropdownOpen(false)}
                   className="flex items-center gap-2.5 px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-surface transition"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                  <Bookmark className="w-4 h-4 text-muted" strokeWidth={2} />
                   Saved
                 </Link>
                 <Link
@@ -139,7 +135,7 @@ export default function NavLinks() {
                   onClick={() => setDropdownOpen(false)}
                   className="flex items-center gap-2.5 px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-surface transition"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  <User className="w-4 h-4 text-muted" strokeWidth={2} />
                   Profile
                 </Link>
               </div>

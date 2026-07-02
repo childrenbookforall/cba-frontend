@@ -13,3 +13,11 @@ export async function listGroupMembers(
   const res = await client.get<GroupMembersResponse>(`/api/groups/${groupId}/members`, { params })
   return res.data
 }
+
+export async function muteGroup(groupId: string): Promise<void> {
+  await client.post(`/api/groups/${groupId}/mute`)
+}
+
+export async function unmuteGroup(groupId: string): Promise<void> {
+  await client.delete(`/api/groups/${groupId}/mute`)
+}

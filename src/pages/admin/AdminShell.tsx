@@ -1,3 +1,4 @@
+import { ChevronLeft } from 'lucide-react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../../stores/authStore'
 
@@ -31,7 +32,7 @@ export default function AdminShell() {
             to="/feed"
             className="flex items-center gap-1 text-xs text-muted hover:text-gray-700 dark:hover:text-gray-300 transition"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+            <ChevronLeft className="w-4 h-4" strokeWidth={2} />
             Back to app
           </Link>
         </div>

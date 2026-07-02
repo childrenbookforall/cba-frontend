@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
+import { X } from 'lucide-react'
 
 interface BottomSheetProps {
   open: boolean
@@ -96,9 +97,7 @@ export default function BottomSheet({ open, onClose, title, titleId, children }:
               aria-label="Close"
               className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-surface transition text-muted hover:text-primary"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
+              <X className="w-4 h-4" strokeWidth={2.5} />
             </button>
           </div>
         )}

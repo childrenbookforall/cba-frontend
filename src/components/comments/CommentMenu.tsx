@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { MoreHorizontal } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { deleteComment, flagComment } from '../../api/comments'
 import { useAuthStore } from '../../stores/authStore'
@@ -106,7 +107,7 @@ export default function CommentMenu({ comment, postId, onEdit }: CommentMenuProp
         aria-expanded={open}
         aria-haspopup="menu"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+        <MoreHorizontal className="w-4 h-4" />
       </button>
 
       {open && (

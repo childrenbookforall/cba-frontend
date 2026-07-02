@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { MoreHorizontal } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useMutation, useQueryClient, type InfiniteData } from '@tanstack/react-query'
 import { deletePost } from '../../api/posts'
@@ -139,7 +140,7 @@ export default function PostMenu({ post, onOpenChange }: PostMenuProps) {
         aria-expanded={open}
         aria-haspopup="menu"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+        <MoreHorizontal className="w-4 h-4" />
       </button>
 
       {open && (

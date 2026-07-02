@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { Send } from 'lucide-react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useInfiniteQuery, useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getConversation, sendMessage, markRead } from '../api/messages'
@@ -266,9 +267,7 @@ export default function ConversationPage() {
           className="flex-shrink-0 w-9 h-9 rounded-full bg-accent flex items-center justify-center text-accent-text-fg disabled:opacity-40 transition"
           aria-label="Send"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
-          </svg>
+          <Send className="w-4 h-4" strokeWidth={2.5} />
         </button>
       </div>
     </div>
