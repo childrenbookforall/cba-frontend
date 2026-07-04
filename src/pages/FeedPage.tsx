@@ -15,7 +15,13 @@ import GroupsSheet from '../components/ui/GroupsSheet'
 import GroupMembersSheet from '../components/ui/GroupMembersSheet'
 import { flattenGroups } from '../lib/groups'
 import { useAuthStore } from '../stores/authStore'
+import { useThemeStore } from '../stores/themeStore'
 import { useWindowVirtualizer } from '@tanstack/react-virtual'
+
+// Static ledger report (built by hledger, hosted on GitHub Pages) shown in place
+// of the normal feed for the #public-ledger group.
+const LEDGER_GROUP_SLUG = 'public-ledger'
+const LEDGER_URL = 'https://childrenbookforall.github.io/ledger/ledger.html'
 
 type FeedView = 'card' | 'list'
 
@@ -75,6 +81,25 @@ export default function FeedPage() {
   // In a view-only group, only admins can post — hide the create-post prompts
   const canPostHere = !activeGroup || isAdmin || !activeGroup.isViewOnly
 
+  const isLedgerGroup = activeGroup?.slug === LEDGER_GROUP_SLUG
+  const theme = useThemeStore((s) => s.theme)
+  const [ledgerHeight, setLedgerHeight] = useState<number | null>(null)
+
+  // The ledger iframe is cross-origin, so it reports its real content height
+  // via postMessage — this lets the iframe grow to fit instead of scrolling
+  // internally, so the page has a single scrollbar.
+  useEffect(() => {
+    if (!isLedgerGroup) return
+    function handleMessage(e: MessageEvent) {
+      if (e.origin !== 'https://childrenbookforall.github.io') return
+      if (e.data?.type === 'ledger-height' && typeof e.data.height === 'number') {
+        setLedgerHeight(e.data.height)
+      }
+    }
+    window.addEventListener('message', handleMessage)
+    return () => window.removeEventListener('message', handleMessage)
+  }, [isLedgerGroup])
+
   // If the selected group disappears from the response (made private, deleted,
   // or became a parent), fall back to All Groups instead of a stuck 403 feed
   useEffect(() => {
@@ -92,7 +117,7 @@ export default function FeedPage() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useFeed({ sort, groupId })
+  } = useFeed({ sort, groupId, enabled: !isLedgerGroup })
 
   const pinnedPosts = useMemo(
     () => sort === 'top' ? (data?.pages[0]?.pinnedPosts ?? []) : [],
@@ -167,6 +192,18 @@ export default function FeedPage() {
         </button>
       )}
 
+      {isLedgerGroup ? (
+        /* Static ledger report replaces the feed entirely for this group */
+        <iframe
+          key={theme}
+          src={`${LEDGER_URL}?theme=${theme}`}
+          title="Ledger"
+          scrolling="no"
+          className="w-full border-0 block"
+          style={{ height: ledgerHeight ? `${ledgerHeight}px` : 'calc(100svh - 3.25rem)' }}
+        />
+      ) : (
+      <>
       {/* Sort bar */}
       <div className="bg-surface border-b border-border">
       <div className="max-w-2xl mx-auto flex items-center justify-between px-4 py-2">
@@ -283,11 +320,13 @@ export default function FeedPage() {
           </div>
         )}
       </div>
+      </>
+      )}
       </div>
       </div>
 
       {/* FAB */}
-      {canPostHere && (
+      {canPostHere && !isLedgerGroup && (
       <Link
         to={groupId ? `/posts/new?groupId=${groupId}` : '/posts/new'}
         className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-4 w-12 h-12 bg-accent text-accent-text-fg rounded-full flex items-center justify-center shadow-lg shadow-accent/40 z-20 hover:scale-110 active:scale-95 transition-transform"

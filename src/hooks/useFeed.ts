@@ -4,9 +4,10 @@ import { fetchFeed } from '../api/posts'
 interface UseFeedParams {
   sort: 'latest' | 'top'
   groupId?: string | null
+  enabled?: boolean
 }
 
-export function useFeed({ sort, groupId }: UseFeedParams) {
+export function useFeed({ sort, groupId, enabled = true }: UseFeedParams) {
   return useInfiniteQuery({
     queryKey: ['feed', sort, groupId ?? null],
     queryFn: ({ pageParam }) =>
@@ -22,5 +23,6 @@ export function useFeed({ sort, groupId }: UseFeedParams) {
       return lastPage.hasMore ? allPages.length + 1 : undefined
     },
     staleTime: 30_000,
+    enabled,
   })
 }
