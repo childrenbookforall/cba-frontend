@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom'
+
 const PALETTES = [
   'bg-blue-50 text-blue-700',
   'bg-purple-50 text-purple-700',
@@ -32,8 +34,21 @@ interface GroupChipProps {
 }
 
 export default function GroupChip({ id, name }: GroupChipProps) {
+  const navigate = useNavigate()
+
+  function goToGroup(e: { preventDefault: () => void }) {
+    e.preventDefault()
+    navigate(`/feed?groupId=${id}`)
+  }
+
   return (
-    <span className={`px-2 py-0.5 rounded-full text-[0.5625rem] font-semibold whitespace-nowrap ${pickColor(id)}`}>
+    <span
+      role="button"
+      tabIndex={0}
+      onClick={goToGroup}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') goToGroup(e) }}
+      className={`px-2 py-0.5 rounded-full text-[0.5625rem] font-semibold whitespace-nowrap cursor-pointer hover:opacity-75 transition-opacity ${pickColor(id)}`}
+    >
       {name}
     </span>
   )

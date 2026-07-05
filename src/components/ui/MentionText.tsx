@@ -1,4 +1,7 @@
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useGroups } from '../../hooks/useGroups'
+import { flattenGroups } from '../../lib/groups'
 
 interface MentionTextProps {
   content: string
@@ -6,12 +9,61 @@ interface MentionTextProps {
 }
 
 const URL_RE = /(https?:\/\/[^\s]+|www\.[^\s]+)/gi
+const GROUP_RE = /#([a-z0-9][a-z0-9-]*)/gi
 
 function openLink(href: string) {
   window.open(href, '_blank', 'noopener,noreferrer')
 }
 
-function linkifyUrls(text: string, keyPrefix: string): React.ReactNode[] {
+type GroupLookup = Map<string, { id: string; name: string }>
+
+function linkifyGroupTags(
+  text: string,
+  keyPrefix: string,
+  groupsBySlug: GroupLookup,
+  navigate: (path: string) => void
+): React.ReactNode[] {
+  const nodes: React.ReactNode[] = []
+  let lastIndex = 0
+  let match
+
+  while ((match = GROUP_RE.exec(text)) !== null) {
+    const precedingChar = match.index > 0 ? text[match.index - 1] : ''
+    const isWordStart = match.index === 0 || /\s/.test(precedingChar)
+    const group = isWordStart ? groupsBySlug.get(match[1].toLowerCase()) : undefined
+    if (!group) continue
+
+    if (match.index > lastIndex) {
+      nodes.push(text.slice(lastIndex, match.index))
+    }
+    nodes.push(
+      <span
+        key={`${keyPrefix}-group-${match.index}`}
+        role="link"
+        tabIndex={0}
+        className="text-accent-text font-medium cursor-pointer hover:underline"
+        onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/feed?groupId=${group.id}`) }}
+        onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); navigate(`/feed?groupId=${group.id}`) } }}
+      >
+        #{match[1]}
+      </span>
+    )
+    lastIndex = match.index + match[0].length
+  }
+
+  if (lastIndex < text.length) {
+    nodes.push(text.slice(lastIndex))
+  }
+
+  return nodes
+}
+
+function linkifyUrls(
+  text: string,
+  keyPrefix: string,
+  groupsBySlug: GroupLookup,
+  navigate: (path: string) => void
+): React.ReactNode[] {
   const nodes: React.ReactNode[] = []
   let lastIndex = 0
   let match
@@ -26,7 +78,7 @@ function linkifyUrls(text: string, keyPrefix: string): React.ReactNode[] {
     if (!url) continue
 
     if (match.index > lastIndex) {
-      nodes.push(text.slice(lastIndex, match.index))
+      nodes.push(...linkifyGroupTags(text.slice(lastIndex, match.index), `${keyPrefix}-${lastIndex}`, groupsBySlug, navigate))
     }
     const href = url.startsWith('www.') ? `https://${url}` : url
     nodes.push(
@@ -46,7 +98,7 @@ function linkifyUrls(text: string, keyPrefix: string): React.ReactNode[] {
   }
 
   if (lastIndex < text.length) {
-    nodes.push(text.slice(lastIndex))
+    nodes.push(...linkifyGroupTags(text.slice(lastIndex), `${keyPrefix}-${lastIndex}`, groupsBySlug, navigate))
   }
 
   return nodes
@@ -54,6 +106,15 @@ function linkifyUrls(text: string, keyPrefix: string): React.ReactNode[] {
 
 export default function MentionText({ content, className }: MentionTextProps) {
   const navigate = useNavigate()
+  const { data: groups } = useGroups()
+  const groupsBySlug = useMemo(() => {
+    const map: GroupLookup = new Map()
+    for (const g of flattenGroups(groups)) {
+      if (g.slug) map.set(g.slug.toLowerCase(), { id: g.id, name: g.name })
+    }
+    return map
+  }, [groups])
+
   const parts: React.ReactNode[] = []
   let lastIndex = 0
   const re = /@\[([^\]]+)\]\(([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\)/g
@@ -61,7 +122,7 @@ export default function MentionText({ content, className }: MentionTextProps) {
   let match
   while ((match = re.exec(content)) !== null) {
     if (match.index > lastIndex) {
-      parts.push(...linkifyUrls(content.slice(lastIndex, match.index), `${lastIndex}`))
+      parts.push(...linkifyUrls(content.slice(lastIndex, match.index), `${lastIndex}`, groupsBySlug, navigate))
     }
     const [full, displayName, userId] = match
     parts.push(
@@ -80,7 +141,7 @@ export default function MentionText({ content, className }: MentionTextProps) {
   }
 
   if (lastIndex < content.length) {
-    parts.push(...linkifyUrls(content.slice(lastIndex), `${lastIndex}`))
+    parts.push(...linkifyUrls(content.slice(lastIndex), `${lastIndex}`, groupsBySlug, navigate))
   }
 
   return <span className={className}>{parts}</span>

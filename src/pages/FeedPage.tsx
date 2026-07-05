@@ -44,7 +44,7 @@ function getSidebarPref(): boolean {
 export default function FeedPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const sort: 'latest' | 'top' = searchParams.get('sort') === 'latest' ? 'latest' : 'top'
-  const [groupId, setGroupId] = useState<string | null>(null)
+  const groupId = searchParams.get('groupId')
   const [membersOpen, setMembersOpen] = useState(false)
   const [groupsSheetOpen, setGroupsSheetOpen] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(getSidebarPref)
@@ -104,10 +104,13 @@ export default function FeedPage() {
   // or became a parent), fall back to All Groups instead of a stuck 403 feed
   useEffect(() => {
     if (groupId && groups && !flatGroups.some((g) => g.id === groupId)) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setGroupId(null)
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('groupId')
+        return next
+      })
     }
-  }, [groupId, groups, flatGroups])
+  }, [groupId, groups, flatGroups, setSearchParams])
 
   const {
     data,
@@ -143,12 +146,21 @@ export default function FeedPage() {
   })
 
   function handleSortChange(newSort: 'latest' | 'top') {
-    setSearchParams({ sort: newSort })
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      next.set('sort', newSort)
+      return next
+    })
     window.scrollTo({ top: 0 })
   }
 
   function handleGroupChange(newGroupId: string | null) {
-    setGroupId(newGroupId)
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      if (newGroupId) next.set('groupId', newGroupId)
+      else next.delete('groupId')
+      return next
+    })
     window.scrollTo({ top: 0 })
   }
 
