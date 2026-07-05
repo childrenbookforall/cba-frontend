@@ -31,6 +31,11 @@ export default function UserProfilePage() {
     )
   }
 
+  const memberSince = user && new Date(user.createdAt).toLocaleDateString('en-US', {
+    month: 'long',
+    year: 'numeric',
+  })
+
   if (isError || !user) {
     return (
       <div className="min-h-svh bg-surface flex flex-col items-center justify-center gap-2">
@@ -67,6 +72,7 @@ export default function UserProfilePage() {
           <h2 className="text-base font-bold text-gray-900 dark:text-gray-100">
             {user.firstName} {user.lastName}
           </h2>
+          <p className="text-[0.625rem] text-muted mt-1">Member since {memberSince}</p>
           {currentUser?.id !== userId && (
             <button
               onClick={() => {
