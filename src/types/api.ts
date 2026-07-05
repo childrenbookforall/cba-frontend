@@ -31,6 +31,7 @@ export interface PublicProfile {
   lastName?: string | null
   bio?: string | null
   avatarUrl?: string | null
+  createdAt: string
 }
 
 // Embedded user on posts/comments (subset of full User)
