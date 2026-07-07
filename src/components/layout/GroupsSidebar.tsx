@@ -62,7 +62,7 @@ export default function GroupsSidebar({ groups, activeGroupId, onChange, onColla
 
   return (
     <aside className="hidden md:block w-56 flex-shrink-0 border-r border-border bg-card">
-      <nav className="sticky top-[53px] max-h-[calc(100svh-53px)] overflow-y-auto p-3 flex flex-col gap-0.5">
+      <nav className="sidebar-scroll sticky top-[53px] max-h-[calc(100svh-53px)] overflow-y-auto p-3 flex flex-col gap-0.5">
         {onCollapse && (
           <div className="flex items-center justify-between px-3 pb-1">
             <span className="text-[0.625rem] font-bold text-muted uppercase tracking-wide">Groups</span>
