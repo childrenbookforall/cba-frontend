@@ -13,6 +13,7 @@ import Spinner from '../components/ui/Spinner'
 import BackButton from '../components/ui/BackButton'
 import BottomNav from '../components/layout/BottomNav'
 import NavLinks from '../components/layout/NavLinks'
+import BadgeList from '../components/ui/BadgeList'
 
 export default function ProfilePage() {
   const navigate = useNavigate()
@@ -113,6 +114,7 @@ export default function ProfilePage() {
               firstName={user.firstName}
               lastName={user.lastName}
               avatarUrl={user.avatarUrl}
+              badges={user.badges}
               size="lg"
             />
             {/* Camera overlay */}
@@ -139,6 +141,7 @@ export default function ProfilePage() {
               Admin
             </span>
           )}
+          <BadgeList badges={user.badges} className="mt-2" />
           <p className="text-[0.625rem] text-muted mt-1">Member since {memberSince}</p>
         </div>
 

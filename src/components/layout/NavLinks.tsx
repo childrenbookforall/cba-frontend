@@ -104,6 +104,7 @@ export default function NavLinks() {
                 firstName={user.firstName}
                 lastName={user.lastName}
                 avatarUrl={user.avatarUrl}
+                badges={user.badges}
                 size="sm"
               />
               <ChevronDown className={`w-3 h-3 text-muted transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} strokeWidth={2.5} />

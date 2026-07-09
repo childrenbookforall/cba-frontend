@@ -16,6 +16,22 @@
   --color-coral: #FF8383;
   --color-admin-bg: #1a1a2e;
 
+  --color-badge-host: #56439a;
+  --color-badge-cohost: #803272;
+  --color-badge-supporter: #007a46;
+  --color-badge-member: #007eb0;
+  --color-badge-sabbatical: #aaaaaa;
+
+  /* Pill fill — deliberately darker than the ring color above: a solid
+     fill needs enough contrast against its own text, which the ring's
+     lightness (tuned for border-on-surface use) doesn't guarantee. */
+  --color-badge-host-pill: #6451ac;
+  --color-badge-cohost-pill: #913f82;
+  --color-badge-supporter-pill: #00834e;
+  --color-badge-member-pill: #006fa3;
+  --color-badge-sabbatical-pill: #636363;
+  --color-badge-pill-fg: #ffffff;
+
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-gluten: 'Gluten', sans-serif;
 }
@@ -29,6 +45,22 @@ html.dark {
   --color-card: #1e1e1e;
   --color-border: #2e2e2e;
   --color-muted: #777777;
+
+  --color-badge-host: #8977da;
+  --color-badge-cohost: #bd64ac;
+  --color-badge-supporter: #00a36a;
+  --color-badge-member: #009dd3;
+  --color-badge-sabbatical: #777777;
+
+  /* Pill fill — lighter than the ring color: on a dark card, a dark fill
+     (the light-mode direction) would blend into the background instead
+     of standing out. */
+  --color-badge-host-pill: #9e8eef;
+  --color-badge-cohost-pill: #d37bc1;
+  --color-badge-supporter-pill: #37b880;
+  --color-badge-member-pill: #00ade4;
+  --color-badge-sabbatical-pill: #adadad;
+  --color-badge-pill-fg: #222222;
 }
 
 html {

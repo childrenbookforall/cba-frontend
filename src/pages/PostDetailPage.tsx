@@ -126,6 +126,7 @@ export default function PostDetailPage() {
                   firstName={post.user!.firstName}
                   lastName={post.user!.lastName}
                   avatarUrl={post.user!.avatarUrl}
+                  badges={post.user!.badges}
                   size="md"
                 />
               </div>

@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { getInitials, cloudinaryUrl } from '../../lib/utils'
+import { getPrimaryBadge, getBadgeRingClass } from '../../lib/badges'
+import type { Badge } from '../../types/api'
 
 const AVATAR_PALETTES = [
   'bg-purple-100 text-purple-700',
@@ -25,6 +27,7 @@ interface AvatarProps {
   lastName?: string | null
   avatarUrl?: string | null
   size?: 'sm' | 'md' | 'lg'
+  badges?: Badge[]
 }
 
 const sizes = {
@@ -40,10 +43,12 @@ const avatarTransforms: Record<string, string> = {
   lg: 'f_auto,q_auto,w_128,h_128,c_fill,g_face',
 }
 
-export default function Avatar({ firstName, lastName, avatarUrl, size = 'md' }: AvatarProps) {
+export default function Avatar({ firstName, lastName, avatarUrl, size = 'md', badges }: AvatarProps) {
   const [imgError, setImgError] = useState(false)
   const [prevAvatarUrl, setPrevAvatarUrl] = useState(avatarUrl)
-  const cls = `${sizes[size]} rounded-full flex-shrink-0 flex items-center justify-center font-bold`
+  const primaryBadge = getPrimaryBadge(badges)
+  const ringCls = primaryBadge ? `ring-[3px] ${getBadgeRingClass(primaryBadge)}` : ''
+  const cls = `${sizes[size]} rounded-full flex-shrink-0 flex items-center justify-center font-bold ${ringCls}`
 
   // Reset error state when the URL changes so a new upload is always attempted
   if (prevAvatarUrl !== avatarUrl) {

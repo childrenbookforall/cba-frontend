@@ -1,3 +1,5 @@
+export type Badge = 'host' | 'co_host' | 'supporter' | 'member' | 'member_sabbatical'
+
 export interface User {
   id: string
   email: string
@@ -7,6 +9,7 @@ export interface User {
   birthday?: string | null
   avatarUrl?: string | null
   role: 'admin' | 'member'
+  badges?: Badge[]
   canInitiateMessages: boolean
   createdAt: string
 }
@@ -31,6 +34,7 @@ export interface PublicProfile {
   lastName?: string | null
   bio?: string | null
   avatarUrl?: string | null
+  badges?: Badge[]
   createdAt: string
 }
 
@@ -40,6 +44,7 @@ export interface PostUser {
   firstName: string
   lastName?: string | null
   avatarUrl?: string | null
+  badges?: Badge[]
 }
 
 export interface Group {
@@ -211,6 +216,7 @@ export interface GroupMember {
   avatarUrl?: string | null
   email: string
   isActive: boolean
+  badges?: Badge[]
   joinedAt: string
 }
 

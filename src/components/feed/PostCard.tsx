@@ -44,6 +44,7 @@ const PostCard = memo(function PostCard({ post, index = 0 }: PostCardProps) {
               firstName={author.firstName}
               lastName={author.lastName}
               avatarUrl={author.avatarUrl}
+              badges={author.badges}
               size="md"
             />
           ) : (

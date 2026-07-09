@@ -8,6 +8,7 @@ import Spinner from '../components/ui/Spinner'
 import BackButton from '../components/ui/BackButton'
 import BottomNav from '../components/layout/BottomNav'
 import NavLinks from '../components/layout/NavLinks'
+import BadgeList from '../components/ui/BadgeList'
 
 export default function UserProfilePage() {
   const { userId } = useParams<{ userId: string }>()
@@ -65,6 +66,7 @@ export default function UserProfilePage() {
             firstName={user.firstName}
             lastName={user.lastName}
             avatarUrl={user.avatarUrl}
+            badges={user.badges}
             size="lg"
           />
         </div>
@@ -72,6 +74,7 @@ export default function UserProfilePage() {
           <h2 className="text-base font-bold text-gray-900 dark:text-gray-100">
             {user.firstName} {user.lastName}
           </h2>
+          <BadgeList badges={user.badges} className="mt-2" />
           <p className="text-[0.625rem] text-muted mt-1">Member since {memberSince}</p>
           {currentUser?.id !== userId && (
             <button

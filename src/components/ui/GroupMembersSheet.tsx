@@ -19,7 +19,7 @@ function MemberRow({ member, onNavigate }: { member: GroupMember; onNavigate: (i
       onClick={() => onNavigate(member.id)}
       className="w-full flex items-center gap-3 py-2.5 border-t border-border first:border-t-0 text-left cursor-pointer hover:bg-surface active:bg-surface transition-colors"
     >
-      <Avatar firstName={member.firstName} lastName={member.lastName} avatarUrl={member.avatarUrl} size="md" />
+      <Avatar firstName={member.firstName} lastName={member.lastName} avatarUrl={member.avatarUrl} badges={member.badges} size="md" />
       <p className="text-sm font-medium text-primary truncate">
         {member.firstName}{member.lastName ? ` ${member.lastName}` : ''}
       </p>

@@ -60,6 +60,7 @@ export default function CommentItem({ comment, postId, groupId, onReply, isReply
               firstName={comment.user.firstName}
               lastName={comment.user.lastName}
               avatarUrl={comment.user.avatarUrl}
+              badges={comment.user.badges}
               size="sm"
             />
           </Link>
@@ -142,6 +143,7 @@ export default function CommentItem({ comment, postId, groupId, onReply, isReply
               firstName={comment.user.firstName}
               lastName={comment.user.lastName}
               avatarUrl={comment.user.avatarUrl}
+              badges={comment.user.badges}
               size="md"
             />
           </Link>
